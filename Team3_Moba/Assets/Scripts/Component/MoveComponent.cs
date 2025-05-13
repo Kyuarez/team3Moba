@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class MoveComponent 
+public class MoveComponent
 {
     private Transform ownerTransform;
     private NavMeshAgent agent;
@@ -13,6 +13,12 @@ public class MoveComponent
     {
         this.ownerTransform = owner;
         this.agent = agent;
+    }
+
+    public void SetData(EntityData data)
+    {
+        moveSpeed = 5.0f;
+        rotateSpeed = 3.0f;
     }
 
     public void Move(Vector3 destination)
