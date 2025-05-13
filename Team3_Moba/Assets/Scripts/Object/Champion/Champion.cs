@@ -20,7 +20,6 @@ public class Champion : GameEntity
     public override void InitData(EntityData data)
     {
         base.InitData(data);
-
-
+        Move.SetData(data);
     }
 }
