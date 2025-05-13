@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 764999171216658193}
   - component: {fileID: 2115644062214443923}
   - component: {fileID: 4555788010304762717}
+  - component: {fileID: 6911569864352345569}
   m_Layer: 0
   m_Name: SM_turret_moba
   m_TagString: Untagged
@@ -136,3 +137,15 @@ CapsuleCollider:
   m_Height: 20
   m_Direction: 1
   m_Center: {x: 0, y: 4, z: -2.7159029e-14}
+--- !u!114 &6911569864352345569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269222077986631364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c706befa58dd07f4db0f10736980a5ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

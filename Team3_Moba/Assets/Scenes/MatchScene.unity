@@ -362,6 +362,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MatchCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 6041739634987303287, guid: e51ff1542e8ce014389e59fc1b53b9ed, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8827603840616250193, guid: e51ff1542e8ce014389e59fc1b53b9ed, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

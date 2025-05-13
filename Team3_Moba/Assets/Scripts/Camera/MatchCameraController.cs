@@ -30,7 +30,8 @@ public class MatchCameraController : MonoBehaviour
 
     private void OnEnable()
     {
-        cameraState = MatchCameraState.Lock;
+        //cameraState = MatchCameraState.Lock;
+        cameraState = MatchCameraState.Free;
     }
 
     private void LateUpdate()
