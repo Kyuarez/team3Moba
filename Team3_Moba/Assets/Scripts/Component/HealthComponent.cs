@@ -8,4 +8,9 @@ public class HealthComponent
     {
 
     }
+
+    public void Damage(float amount)
+    {
+        
+    }
 }

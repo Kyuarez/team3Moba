@@ -1494,7 +1494,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79f262bd36493f84c8c6f537abb2a127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Skill: {fileID: 0}
 --- !u!95 &8703286296217739578
 Animator:
   serializedVersion: 7
@@ -1585,7 +1584,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0

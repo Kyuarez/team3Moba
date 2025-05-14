@@ -45,12 +45,17 @@ public class MatchManager : MonoSingleton<MatchManager>
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                //if()
+                GameEntity entity = hit.collider.gameObject.GetComponent<GameEntity>();
+                if(entity != null)
+                {
+                    playerChampion.SetAttackTarget(entity);
+                }
+                else
+                {
+                    playerChampion.ResetAttackTarget();
+                    playerChampion.Move(hit.point);
+                }
 
-                Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.red, 1.0f);
-                Logger.Log("현재 클릭한 좌표  : " + hit.point);
-                Logger.Log("히트된 오브젝트 : " + hit.collider.gameObject.name);
-                playerChampion.Move(hit.point);
             }
         }
 
