@@ -17,6 +17,9 @@ public class MatchManager : MonoSingleton<MatchManager>
     private Champion playerChampion;
     private List<Vector3> spawnItemPositions;
     private bool isSpawned;
+    private int maxSpawnItem = 20;
+    private int currentSpawnCount = 0;
+
     public Transform PlayerTransform => playerTransform;
 
     private void Start()
@@ -59,6 +62,11 @@ public class MatchManager : MonoSingleton<MatchManager>
 
         if(isSpawned == false)
         {
+            if(currentSpawnCount >= maxSpawnItem)
+            {
+                return;
+            }
+
             isSpawned = true;
             StartCoroutine(CoSpawnItem());
         }
@@ -69,11 +77,17 @@ public class MatchManager : MonoSingleton<MatchManager>
     {
         yield return new WaitForSeconds(0.1f);
         Vector3 positionTemp = spawnItemPositions[Random.Range(0,4)];
-        float angle = (2f * Mathf.PI / 17) * count;
+        float angle = (2f * Mathf.PI / 17) * currentSpawnCount;
         int radius = 4;
         positionTemp.x += Mathf.Cos(angle) * radius;
         positionTemp.z += Mathf.Sin(angle) * radius;
-        PoolManager.Instance.SpawnObject("TestItem", positionTemp);
+        GameObject item = PoolManager.Instance.SpawnObject("TestItem", positionTemp);
+
+        if(item != null)
+        {
+            currentSpawnCount++;
+        }
+
         isSpawned = false;
         count = (count + 1) % 21;
     }
