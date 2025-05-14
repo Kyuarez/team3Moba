@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum Team
@@ -13,7 +15,8 @@ public class MatchManager : MonoSingleton<MatchManager>
 
     private Transform playerTransform;
     private Champion playerChampion;
-
+    private List<Vector3> spawnItemPositions;
+    private bool isSpawned;
     public Transform PlayerTransform => playerTransform;
 
     private void Start()
@@ -21,6 +24,12 @@ public class MatchManager : MonoSingleton<MatchManager>
         matchCamera = FindAnyObjectByType<MatchCameraController>();
         playerChampion = FindAnyObjectByType<Champion>();
         playerTransform = playerChampion.transform;
+        //아이템 스폰 위치 임시 지정
+        spawnItemPositions = new List<Vector3>();
+        spawnItemPositions.Add(new Vector3(-34f, 3f, -70f));
+        spawnItemPositions.Add(new Vector3(-59f, 3f, -39f));
+        spawnItemPositions.Add(new Vector3(-84f, 3f, -65f));
+        spawnItemPositions.Add(new Vector3(-60f, 3f, -94f));
     }
 
     private void Update()
@@ -47,5 +56,25 @@ public class MatchManager : MonoSingleton<MatchManager>
         {
             matchCamera.SetMatchCameraState(!matchCamera.IsLocked);
         }
+
+        if(isSpawned == false)
+        {
+            isSpawned = true;
+            StartCoroutine(CoSpawnItem());
+        }
+    }
+
+    int count = 0;
+    IEnumerator CoSpawnItem()
+    {
+        yield return new WaitForSeconds(0.1f);
+        Vector3 positionTemp = spawnItemPositions[Random.Range(0,4)];
+        float angle = (2f * Mathf.PI / 17) * count;
+        int radius = 4;
+        positionTemp.x += Mathf.Cos(angle) * radius;
+        positionTemp.z += Mathf.Sin(angle) * radius;
+        PoolManager.Instance.SpawnObject("TestItem", positionTemp);
+        isSpawned = false;
+        count = (count + 1) % 21;
     }
 }
