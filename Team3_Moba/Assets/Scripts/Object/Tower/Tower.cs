@@ -1,28 +1,25 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class Tower : GameEntity
 {
-    public AttackComponent Attack;
-    public HealthComponent Health;
-    //private Dictionary<int, GameEntity> enemyDic;
     private List<GameEntity> enemys;
+    private bool isAttacking;
+
+    //private Dictionary<int, GameEntity> enemyDic;
     //private int indexTargetEnemy;
 
     private void OnEnable()
     {
         enemys = new List<GameEntity>();
-        Attack = new AttackComponent();
-        Health = new HealthComponent();
+        isAttacking = false;
+        //InitData();
     }
 
     public override void InitData(EntityData data)
     {
         base.InitData(data);
-
-        // Initialize tower-specific data here
-        // For example, set the tower's attack damage, range, etc.
-        Attack.SetData(data);
     }
     void Update()
     {
@@ -40,17 +37,31 @@ public class Tower : GameEntity
         }
         //// Update tower logic here
         //// For example, check for enemies in range and attack them
+        attackCoolTime = 3f;
         if (targetIndex > -1)   // 근접한 적의 주소가 감지 된다면 주소를 기반으로 타겟을 정한다.
         {
             GameEntity target = enemys[targetIndex];
-            Attack.Attack(target);
 
+            //  Formula 의 공격 메서드를 호출한다.
+            if(isAttacking == false)
+            {
+                isAttacking = true;
+                StartCoroutine(CoAttackWithCooldown(target));
+            }
         }
+    }
+    IEnumerator CoAttackWithCooldown(GameEntity target)
+    {
+        Logger.Log("CoolTime : " + attackCoolTime);
+        Attack(this, target);
+        yield return new WaitForSeconds(attackCoolTime);
+        isAttacking = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("Enemy"))
+        Logger.Log("TriggerEnter : " + other.gameObject.name);
+        if (other.gameObject.CompareTag("Player"))
         {
             enemys.Add(other.gameObject.GetComponent<GameEntity>());
             //if(indexTargetEnemy < 0)    //   만약 타워의 타겟이 없다면
@@ -62,7 +73,7 @@ public class Tower : GameEntity
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.gameObject.CompareTag("Player"))
         {
             enemys.Remove(other.gameObject.GetComponent<GameEntity>());
         }
