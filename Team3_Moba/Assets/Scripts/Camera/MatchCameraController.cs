@@ -23,7 +23,7 @@ public class MatchCameraController : MonoBehaviour
         get
         {
             //@tk : 나중에 Netcode로 넘어가면, MatchManager에서 IsOwner 체크해서 전달
-            return MatchManager.Instance.PlayerTrs;
+            return MatchManager.Instance.PlayerTransform;
         }
     }
 
