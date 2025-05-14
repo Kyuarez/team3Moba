@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-using static UnityEngine.GraphicsBuffer;
 
 public class Tower : GameEntity
 {
@@ -47,14 +46,14 @@ public class Tower : GameEntity
             if(isAttacking == false)
             {
                 isAttacking = true;
-                StartCoroutine(AttackWithCooldown(target));
+                StartCoroutine(CoAttackWithCooldown(target));
             }
         }
     }
-    IEnumerator AttackWithCooldown(GameEntity target)
+    IEnumerator CoAttackWithCooldown(GameEntity target)
     {
         Logger.Log("CoolTime : " + attackCoolTime);
-        Formula.attack(this, target);
+        Attack(this, target);
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
     }

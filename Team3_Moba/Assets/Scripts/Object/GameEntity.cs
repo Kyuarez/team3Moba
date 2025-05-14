@@ -17,10 +17,6 @@ public class GameEntity : MonoBehaviour
     // move variable - 보류 태규님과 상의 후 결정
 
 
-   
-       
-
-
     public virtual void InitData(EntityData data)
     {
         this.attackDamage = 15f;
@@ -36,43 +32,26 @@ public class GameEntity : MonoBehaviour
     {
         return currentHP;
     }
-    public void ChangeHP(float hpValue) // 힐을 받았을때
-    {
-        float tmpHp = currentHP + hpValue;
-
-        if (tmpHp < 0)
-        {
-            currentHP = 0;
-        }
-        else if (tmpHp > maxHP)
-        {
-            currentHP = maxHP;
-        }
-        else  // 노멀 처리
-        {
-            currentHP = tmpHp;
-        }
-    }
-    public void TakeDamage(float damageValue) // 데미지를 받았을때
-    {
-        Logger.Log("공격 : " + damageValue);
-
-        float tmpHp = currentHP - damageValue;
-        if (tmpHp < 0)  // 사망처리
-        {
-            currentHP = 0;
-        }
-        else if (tmpHp > maxHP)
-        {
-            currentHP = maxHP;
-        }
-        else  // 노멀 처리
-        {
-            currentHP = tmpHp;
-        }
-    }
     public float GetAttackDamage()
     {
         return attackDamage;
     }
+
+    public void Heal(float hpValue) // 힐을 받았을때
+    {
+        currentHP = Mathf.Min(maxHP, currentHP + hpValue);    
+    }
+    public void TakeDamage(float damageValue) // 데미지를 받았을때
+    {
+        Logger.Log("공격 : " + damageValue);
+        currentHP = Mathf.Max(0, currentHP - damageValue);
+    }
+
+    public void Attack(GameEntity attacker, GameEntity target)
+    {
+        Vector3 direction = (target.gameObject.transform.position - attacker.gameObject.transform.position).normalized;
+        target.TakeDamage(Formula.CalcDamage(attacker));
+    }
+
+
 }

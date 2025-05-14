@@ -1,20 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class Formula : MonoBehaviour
+// 레벨에 따른 계산 기능
+public class Formula
 {
-   
-    public static void attack(GameEntity attacker, GameEntity target)
+
+    public static float CalcDamage(GameEntity attacker)
     {
-        // 공격자와 타겟의 위치를 비교하여 공격 방향을 계산
-        Vector3 direction = (target.gameObject.transform.position - attacker.gameObject.transform.position).normalized;
-        // 공격 애니메이션 실행
-        //Animator animator = attacker.GetComponent<Animator>();
-        //if (animator != null)
-        //{
-        //    animator.SetTrigger("Attack");
-        //}
-        // 타겟에게 피해를 입힘
-        target.TakeDamage(attacker.GetAttackDamage());
+        float damage = 0f;
+        return attacker.GetAttackDamage();
     }
+
 }
