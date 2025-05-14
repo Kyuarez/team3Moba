@@ -11,6 +11,7 @@ public class Tower : GameEntity
 
     private void OnEnable()
     {
+        enemys = new List<GameEntity>();
         Attack = new AttackComponent();
         Health = new HealthComponent();
     }
