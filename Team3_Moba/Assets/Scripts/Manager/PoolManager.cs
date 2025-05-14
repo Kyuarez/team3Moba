@@ -54,7 +54,7 @@ public class PoolManager : MonoSingleton<PoolManager>
 
         return poolDict[path]?.SpawnObject(Vector3.zero, action);
     }
-    public GameObject SpawnObject(string path, Vector2 worldPos, Action<GameObject> action = null)
+    public GameObject SpawnObject(string path, Vector3 worldPos, Action<GameObject> action = null)
     {
         if (poolDict.ContainsKey(path) == false)
         {

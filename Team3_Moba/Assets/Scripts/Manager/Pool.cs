@@ -9,7 +9,7 @@ public interface IPool
     Queue<GameObject> pool { get; set; }
 
     public void LoadObject(Transform parent, GameObject prefab, int maxCount);
-    public GameObject SpawnObject(Vector2 worldPos, Action<GameObject> action = null);
+    public GameObject SpawnObject(Vector3 worldPos, Action<GameObject> action = null);
     public void DespawnObject(GameObject obj, Action<GameObject> action = null);
 }
 
@@ -38,13 +38,17 @@ public class Pool : IPool
         }
     }
 
-    public GameObject SpawnObject(Vector2 worldPos, Action<GameObject> action = null)
+    public GameObject SpawnObject(Vector3 worldPos, Action<GameObject> action = null)
     {
+        if(pool.Count == 0)
+        {
+            return null;
+        }
         var obj = pool.Dequeue();
         if (obj != null)
         {
             obj.transform.SetParent(null);
-            obj.transform.localPosition = worldPos;
+            obj.transform.position = worldPos;
             obj.gameObject.SetActive(true);
             action?.Invoke(obj);
             return obj;
