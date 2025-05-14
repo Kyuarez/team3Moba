@@ -36,7 +36,7 @@ public class MatchManager : MonoSingleton<MatchManager>
                 Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.red, 1.0f);
                 Logger.Log("현재 클릭한 좌표  : " + hit.point);
                 Logger.Log("히트된 오브젝트 : " + hit.collider.gameObject.name);
-                playerChampion.Move.Move(hit.point);
+                playerChampion.Move(hit.point);
             }
         }
 
