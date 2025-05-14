@@ -9,18 +9,18 @@ public enum Team
 
 public class MatchManager : MonoSingleton<MatchManager>
 {
-    private MatchCameraController matchCam;
+    private MatchCameraController matchCamera;
 
-    private Transform playerTrs;
+    private Transform playerTransform;
     private Champion playerChampion;
 
-    public Transform PlayerTrs => playerTrs;
+    public Transform PlayerTransform => playerTransform;
 
     private void Start()
     {
-        matchCam = FindAnyObjectByType<MatchCameraController>();
+        matchCamera = FindAnyObjectByType<MatchCameraController>();
         playerChampion = FindAnyObjectByType<Champion>();
-        playerTrs = playerChampion.transform;
+        playerTransform = playerChampion.transform;
     }
 
     private void Update()
@@ -33,6 +33,8 @@ public class MatchManager : MonoSingleton<MatchManager>
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
+                //if()
+
                 Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.red, 1.0f);
                 Logger.Log("현재 클릭한 좌표  : " + hit.point);
                 Logger.Log("히트된 오브젝트 : " + hit.collider.gameObject.name);
@@ -43,7 +45,7 @@ public class MatchManager : MonoSingleton<MatchManager>
         //camera lock - free
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            matchCam.SetMatchCameraState(!matchCam.IsLocked);
+            matchCamera.SetMatchCameraState(!matchCamera.IsLocked);
         }
     }
 }
