@@ -6,11 +6,12 @@ public class Tower : GameEntity
     public AttackComponent Attack;
     public HealthComponent Health;
     //private Dictionary<int, GameEntity> enemyDic;
-    private List<GameEntity> enemys = new List<GameEntity>();
+    private List<GameEntity> enemys;
     //private int indexTargetEnemy;
 
     private void OnEnable()
     {
+        enemys = new List<GameEntity>();
         Attack = new AttackComponent();
         Health = new HealthComponent();
     }
