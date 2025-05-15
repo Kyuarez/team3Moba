@@ -34,7 +34,8 @@ Transform:
   m_LocalPosition: {x: -139.03, y: 0.014400005, z: 35.76}
   m_LocalScale: {x: 0.49791673, y: 0.4571722, z: 0.49791673}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5694793548352101616}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3276691953248811995
@@ -150,6 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c706befa58dd07f4db0f10736980a5ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectileObj: {fileID: 687467339680830861, guid: 230ffca8bdf798d448507a7e2f8809c6, type: 3}
 --- !u!135 &5983463055166955024
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -171,3 +173,34 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 10
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &6713542887415245779
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5694793548352101616}
+  m_Layer: 0
+  m_Name: ProjectileTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5694793548352101616
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6713542887415245779}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 13.38, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1934012837358318718}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
