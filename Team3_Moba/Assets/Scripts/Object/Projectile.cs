@@ -40,6 +40,13 @@ public class Projectile : MonoBehaviour
         if (elapsedTime > duration) 
         {
             DestroyProjectile();
+            return;
+        }
+
+        if(target == null)
+        {
+            DestroyProjectile();
+            return;
         }
 
         elapsedTime += Time.deltaTime;
@@ -50,17 +57,22 @@ public class Projectile : MonoBehaviour
             dir = (target.transform.position - transform.position).normalized;
         }
         transform.Translate(dir * moveSpeed * Time.deltaTime);
+
+        CheckCollisionWithTarget();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void CheckCollisionWithTarget()
     {
-        GameEntity entity = other.gameObject.GetComponent<GameEntity>();
-        if (entity != null)
+        float hitRadius = 0.5f; // 적절한 충돌 반경 설정
+        Collider[] hits = Physics.OverlapSphere(transform.position, hitRadius);
+        foreach (var hit in hits)
         {
-            if (entity == target)
+            GameEntity entity = hit.GetComponent<GameEntity>();
+            if (entity != null && entity == target)
             {
                 OnAttack?.Invoke();
                 DestroyProjectile();
+                break;
             }
         }
     }
@@ -68,6 +80,15 @@ public class Projectile : MonoBehaviour
     private void DestroyProjectile()
     {
         //TODO : Pool인지 체크해서 처리
-        Destroy(gameObject);
+        string path = gameObject.name.Replace("(Clone)", "");
+
+        if (PoolManager.Instance.IsContainPool(path))
+        {
+            PoolManager.Instance.DespawnObject(path, gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

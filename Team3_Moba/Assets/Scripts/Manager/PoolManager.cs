@@ -75,6 +75,10 @@ public class PoolManager : MonoSingleton<PoolManager>
         poolDict[path].DespawnObject(obj);
     }
 
+    public bool IsContainPool(string path)
+    {
+        return poolDict.ContainsKey(path);
+    }
 
     private Dictionary<string, IPool> poolDict = new Dictionary<string, IPool>();
 

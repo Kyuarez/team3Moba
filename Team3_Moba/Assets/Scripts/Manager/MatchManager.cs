@@ -45,8 +45,17 @@ public class MatchManager : MonoSingleton<MatchManager>
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
+                //TODO : 스킬매니저에서 예약된 스킬이 있을 때 발동
+                if (SkillManager.Instance.CheckReservationSkill())
+                {
+                    if(SkillManager.Instance.ExecuteSkill(playerChampion, hit) == true)
+                    {
+                        return;
+                    }
+                }
+
                 GameEntity entity = hit.collider.gameObject.GetComponent<GameEntity>();
-                if(entity != null)
+                if (entity != null)
                 {
                     playerChampion.SetAttackTarget(entity);
                 }
@@ -56,6 +65,21 @@ public class MatchManager : MonoSingleton<MatchManager>
                     playerChampion.Move(hit.point);
                 }
 
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            SkillData skill = playerChampion.GetSkillData(SkillInputType.Q);
+            //TODO : 쿨타임 체크하는 로직 필요
+            if(skill != null)
+            {
+                //TODO : 바로 시전인지 타겟 설정인지 
+                SkillManager.Instance.SetReservationSkill(skill);
+                if(skill.SkillExecuteType == SkillExecuteType.Immediately)
+                {
+                    SkillManager.Instance.ExecuteSkill(playerChampion);
+                }
             }
         }
 
