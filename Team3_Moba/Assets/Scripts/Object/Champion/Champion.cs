@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,6 +17,18 @@ public class Champion : GameEntity
     private GameEntity attackTarget;
     private Coroutine autoAttackCoroutine;
     private bool isAttacking = false;
+
+    private Dictionary<SkillInputType, SkillData> skillDict;
+
+    public SkillData GetSkillData(SkillInputType skillInputType)
+    {
+        if(skillDict.ContainsKey(skillInputType) == false)
+        {
+            return null;
+        }
+
+        return skillDict[skillInputType];
+    }
 
     private void Awake()
     {
@@ -37,6 +50,17 @@ public class Champion : GameEntity
         agent.speed = moveSpeed;
         agent.angularSpeed = 10000f;
         agent.acceleration = 10000f;
+
+        //@tk 임시 스킬 넣기
+        skillDict = new Dictionary<SkillInputType, SkillData>();
+        SkillData fireball = new SkillData()
+        {
+            SkillID = 1,
+            PoolPath = "TestFireball",
+            SkillExecuteType = SkillExecuteType.SetTarget,
+            SkillActionType = SkillActionType.Launch,
+        };
+        skillDict.Add(SkillInputType.Q, fireball);
         #endregion
     }
 
@@ -54,7 +78,6 @@ public class Champion : GameEntity
 
         this.maxHP = 100;
         this.currentHP = maxHP;
-
     }
 
     public void Move(Vector3 destination)
