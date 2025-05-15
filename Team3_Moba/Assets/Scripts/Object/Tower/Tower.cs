@@ -26,6 +26,8 @@ public class Tower : GameEntity
     {
         enemys = new List<GameEntity>();
         isAttacking = false;
+        GameEntity entity = GetComponent<GameEntity>();
+        entity.OnDead += OnTowerDestroyed;
         //InitData();
     }
 
@@ -41,8 +43,8 @@ public class Tower : GameEntity
         for (int i = enemys.Count - 1; i >= 0; i--)
         {
             float distance = Vector3.Distance(transform.position, enemys[i].transform.position);
-            
-            if(distance < minDistance)
+
+            if (distance < minDistance)
             {
                 minDistance = distance;
                 targetIndex = i;
@@ -56,7 +58,7 @@ public class Tower : GameEntity
             GameEntity target = enemys[targetIndex];
 
             //  Formula 의 공격 메서드를 호출한다.
-            if(isAttacking == false)
+            if (isAttacking == false)
             {
                 isAttacking = true;
                 StartCoroutine(CoAttackWithCooldown(target));
@@ -78,7 +80,7 @@ public class Tower : GameEntity
     private void OnTriggerEnter(Collider other)
     {
         Logger.Log("TriggerEnter : " + other.gameObject.name);
-        if (other.gameObject.CompareTag("Player"))
+        if (gameObject.GetComponent<GameEntity>().GetTeam()!= other.gameObject.GetComponent<GameEntity>().GetTeam())
         {
             enemys.Add(other.gameObject.GetComponent<GameEntity>());
             //if(indexTargetEnemy < 0)    //   만약 타워의 타겟이 없다면
@@ -95,5 +97,11 @@ public class Tower : GameEntity
             enemys.Remove(other.gameObject.GetComponent<GameEntity>());
         }
     }
+
+    void OnTowerDestroyed(GameEntity deadEntity)
+    {
+        Destroy(gameObject);
+    }
+
 }
 

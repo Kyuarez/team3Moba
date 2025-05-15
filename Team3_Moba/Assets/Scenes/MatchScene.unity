@@ -341,6 +341,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 672608208534848442, guid: 15735385281a87f439bd397704faf7f4, type: 3}
+      propertyPath: team
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1475036751574160435, guid: 15735385281a87f439bd397704faf7f4, type: 3}
+      propertyPath: team
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2640417251878647734, guid: 15735385281a87f439bd397704faf7f4, type: 3}
       propertyPath: m_NavMeshData
       value: 
@@ -520,6 +528,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 581128812550074909, guid: 20519e0d49948c54985a2019c3ed5a99, type: 3}
+      propertyPath: team
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2953036634735983564, guid: 20519e0d49948c54985a2019c3ed5a99, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
