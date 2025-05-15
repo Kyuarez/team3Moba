@@ -19,7 +19,7 @@ public class GameEntity : MonoBehaviour
 
     // move variable - 보류 태규님과 상의 후 결정
 
-    public event Action<GameEntity> OnDead;
+    public event Action OnDead;
 
 
     public virtual void InitData(EntityData data)
@@ -54,7 +54,7 @@ public class GameEntity : MonoBehaviour
         //사망 처리
         if (currentHP <= 0)
         {
-            OnDead?.Invoke(this);
+            OnDead?.Invoke();
         }
 
     }

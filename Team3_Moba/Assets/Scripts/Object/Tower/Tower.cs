@@ -98,7 +98,7 @@ public class Tower : GameEntity
         }
     }
 
-    void OnTowerDestroyed(GameEntity deadEntity)
+    void OnTowerDestroyed()
     {
         Destroy(gameObject);
     }
