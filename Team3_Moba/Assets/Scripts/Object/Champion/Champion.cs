@@ -23,7 +23,6 @@ public class Champion : GameEntity
     private GameEntity attackTarget;
     private Coroutine autoAttackCoroutine;
     private bool isAttacking = false;
-    private bool isDead = false;
 
     private Dictionary<SkillInputType, SkillTable> skillDict;
 
@@ -187,10 +186,10 @@ public class Champion : GameEntity
     {
         yield return new WaitForSeconds(respawnTimeChampion);
         championAnimator.SetTrigger("OnRespawn");
-        TestRespawn();
+        RespawnChampion();
     }
 
-    private void TestRespawn()
+    private void RespawnChampion()
     {
         currentHP = maxHP;
         Logger.Log("∫Œ»∞  " + currentHP);
@@ -198,4 +197,4 @@ public class Champion : GameEntity
         OnDeadComplete?.Invoke();
         agent.enabled = true;
     }
-}
+} 

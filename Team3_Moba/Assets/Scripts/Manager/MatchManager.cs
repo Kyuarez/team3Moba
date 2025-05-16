@@ -152,7 +152,5 @@ public class MatchManager : MonoSingleton<MatchManager>
         {
             playerChampion.transform.position = spawnBlueTeamPosition;
         }
-        //playerChampion.a
-        
     }
 }
