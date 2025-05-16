@@ -55,6 +55,16 @@ public class MatchManager : MonoSingleton<MatchManager>
         matchHUD.playerStatText = "0/0";
         matchHUD.timerText = "00:00";
         UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
+        UIChampionHUDData championHUD = new UIChampionHUDData();
+        //TODO @TK(25.05.16) 가짜 데이터 넣기. (플레이어 데이터 동기화 로직 작성)
+        //ChampionTable data = TableManager.Instance.FindTableData<ChampionTable>(playerChampion.GetEntityID());
+        ////championHUD.championIcon = null;
+        //championHUD.championLevel = data.level;
+        //championHUD.championCurrentHP = data.hp;
+        //championHUD.championMaxHP = data.hp;
+        //championHUD.championCurrentExp = 1;
+        //championHUD.championMaxExp = 1;
+        //UIManager.Instance.OpenUI<UIChampionHUD>(championHUD);
     }
 
     private void Update()

@@ -27,6 +27,11 @@ public class GameEntity : MonoBehaviour
         InitData(data);
     }
 
+    public int GetEntityID()
+    {
+        return entityID;
+    }
+
     public virtual void InitData(EntityTable data)
     {
         this.attackDamage = data.damage;

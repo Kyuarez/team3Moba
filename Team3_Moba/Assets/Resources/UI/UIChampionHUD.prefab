@@ -203,10 +203,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -729,10 +729,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -825,6 +825,7 @@ GameObject:
   - component: {fileID: 2462356580918982598}
   - component: {fileID: 5963971143450585141}
   - component: {fileID: 5909057391557985954}
+  - component: {fileID: 3624004542718250294}
   m_Layer: 5
   m_Name: UIChampionHUD
   m_TagString: Untagged
@@ -892,7 +893,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0.5
+  m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -915,6 +916,25 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &3624004542718250294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7539480059140067344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4431ffeb68798a4399ead39adcced2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  championImage: {fileID: 5225750807838989872}
+  championLevelText: {fileID: 766702644827937339}
+  championHPSlider: {fileID: 4388239802271032671}
+  championHPText: {fileID: 2947221521297942382}
+  championExpSlider: {fileID: 7031342495163004926}
+  championExpText: {fileID: 8934967388371883073}
+  skillSlotLayout: {fileID: 9012171910615629925}
 --- !u!1 &7592729851645298347
 GameObject:
   m_ObjectHideFlags: 0
