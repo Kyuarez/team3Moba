@@ -45,7 +45,7 @@ public class UIBase : MonoBehaviour
             OnClose?.Invoke();
         }
         OnClose = null;
-        //TODO : UIManager.Close()
+        UIManager.Instance.CloseUI(this);
     }
 
     public virtual void OnClickCloseButton()
