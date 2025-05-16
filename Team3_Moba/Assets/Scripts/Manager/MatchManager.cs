@@ -143,6 +143,7 @@ public class MatchManager : MonoSingleton<MatchManager>
 
     public void OnChampionDeadComplete()
     {
+
         if (playerChampion.GetTeam() == Team.Red)
         {
             playerChampion.transform.position = spawnRedTeamPosition;
@@ -151,7 +152,7 @@ public class MatchManager : MonoSingleton<MatchManager>
         {
             playerChampion.transform.position = spawnBlueTeamPosition;
         }
-
+        //playerChampion.a
         
     }
 }

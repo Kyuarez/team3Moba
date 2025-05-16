@@ -2,7 +2,7 @@
   "ChampionTable": [
     {
       "id": "1",
-      "hp": "500",
+      "hp": "10",
       "mp": "100",
       "attack": "25",
       "attack_range": "3",

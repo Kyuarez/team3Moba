@@ -20,12 +20,11 @@ public class GameEntity : MonoBehaviour
     // move variable - 보류 태규님과 상의 후 결정
 
     public event Action OnDead;
-    public event Action OnDeadComplete;
 
     protected virtual void Start()
     {
-       EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
-       InitData(data);
+        EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
+        InitData(data);
     }
 
     public virtual void InitData(EntityTable data)
@@ -33,7 +32,7 @@ public class GameEntity : MonoBehaviour
         this.attackDamage = data.damage;
         this.attackRange = data.attack_range;
         this.attackCoolTime = data.attack_cool_time;
-        
+
         this.maxHP = data.hp;
         this.currentHP = maxHP;
     }
