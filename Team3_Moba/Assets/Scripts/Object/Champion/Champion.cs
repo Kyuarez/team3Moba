@@ -2,9 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using System;
 
 public class Champion : GameEntity
 {
+    public event Action OnDeadComplete;
+
+
     private Animator championAnimator;
     private NavMeshAgent agent;
 
@@ -14,6 +18,8 @@ public class Champion : GameEntity
 
     private float animSmoothTime = 0.1f;
 
+    private float respawnTimeChampion = 5.0f;
+
     private GameEntity attackTarget;
     private Coroutine autoAttackCoroutine;
     private bool isAttacking = false;
@@ -22,7 +28,7 @@ public class Champion : GameEntity
 
     public SkillTable GetSkillData(SkillInputType skillInputType)
     {
-        if(skillDict.ContainsKey(skillInputType) == false)
+        if (skillDict.ContainsKey(skillInputType) == false)
         {
             return null;
         }
@@ -65,7 +71,7 @@ public class Champion : GameEntity
 
         skillDict = new Dictionary<SkillInputType, SkillTable>();
 
-        for (int i = 0; i < data.skill_list.Count; i++) 
+        for (int i = 0; i < data.skill_list.Count; i++)
         {
             int skillID = data.skill_list[i];
             SkillTable skill = TableManager.Instance.FindTableData<SkillTable>(skillID);
@@ -90,7 +96,7 @@ public class Champion : GameEntity
     public void Move(Vector3 destination)
     {
         //Move
-        if(agent.isStopped == true)
+        if (agent.isStopped == true)
         {
             agent.isStopped = false;
         }
@@ -106,7 +112,7 @@ public class Champion : GameEntity
     }
     public void StopMove()
     {
-        if (agent.isStopped == false) 
+        if (agent.isStopped == false)
         {
             agent.isStopped = true;
         }
@@ -120,7 +126,7 @@ public class Champion : GameEntity
 
     public void ResetAttackTarget()
     {
-        if(autoAttackCoroutine != null)
+        if (autoAttackCoroutine != null)
         {
             StopCoroutine(autoAttackCoroutine);
             autoAttackCoroutine = null;
@@ -134,13 +140,13 @@ public class Champion : GameEntity
         //@tk : 플레이어와 타겟과의 거리
         while (true)
         {
-            if(attackTarget == null)
+            if (attackTarget == null)
             {
                 break;
             }
 
             float distance = Vector3.Distance(transform.position, attackTarget.transform.position);
-            if(distance < attackRange)
+            if (distance < attackRange)
             {
                 StopMove();
                 if (isAttacking == false)
@@ -151,7 +157,7 @@ public class Champion : GameEntity
             else
             {
                 Move(attackTarget.transform.position);
-            }   
+            }
             yield return null;
         }
     }
@@ -168,8 +174,27 @@ public class Champion : GameEntity
 
     private void OnDeadAction()
     {
+        Logger.Log("바로 죽음  " + currentHP);
         agent.enabled = false;
         championAnimator.SetTrigger("OnDead");
         //TODO 애니메이션이 끝났다면 실행
+        StartCoroutine(CoRespawnChampion());
     }
-}
+
+
+    IEnumerator CoRespawnChampion()
+    {
+        yield return new WaitForSeconds(respawnTimeChampion);
+        championAnimator.SetTrigger("OnRespawn");
+        RespawnChampion();
+    }
+
+    private void RespawnChampion()
+    {
+        currentHP = maxHP;
+        Logger.Log("부활  " + currentHP);
+
+        OnDeadComplete?.Invoke();
+        agent.enabled = true;
+    }
+} 
