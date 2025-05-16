@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +24,10 @@ public class MatchManager : MonoSingleton<MatchManager>
     private Vector3 spawnRedTeamPosition = new Vector3(19f, 6f, 5f);
     private Vector3 spawnBlueTeamPosition = new Vector3(-135f, 6f, -140f);
 
+    public Action<int, int> OnChangedMatchScore;
+    public Action<int, int> OnChangedPlayerStat;
+    public Action<DateTime> OnUpdateMatchTimer;
+
     public Transform PlayerTransform => playerTransform;
 
     protected override void Awake()
@@ -44,6 +49,12 @@ public class MatchManager : MonoSingleton<MatchManager>
         spawnItemPositions.Add(new Vector3(-60f, 3f, -94f));
 
         playerChampion.OnDeadComplete += OnChampionDeadComplete;
+
+        UIMatchHUDData matchHUD = new UIMatchHUDData();
+        matchHUD.teamScoreText = "0vs0";
+        matchHUD.playerStatText = "0/0";
+        matchHUD.timerText = "00:00";
+        UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
     }
 
     private void Update()
@@ -125,7 +136,7 @@ public class MatchManager : MonoSingleton<MatchManager>
     IEnumerator CoSpawnItem()
     {
         yield return new WaitForSeconds(0.1f);
-        Vector3 positionTemp = spawnItemPositions[Random.Range(0,4)];
+        Vector3 positionTemp = spawnItemPositions[UnityEngine.Random.Range(0,4)];
         float angle = (2f * Mathf.PI / 17) * currentSpawnCount;
         int radius = 4;
         positionTemp.x += Mathf.Cos(angle) * radius;

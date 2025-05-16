@@ -262,6 +262,7 @@ GameObject:
   - component: {fileID: 3165228189125095590}
   - component: {fileID: 303807239932653294}
   - component: {fileID: 8826334680340148425}
+  - component: {fileID: 1765739918599468692}
   m_Layer: 5
   m_Name: UIMatchHUD
   m_TagString: Untagged
@@ -307,7 +308,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -352,6 +353,21 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1765739918599468692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3601770354644165141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1af07ee30f1633d4c8200fc763eddaef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  teamScoreText: {fileID: 4581420528438953861}
+  playerStatText: {fileID: 1607393742794361461}
+  timerText: {fileID: 1829914124223081060}
 --- !u!1 &5022047738418777895
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,8 +9,8 @@ public class UIBaseData
 
 public class UIBase : MonoBehaviour
 {
-    private Action OnOpen;
-    private Action OnClose;
+    protected Action OnOpen;
+    protected Action OnClose;
 
     public virtual void Initialize(Transform anchor)
     {
