@@ -18,9 +18,9 @@ public class Champion : GameEntity
     private Coroutine autoAttackCoroutine;
     private bool isAttacking = false;
 
-    private Dictionary<SkillInputType, SkillData> skillDict;
+    private Dictionary<SkillInputType, SkillTable> skillDict;
 
-    public SkillData GetSkillData(SkillInputType skillInputType)
+    public SkillTable GetSkillData(SkillInputType skillInputType)
     {
         if(skillDict.ContainsKey(skillInputType) == false)
         {
@@ -32,8 +32,12 @@ public class Champion : GameEntity
 
     private void Awake()
     {
-        //Todo : 지금은 가짜 데이터, 테이블 넣으면, 테이블에서 정보 값 가져와서 넣기
-        EntityData data = new EntityData();
+        OnDead += OnDeadAction;
+    }
+
+    protected override void Start()
+    {
+        ChampionTable data = TableManager.Instance.FindTableData<ChampionTable>(entityID);
         InitData(data);
     }
 
@@ -43,25 +47,6 @@ public class Champion : GameEntity
         agent = GetComponent<NavMeshAgent>();
 
         attackTarget = null;
-
-        #region Test
-        //@tk : agent 세팅 test
-        moveSpeed = 10f;
-        agent.speed = moveSpeed;
-        agent.angularSpeed = 10000f;
-        agent.acceleration = 10000f;
-
-        //@tk 임시 스킬 넣기
-        skillDict = new Dictionary<SkillInputType, SkillData>();
-        SkillData fireball = new SkillData()
-        {
-            SkillID = 1,
-            PoolPath = "TestFireball",
-            SkillExecuteType = SkillExecuteType.SetTarget,
-            SkillActionType = SkillActionType.Launch,
-        };
-        skillDict.Add(SkillInputType.Q, fireball);
-        #endregion
     }
 
     private void Update()
@@ -69,15 +54,37 @@ public class Champion : GameEntity
         championAnimator.SetFloat("MoveFactor", agent.velocity.magnitude / agent.speed, animSmoothTime, Time.deltaTime);
     }
 
-    public override void InitData(EntityData data)
+    public override void InitData(ChampionTable data)
     {
-        this.attackDamage = 50f;
-        this.attackRange = 3f;
-        this.attackCoolTime = 1.5f;
-        this.attackDelay = 1f;
+        base.InitData(data);
+        moveSpeed = data.move_speed;
+        agent.speed = moveSpeed;
+        agent.angularSpeed = 10000f;
+        agent.acceleration = 10000f;
+        rotateSpeed = 3.0f;
 
-        this.maxHP = 100;
-        this.currentHP = maxHP;
+        skillDict = new Dictionary<SkillInputType, SkillTable>();
+
+        for (int i = 0; i < data.skill_list.Count; i++) 
+        {
+            int skillID = data.skill_list[i];
+            SkillTable skill = TableManager.Instance.FindTableData<SkillTable>(skillID);
+            switch (i)
+            {
+                case 0:
+                    skillDict[SkillInputType.Q] = skill;
+                    break;
+                case 1:
+                    skillDict[SkillInputType.W] = skill;
+                    break;
+                case 2:
+                    skillDict[SkillInputType.E] = skill;
+                    break;
+                case 3:
+                    skillDict[SkillInputType.R] = skill;
+                    break;
+            }
+        }
     }
 
     public void Move(Vector3 destination)
@@ -157,5 +164,12 @@ public class Champion : GameEntity
         Attack(this, attackTarget);
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
+    }
+
+    private void OnDeadAction()
+    {
+        agent.enabled = false;
+        championAnimator.SetTrigger("OnDead");
+        //TODO 애니메이션이 끝났다면 실행
     }
 }

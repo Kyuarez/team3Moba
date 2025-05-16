@@ -1,0 +1,20 @@
+{
+  "EntityTable": [
+    {
+      "id": "1",
+      "name": "tower",
+      "damage": "15",
+      "attack_range": "10",
+      "attack_cool_time": "3",
+      "hp": "500"
+    },
+    {
+      "id": "2",
+      "name": "nexus",
+      "damage": "25",
+      "attack_range": "15",
+      "attack_cool_time": "1",
+      "hp": "1000"
+    }
+  ]
+}

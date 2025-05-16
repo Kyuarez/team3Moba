@@ -1,0 +1,18 @@
+{
+  "ChampionTable": [
+    {
+      "id": "1",
+      "hp": "500",
+      "mp": "100",
+      "attack": "25",
+      "attack_range": "3",
+      "move_speed": "10",
+      "recovery": "10",
+      "level": "1",
+      "current_exp": "0",
+      "skill_list": [
+        "1"
+      ]
+    }
+  ]
+}

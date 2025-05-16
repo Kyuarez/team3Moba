@@ -6,7 +6,7 @@ using UnityEngine;
 //모듈적... 스킬 데이터 받으면, 스킬 데이터의 정보값에 따른 클래스들을 붙여주는 역할
 public class SkillManager : MonoSingleton<SkillManager>
 {
-    private SkillData reservationSkill;
+    private SkillTable reservationSkill;
     private Dictionary<SkillActionType, SkillActor> skillActorDict = new Dictionary<SkillActionType, SkillActor>();
 
     protected override void Awake()
@@ -35,7 +35,7 @@ public class SkillManager : MonoSingleton<SkillManager>
             return false;
         }
 
-        if (reservationSkill.SkillExecuteType == SkillExecuteType.SetTarget)
+        if (reservationSkill.excute_type == SkillExecuteType.SetTarget)
         {
             GameEntity target = hit.collider.gameObject.GetComponent<GameEntity>();
             if(target != null)
@@ -43,7 +43,7 @@ public class SkillManager : MonoSingleton<SkillManager>
                 return Execute(caster, target);
             }
         }
-        else if(reservationSkill.SkillExecuteType == SkillExecuteType.NonTarget)
+        else if(reservationSkill.excute_type == SkillExecuteType.NoneTarget)
         {
             return Execute(caster);
         }
@@ -54,9 +54,9 @@ public class SkillManager : MonoSingleton<SkillManager>
 
     private bool Execute(GameEntity caster, GameEntity target = null)
     {
-        if(skillActorDict.TryGetValue(reservationSkill.SkillActionType, out var skillActor))
+        if(skillActorDict.TryGetValue(reservationSkill.action_type, out var skillActor))
         {
-            Logger.Log($"{reservationSkill.SkillID} is act!");
+            Logger.Log($"{reservationSkill.skill_name} is act!");
             skillActor.Execute(reservationSkill, caster, target);
             ResetReservationSkill();
             return true;
@@ -66,7 +66,7 @@ public class SkillManager : MonoSingleton<SkillManager>
         return false;
     }
 
-    public void SetReservationSkill(SkillData skill)
+    public void SetReservationSkill(SkillTable skill)
     {
         if (reservationSkill != null) 
         {
@@ -74,7 +74,7 @@ public class SkillManager : MonoSingleton<SkillManager>
             ResetReservationSkill();
         }
 
-        Logger.Log($"{skill.SkillID} is reservation!");
+        Logger.Log($"{skill.skill_name} is reservation!");
         reservationSkill = skill;
     }
     public void ResetReservationSkill()

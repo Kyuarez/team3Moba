@@ -11,7 +11,7 @@ public enum SkillInputType
 public enum SkillExecuteType
 {
     Immediately,
-    NonTarget,
+    NoneTarget,
     SetTarget,
 }
 

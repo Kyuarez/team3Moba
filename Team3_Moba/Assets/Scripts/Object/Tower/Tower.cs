@@ -16,9 +16,6 @@ public class Tower : GameEntity
     //private int indexTargetEnemy;
     private void Awake()
     {
-        EntityData data = new EntityData();
-        InitData(data);
-
         projectileTransform = transform.Find("ProjectileTransform");
     }
 
@@ -31,7 +28,7 @@ public class Tower : GameEntity
         //InitData();
     }
 
-    public override void InitData(EntityData data)
+    public override void InitData(EntityTable data)
     {
         base.InitData(data);
     }
@@ -71,8 +68,6 @@ public class Tower : GameEntity
         //TODO 투사체 보내기
         Projectile projectile = Instantiate(projectileObj, projectileTransform.position, Quaternion.identity).AddComponent<Projectile>();
         projectile.InitProjectile(ProjectileType.Guided, target, 10f, 10f, () => Attack(this, target));
-
-        //Attack(this, target);
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
     }
