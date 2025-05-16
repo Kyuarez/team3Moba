@@ -23,14 +23,16 @@ public partial class TableManager
         instance = this;
 
         LoadAllTables();
+        Logger.Log("");
     }
 
 
     //@tk 일단 타이틀에서 작업하되 
     private void LoadAllTables()
     {
-        //LoadTable<JsonIngameObject>("JsonIngameObject", out ingameObjectDict, x => x.ObjectID);
-       
+        LoadTable<EntityTable>("EntityTable", out entityTable, x => x.id);
+        LoadTable<ChampionTable>("ChampionTable", out championTable, x => x.id);
+        LoadTable<SkillTable>("SkillTable", out skillTable, x => x.id);
     }
 
     private void LoadTable<T>(string tableName, out Dictionary<int, T> outDict, System.Func<T, int> keySelector)
@@ -51,7 +53,7 @@ public partial class TableManager
         while (!www.isDone) { }
         jsonText = www.downloadHandler.text;
 #endif
-
+        Logger.Log(tableName.ToString());
         Dictionary<string, List<T>> parsed = JsonConvert.DeserializeObject<Dictionary<string, List<T>>>(jsonText);
         List<T> items = parsed[tableName];
 
@@ -84,7 +86,8 @@ public partial class TableManager
     #region DataTable
     private Dictionary<Type, object> tableMap = new Dictionary<Type, object>();
 
-    //private Dictionary<int, JsonIngameObject> ingameObjectDict = new Dictionary<int, JsonIngameObject>();
-
+    private Dictionary<int, EntityTable> entityTable = new Dictionary<int, EntityTable>();
+    private Dictionary<int, ChampionTable> championTable = new Dictionary<int, ChampionTable>();
+    private Dictionary<int, SkillTable> skillTable = new Dictionary<int, SkillTable>();
     #endregion
 }

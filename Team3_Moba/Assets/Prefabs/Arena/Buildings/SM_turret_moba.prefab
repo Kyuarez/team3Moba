@@ -128,6 +128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  entityID: 1
   projectileObj: {fileID: 687467339680830861, guid: 230ffca8bdf798d448507a7e2f8809c6, type: 3}
 --- !u!135 &5983463055166955024
 SphereCollider:

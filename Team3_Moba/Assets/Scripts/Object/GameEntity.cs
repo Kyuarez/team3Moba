@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GameEntity : MonoBehaviour
 {
-    [SerializeField]
-    protected Team team;
+    [SerializeField] protected Team team;
+    [SerializeField] protected int entityID;
 
     //  attack variable
     protected float attackDamage;
@@ -20,16 +20,29 @@ public class GameEntity : MonoBehaviour
     // move variable - 보류 태규님과 상의 후 결정
 
     public event Action OnDead;
+    public event Action OnDeadComplete;
 
-
-    public virtual void InitData(EntityData data)
+    protected virtual void Start()
     {
-        this.attackDamage = 15f;
-        this.attackRange = 10f;
-        this.attackCoolTime = 3f;
-        this.attackDelay = 1f;
+       EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
+       InitData(data);
+    }
 
-        this.maxHP = 100;
+    public virtual void InitData(EntityTable data)
+    {
+        this.attackDamage = data.damage;
+        this.attackRange = data.attack_range;
+        this.attackCoolTime = data.attack_cool_time;
+        
+        this.maxHP = data.hp;
+        this.currentHP = maxHP;
+    }
+    public virtual void InitData(ChampionTable data)
+    {
+        this.attackDamage = data.attack;
+        this.attackRange = data.attack_range;
+
+        this.maxHP = data.hp;
         this.currentHP = maxHP;
     }
 
@@ -72,6 +85,4 @@ public class GameEntity : MonoBehaviour
     {
         return team;
     }
-
-
 }

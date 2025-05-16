@@ -20,8 +20,17 @@ public class MatchManager : MonoSingleton<MatchManager>
     private int maxSpawnItem = 20;
     private int currentSpawnCount = 0;
 
+    private Vector3 spawnRedTeamPosition = new Vector3(19f, 6f, 5f);
+    private Vector3 spawnBlueTeamPosition = new Vector3(-135f, 6f, -140f);
+
     public Transform PlayerTransform => playerTransform;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        TableManager table = new TableManager();
+        table.OnLoadGameAction();
+    }
     private void Start()
     {
         matchCamera = FindAnyObjectByType<MatchCameraController>();
@@ -33,6 +42,8 @@ public class MatchManager : MonoSingleton<MatchManager>
         spawnItemPositions.Add(new Vector3(-59f, 3f, -39f));
         spawnItemPositions.Add(new Vector3(-84f, 3f, -65f));
         spawnItemPositions.Add(new Vector3(-60f, 3f, -94f));
+
+        playerChampion.OnDeadComplete += OnChampionDeadComplete;
     }
 
     private void Update()
@@ -40,6 +51,10 @@ public class MatchManager : MonoSingleton<MatchManager>
         //InputManager
         if (Input.GetMouseButtonDown(1))
         {
+            if (playerChampion.GetHP() == 0)
+            {
+                return;
+            }
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -70,13 +85,18 @@ public class MatchManager : MonoSingleton<MatchManager>
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            SkillData skill = playerChampion.GetSkillData(SkillInputType.Q);
+            if (playerChampion.GetHP() == 0)
+            {
+                return;
+            }
+
+            SkillTable skill = playerChampion.GetSkillData(SkillInputType.Q);
             //TODO : 쿨타임 체크하는 로직 필요
             if(skill != null)
             {
                 //TODO : 바로 시전인지 타겟 설정인지 
                 SkillManager.Instance.SetReservationSkill(skill);
-                if(skill.SkillExecuteType == SkillExecuteType.Immediately)
+                if(skill.excute_type == SkillExecuteType.Immediately)
                 {
                     SkillManager.Instance.ExecuteSkill(playerChampion);
                 }
@@ -119,5 +139,19 @@ public class MatchManager : MonoSingleton<MatchManager>
 
         isSpawned = false;
         count = (count + 1) % 21;
+    }
+
+    public void OnChampionDeadComplete()
+    {
+        if (playerChampion.GetTeam() == Team.Red)
+        {
+            playerChampion.transform.position = spawnRedTeamPosition;
+        }
+        else if(playerChampion.GetTeam() == Team.Blue)
+        {
+            playerChampion.transform.position = spawnBlueTeamPosition;
+        }
+
+        
     }
 }
