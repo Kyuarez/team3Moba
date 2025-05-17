@@ -55,6 +55,10 @@ public class MatchManager : MonoSingleton<MatchManager>
         matchHUD.playerStatText = "0/0";
         matchHUD.timerText = "00:00";
         UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
+        UIChampionHUDData championHUD = new UIChampionHUDData();
+        championHUD.champion = playerChampion;
+        UIManager.Instance.OpenUI<UIChampionHUD>(championHUD);
+        
     }
 
     private void Update()

@@ -1,0 +1,68 @@
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class UIChampionHUDData : UIBaseData
+{
+    public Champion champion;
+}
+
+public class UIChampionHUD : UIBase
+{
+    [SerializeField] private Image championImage;
+    [SerializeField] private TextMeshProUGUI championLevelText;
+    [SerializeField] private Image championHPSlider;
+    [SerializeField] private TextMeshProUGUI championHPText;
+    [SerializeField] private Image championExpSlider;
+    [SerializeField] private TextMeshProUGUI championExpText;
+    [SerializeField] private Transform skillSlotLayout;
+
+    public override void SetInfo(UIBaseData uidata)
+    {
+
+        base.SetInfo(uidata);
+        UIChampionHUDData data = uidata as UIChampionHUDData;
+
+        if (data.champion == null)
+        {
+            Logger.LogError("Player Champion is null");
+            return;
+        }
+        ChampionTable table = TableManager.Instance.FindTableData<ChampionTable>(data.champion.GetEntityID());
+        //championImage.sprite = table.championIcon;
+        championLevelText.text = table.level.ToString();
+        championHPText.text = $"{table.hp} / {table.hp}";
+        championHPSlider.fillAmount = table.hp / table.hp;
+        //championExpText.text = $"{table.current_exp} / {table.current_exp}";
+        //championExpSlider.fillAmount = table.current_exp / table.current_exp;
+        championExpText.text = $"{1} / {1}";
+        championExpSlider.fillAmount = 1 / 1;
+        Bind(data.champion);
+    }
+
+    //TODO : Event 연결 (챔피언 데이터와 동기화)
+    private void Bind(Champion champion)
+    {
+        champion.OnLevelChanged += OnUpdateLevel; 
+        champion.OnHPChanged += OnUpdateHP;
+        champion.OnExpChanged += OnUpdateExp;
+    }
+
+    public void OnUpdateLevel(int currentLevel)
+    {
+        championLevelText.text = currentLevel.ToString();
+    }
+
+    public void OnUpdateHP(float currentHP, float maxHP)
+    {
+        championHPText.text = $"{currentHP} / {maxHP}";
+        championHPSlider.fillAmount = currentHP / maxHP;
+    }
+
+    public void OnUpdateExp(float currentExp, float maxExp)
+    {
+        championExpText.text = $"{currentExp} / {maxExp}";
+        championExpSlider.fillAmount = currentExp / maxExp;
+    }
+}
