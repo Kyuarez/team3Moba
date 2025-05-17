@@ -18,7 +18,8 @@ public class GameEntity : MonoBehaviour
     protected float currentHP;
 
     // move variable - 보류 태규님과 상의 후 결정
-
+    //@TK : 차후 MVC 패턴에 맞게 Stat관리하는 별도 클래스 필요
+    public event Action<float, float> OnHPChanged;
     public event Action OnDead;
 
     protected virtual void Start()
@@ -62,11 +63,13 @@ public class GameEntity : MonoBehaviour
     public void Heal(float hpValue) // 힐을 받았을때
     {
         currentHP = Mathf.Min(maxHP, currentHP + hpValue);
+        OnHPChanged?.Invoke(currentHP, maxHP);
     }
     public void TakeDamage(float damageValue) // 데미지를 받았을때
     {
         //Logger.Log("공격 : " + damageValue);
         currentHP = Mathf.Max(0, currentHP - damageValue);
+        OnHPChanged?.Invoke(currentHP, maxHP);
 
         //사망 처리
         if (currentHP <= 0)

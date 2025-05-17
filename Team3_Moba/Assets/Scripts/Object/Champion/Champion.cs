@@ -8,7 +8,6 @@ public class Champion : GameEntity
 {
     public event Action OnDeadComplete;
 
-
     private Animator championAnimator;
     private NavMeshAgent agent;
 
@@ -25,6 +24,10 @@ public class Champion : GameEntity
     private bool isAttacking = false;
 
     private Dictionary<SkillInputType, SkillTable> skillDict;
+
+    //@TK : 차후 MVC 패턴에 맞게 Stat관리하는 별도 클래스 필요 (Level등)
+    public event Action<float, float> OnExpChanged;
+    public event Action<int> OnLevelChanged;
 
     public SkillTable GetSkillData(SkillInputType skillInputType)
     {
