@@ -46,12 +46,12 @@ public class UIMatchHUD : UIBase
     }
     public void OnChangeMatchScore(int redScore, int blueScore)
     {
-        teamScoreText.text = $"{redScore}vs{blueScore}";
+        teamScoreText.text = $"<color=red>{redScore}</color> vs <color=blue>{blueScore}</color>";
     }
 
     public void OnChangedPlayerStat(int playerKillCount, int playerDeadCount)
     {
-        playerStatText.text = $"{playerKillCount}/{playerDeadCount}";
+        playerStatText.text = $"{playerKillCount} / {playerDeadCount}";
     }
 
     public void OnUpdateMatchTimer(DateTime dateTime)

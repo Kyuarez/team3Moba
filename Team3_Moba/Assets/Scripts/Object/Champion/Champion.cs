@@ -6,7 +6,7 @@ using System;
 
 public class Champion : GameEntity
 {
-    public event Action OnDeadComplete;
+    private CoolTimeManager coolTime;
 
     private Animator championAnimator;
     private NavMeshAgent agent;
@@ -26,8 +26,11 @@ public class Champion : GameEntity
     private Dictionary<SkillInputType, SkillTable> skillDict;
 
     //@TK : 차후 MVC 패턴에 맞게 Stat관리하는 별도 클래스 필요 (Level등)
+    public event Action OnDeadComplete;
     public event Action<float, float> OnExpChanged;
     public event Action<int> OnLevelChanged;
+
+    public CoolTimeManager PlayerCoolTime => coolTime;
 
     public SkillTable GetSkillData(SkillInputType skillInputType)
     {
@@ -48,6 +51,7 @@ public class Champion : GameEntity
     {
         ChampionTable data = TableManager.Instance.FindTableData<ChampionTable>(entityID);
         InitData(data);
+        coolTime = new CoolTimeManager();
     }
 
     private void OnEnable()
@@ -61,6 +65,7 @@ public class Champion : GameEntity
     private void Update()
     {
         championAnimator.SetFloat("MoveFactor", agent.velocity.magnitude / agent.speed, animSmoothTime, Time.deltaTime);
+        coolTime?.Update();
     }
 
     public override void InitData(ChampionTable data)

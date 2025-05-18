@@ -51,8 +51,8 @@ public class MatchManager : MonoSingleton<MatchManager>
         playerChampion.OnDeadComplete += OnChampionDeadComplete;
 
         UIMatchHUDData matchHUD = new UIMatchHUDData();
-        matchHUD.teamScoreText = "0vs0";
-        matchHUD.playerStatText = "0/0";
+        matchHUD.teamScoreText = "<color=red>0</color> vs <color=blue>0</color>";
+        matchHUD.playerStatText = "0 / 0";
         matchHUD.timerText = "00:00";
         UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
         UIChampionHUDData championHUD = new UIChampionHUDData();
@@ -106,7 +106,11 @@ public class MatchManager : MonoSingleton<MatchManager>
             }
 
             SkillTable skill = playerChampion.GetSkillData(SkillInputType.Q);
-            //TODO : 쿨타임 체크하는 로직 필요
+            if(playerChampion.PlayerCoolTime.GetRemainingTime(skill.skill_name) != 0)
+            {
+                return;
+            }
+
             if(skill != null)
             {
                 //TODO : 바로 시전인지 타겟 설정인지 
