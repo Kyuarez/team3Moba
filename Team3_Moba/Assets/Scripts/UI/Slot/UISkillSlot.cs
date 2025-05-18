@@ -44,7 +44,7 @@ public class UISkillSlot : UISlotBase
             return;
         }
 
-        coolTimeImage.fillAmount = coolTimeData.RemainingTime / coolTimeData.endTime;
+        coolTimeImage.fillAmount = coolTimeData.RemainingTime / coolTimeData.duration;
         coolTimeText.text = coolTimeData.RemainingTime.ToString("F0");
     }
 }

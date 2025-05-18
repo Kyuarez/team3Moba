@@ -6,9 +6,9 @@ public class CoolTimeData
     public string key;
     public float startTime;
     public float endTime;
+    public float duration;
 
-    public float Duration => endTime - startTime;
-    public float RemainingTime => Mathf.Max(0f, endTime - Time.time);
+    public float RemainingTime => Mathf.Max(0f, startTime + duration - Time.time);
     public bool IsOver => Time.time >= endTime;
 
     public CoolTimeData(string key, float duration)
@@ -16,6 +16,7 @@ public class CoolTimeData
         this.key = key;
         this.startTime = Time.time;
         this.endTime = Time.time + duration;
+        this.duration = duration;
     }
 }
 
