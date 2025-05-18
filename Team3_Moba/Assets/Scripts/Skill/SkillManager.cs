@@ -25,6 +25,12 @@ public class SkillManager : MonoSingleton<SkillManager>
             return false;
         }
 
+        Champion chapion = caster as Champion;
+        if(chapion != null) 
+        {
+            chapion.PlayerCoolTime.SetCoolTime(reservationSkill.skill_name, reservationSkill.cool_time);
+        }
+
         return Execute(caster);
     }
     //ÁÂÇ¥, Å¸°Ù
@@ -33,6 +39,12 @@ public class SkillManager : MonoSingleton<SkillManager>
         if (reservationSkill == null)
         {
             return false;
+        }
+
+        Champion chapion = caster as Champion;
+        if (chapion != null)
+        {
+            chapion.PlayerCoolTime.SetCoolTime(reservationSkill.skill_name, reservationSkill.cool_time);
         }
 
         if (reservationSkill.excute_type == SkillExecuteType.SetTarget)

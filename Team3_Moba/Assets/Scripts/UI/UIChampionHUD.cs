@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -39,6 +40,28 @@ public class UIChampionHUD : UIBase
         championExpText.text = $"{1} / {1}";
         championExpSlider.fillAmount = 1 / 1;
         Bind(data.champion);
+        SetChampionSkillSlot(data.champion);
+    }
+
+    private void SetChampionSkillSlot(Champion champion)
+    {
+        //Skill Slot Spawn with Bind CoolTimeManager
+        GameObject slotObj = Resources.Load<GameObject>("UI/Slot/UISkillSlot");
+        foreach (SkillInputType skillInput in Enum.GetValues(typeof(SkillInputType)))
+        {
+            SkillTable skillTable = champion.GetSkillData(skillInput);
+            if(skillTable != null)
+            {
+                UISkillSlotData skillSlotData = new UISkillSlotData();
+                skillSlotData.slotType = UISlotType.Skill;
+                //skillSlotData.slotIcon = 
+                skillSlotData.skillInputType = skillInput;
+                skillSlotData.skillTable = skillTable;
+                skillSlotData.champion = champion;
+                UISkillSlot skillSlot = Instantiate(slotObj, skillSlotLayout).GetComponent<UISkillSlot>();
+                skillSlot.SetInfo(skillSlotData);
+            }
+        }
     }
 
     //TODO : Event 연결 (챔피언 데이터와 동기화)

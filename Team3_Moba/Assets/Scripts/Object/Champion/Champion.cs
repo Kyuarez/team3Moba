@@ -6,7 +6,7 @@ using System;
 
 public class Champion : GameEntity
 {
-    public event Action OnDeadComplete;
+    private CoolTimeManager coolTime;
 
     private Animator championAnimator;
     private NavMeshAgent agent;
@@ -25,13 +25,18 @@ public class Champion : GameEntity
 
     private Dictionary<SkillInputType, SkillTable> skillDict;
 
-    //@TK : Â÷ÈÄ MVC ÆĞÅÏ¿¡ ¸Â°Ô Stat°ü¸®ÇÏ´Â º°µµ Å¬·¡½º ÇÊ¿ä (Levelµî)
+    //@TK : ì°¨í›„ MVC íŒ¨í„´ì— ë§ê²Œ Statê´€ë¦¬í•˜ëŠ” ë³„ë„ í´ë˜ìŠ¤ í•„ìš” (Levelë“±)
+    public event Action OnDeadComplete;
     public event Action<float, float> OnExpChanged;
     public event Action<int> OnLevelChanged;
+
+
+    public CoolTimeManager PlayerCoolTime => coolTime;
 
     private int currentLevel;
     private int currentExp;
     private int levelExp;
+
 
     public SkillTable GetSkillData(SkillInputType skillInputType)
     {
@@ -52,6 +57,7 @@ public class Champion : GameEntity
     {
         ChampionTable data = TableManager.Instance.FindTableData<ChampionTable>(entityID);
         InitData(data);
+        coolTime = new CoolTimeManager();
     }
 
     private void OnEnable()
@@ -65,6 +71,7 @@ public class Champion : GameEntity
     private void Update()
     {
         championAnimator.SetFloat("MoveFactor", agent.velocity.magnitude / agent.speed, animSmoothTime, Time.deltaTime);
+        coolTime?.Update();
     }
 
     public override void InitData(ChampionTable data)
@@ -147,7 +154,7 @@ public class Champion : GameEntity
 
     private IEnumerator CoAutoAttack()
     {
-        //@tk : ÇÃ·¹ÀÌ¾î¿Í Å¸°Ù°úÀÇ °Å¸®
+        //@tk : í”Œë ˆì´ì–´ì™€ íƒ€ê²Ÿê³¼ì˜ ê±°ë¦¬
         while (true)
         {
             if (attackTarget == null)
@@ -184,10 +191,10 @@ public class Champion : GameEntity
 
     private void OnDeadAction()
     {
-        Logger.Log("¹Ù·Î Á×À½  " + currentHP);
+        Logger.Log("ë°”ë¡œ ì£½ìŒ  " + currentHP);
         agent.enabled = false;
         championAnimator.SetTrigger("OnDead");
-        //TODO ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µ´Ù¸é ½ÇÇà
+        //TODO ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ë‹¤ë©´ ì‹¤í–‰
         StartCoroutine(CoRespawnChampion());
     }
 
@@ -202,7 +209,7 @@ public class Champion : GameEntity
     private void RespawnChampion()
     {
         currentHP = maxHP;
-        Logger.Log("ºÎÈ°  " + currentHP);
+        Logger.Log("ë¶€í™œ  " + currentHP);
 
         OnDeadComplete?.Invoke();
         agent.enabled = true;
@@ -214,7 +221,7 @@ public class Champion : GameEntity
         if(currentExp >= levelExp)
         {
             currentLevel++;
-            //ÀÓ½Ã°ª ÇÏµåÄÚµù
+            //ì„ì‹œê°’ í•˜ë“œì½”ë”©
             levelExp += 10;
             Logger.Log($"Level : {currentLevel} \n Exp : {currentExp} \n LevelMaxExp : {levelExp}");
         }

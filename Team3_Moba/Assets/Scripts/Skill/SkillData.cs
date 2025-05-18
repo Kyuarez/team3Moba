@@ -21,15 +21,5 @@ public enum SkillActionType
     Launch,
 }
 
-public class SkillData 
-{
-    public int SkillID;
-    public string PoolPath;
-    public string Description;
-    public float CoolTime;
-    public SkillExecuteType SkillExecuteType;
-    public SkillActionType SkillActionType;
-    public GameObject SkillFX;
-}
 
 
