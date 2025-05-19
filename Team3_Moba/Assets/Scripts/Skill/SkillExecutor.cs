@@ -21,7 +21,7 @@ public class LaunchSkillActor : SkillActor
             projectileType = ProjectileType.NoneGuided;
         }
 
-        projectile.InitProjectile(projectileType, target, 10f, 10f, () => caster.Attack(caster, target));
+        projectile.InitProjectile(projectileType, target, 10f, 10f, () => caster.Attack(data.damage, target));
     }
 }
 

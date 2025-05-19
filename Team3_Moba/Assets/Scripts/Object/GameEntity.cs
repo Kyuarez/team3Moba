@@ -1,5 +1,6 @@
 using Mono.Cecil;
 using System;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class GameEntity : MonoBehaviour
@@ -55,6 +56,7 @@ public class GameEntity : MonoBehaviour
     {
         return currentHP;
     }
+
     public float GetAttackDamage()
     {
         return attackDamage;
@@ -65,6 +67,7 @@ public class GameEntity : MonoBehaviour
         currentHP = Mathf.Min(maxHP, currentHP + hpValue);
         OnHPChanged?.Invoke(currentHP, maxHP);
     }
+
     public void TakeDamage(float damageValue) // 데미지를 받았을때
     {
         //Logger.Log("공격 : " + damageValue);
@@ -79,17 +82,23 @@ public class GameEntity : MonoBehaviour
 
     }
 
-    public void Attack(GameEntity attacker, GameEntity target)
+    public void Attack(float damage, GameEntity target)
     {
-        if (attacker.team != target.team)
+        if(target == null)
         {
-            Vector3 direction = (target.gameObject.transform.position - attacker.gameObject.transform.position).normalized;
-            target.TakeDamage(Formula.CalcDamage(attacker));
+            return;
         }
 
+        target.TakeDamage(damage);
     }
+
     public Team GetTeam()
     {
         return team;
+    }
+
+    public bool IsOpposingTeam(GameEntity other)
+    {
+        return team != other.GetTeam();
     }
 }

@@ -87,7 +87,10 @@ public class MatchManager : MonoSingleton<MatchManager>
                 GameEntity entity = hit.collider.gameObject.GetComponent<GameEntity>();
                 if (entity != null)
                 {
-                    playerChampion.SetAttackTarget(entity);
+                    if (playerChampion.IsOpposingTeam(entity))
+                    {
+                        playerChampion.SetAttackTarget(entity);
+                    }
                 }
                 else
                 {

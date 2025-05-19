@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using System;
+using UnityEditor.Experimental.GraphView;
+using Unity.VisualScripting;
 
 public class Champion : GameEntity
 {
@@ -184,7 +186,7 @@ public class Champion : GameEntity
         isAttacking = true;
         Logger.Log($"Player Attack to {attackTarget.gameObject.name}");
         championAnimator.SetTrigger("OnAttack");
-        Attack(this, attackTarget);
+        Attack(Formula.CalcDamage(this), attackTarget);
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
     }
