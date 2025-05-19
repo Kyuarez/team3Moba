@@ -25,6 +25,11 @@ public class Champion : GameEntity
     private Coroutine autoAttackCoroutine;
     private bool isAttacking = false;
 
+    private int currentLevel;
+    private int maxLevel;
+    private int currentExp;
+    private int requireExp;
+    
     private Dictionary<SkillInputType, SkillTable> skillDict;
 
     //@TK : 차후 MVC 패턴에 맞게 Stat관리하는 별도 클래스 필요 (Level등)
@@ -34,10 +39,7 @@ public class Champion : GameEntity
 
 
     public CoolTimeManager PlayerCoolTime => coolTime;
-
-    private int currentLevel;
-    private int currentExp;
-    private int levelExp;
+    public int CurrentLevel => currentLevel;
 
 
     public SkillTable GetSkillData(SkillInputType skillInputType)
@@ -80,13 +82,17 @@ public class Champion : GameEntity
     {
         base.InitData(data);
         moveSpeed = data.move_speed;
-        currentExp = data.current_exp;
-        currentLevel = 0;
-        levelExp = 10;
-        agent.speed = moveSpeed;
         agent.angularSpeed = 10000f;
         agent.acceleration = 10000f;
         rotateSpeed = 3.0f;
+
+
+        currentExp = data.current_exp;
+        currentLevel = 1;
+        maxLevel = data.max_level;
+        agent.speed = moveSpeed;
+        LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(currentLevel);
+        requireExp = levelTable.require_exp;
 
         skillDict = new Dictionary<SkillInputType, SkillTable>();
 
@@ -224,13 +230,27 @@ public class Champion : GameEntity
 
     public void OnGetExpItem(int expAmount)
     {
+        if(currentLevel >= maxLevel)
+        {
+            return;
+        }
+
         currentExp += expAmount;
-        if(currentExp >= levelExp)
+        if(currentExp >= requireExp)
         {
             currentLevel++;
-            //임시값 하드코딩
-            levelExp += 10;
-            Logger.Log($"Level : {currentLevel} \n Exp : {currentExp} \n LevelMaxExp : {levelExp}");
+            OnLevelChanged?.Invoke(currentLevel);
+            currentExp -= requireExp;
+            
+            LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(currentLevel);
+            requireExp = levelTable.require_exp;
+           
+            if(currentLevel >= maxLevel)
+            {
+                currentExp = requireExp;
+            }
         }
+
+        OnExpChanged?.Invoke(currentExp, requireExp);
     }
 } 

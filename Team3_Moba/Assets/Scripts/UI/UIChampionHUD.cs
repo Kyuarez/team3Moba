@@ -32,13 +32,12 @@ public class UIChampionHUD : UIBase
         }
         ChampionTable table = TableManager.Instance.FindTableData<ChampionTable>(data.champion.GetEntityID());
         //championImage.sprite = table.championIcon;
-        championLevelText.text = table.level.ToString();
+        championLevelText.text = data.champion.CurrentLevel.ToString();
         championHPText.text = $"{table.hp} / {table.hp}";
         championHPSlider.fillAmount = table.hp / table.hp;
-        //championExpText.text = $"{table.current_exp} / {table.current_exp}";
-        //championExpSlider.fillAmount = table.current_exp / table.current_exp;
-        championExpText.text = $"{1} / {1}";
-        championExpSlider.fillAmount = 1 / 1;
+        LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(1);
+        championExpText.text = $"{0} / {levelTable.require_exp}";
+        championExpSlider.fillAmount = 0;
         Bind(data.champion);
         SetChampionSkillSlot(data.champion);
     }
