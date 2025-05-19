@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class GameEntity : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class GameEntity : MonoBehaviour
     //  health variable
     protected float maxHP;
     protected float currentHP;
+    protected bool isInvincible = false;
 
     // move variable - 보류 태규님과 상의 후 결정
     //@TK : 차후 MVC 패턴에 맞게 Stat관리하는 별도 클래스 필요
@@ -29,7 +31,6 @@ public class GameEntity : MonoBehaviour
     protected float recoveryAmount;              // 초당 회복력
     private float damagedTime;                   //마지막으로 데미지 입은 시간
     private Coroutine recoveryCoroutine;
-
     
 
     protected virtual void Start()
@@ -110,8 +111,17 @@ public class GameEntity : MonoBehaviour
         {
             return;
         }
+        if (target.IsInvincible() == true)
+        {
+            return;
+        }
 
         target.TakeDamage(damage);
+    }
+
+    public virtual bool IsInvincible()
+    {
+        return isInvincible;
     }
 
     public Team GetTeam()

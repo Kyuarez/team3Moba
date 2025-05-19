@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 764999171216658193}
   - component: {fileID: 2115644062214443923}
   - component: {fileID: 6911569864352345569}
-  - component: {fileID: 5983463055166955024}
   m_Layer: 0
   m_Name: SM_turret_moba
   m_TagString: Untagged
@@ -130,27 +129,7 @@ MonoBehaviour:
   team: 0
   entityID: 1
   projectileObj: {fileID: 687467339680830861, guid: 230ffca8bdf798d448507a7e2f8809c6, type: 3}
---- !u!135 &5983463055166955024
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1269222077986631364}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 10
-  m_Center: {x: 0, y: 0, z: 0}
+  invincibleConditionList: []
 --- !u!1 &6713542887415245779
 GameObject:
   m_ObjectHideFlags: 0

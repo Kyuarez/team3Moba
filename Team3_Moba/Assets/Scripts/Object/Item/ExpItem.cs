@@ -36,4 +36,12 @@ public class ExpItem : MonoBehaviour
             }
         }
     }
+
+    //@tk : 상호작용 영역
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        float hitRadius = 0.5f; 
+        Gizmos.DrawWireSphere(transform.position, hitRadius); 
+    }
 }

@@ -16,6 +16,7 @@ public class MatchManager : MonoSingleton<MatchManager>
 
     private Transform playerTransform;
     private Champion playerChampion;
+    
     private List<Vector3> spawnItemPositions;
     private bool isSpawned;
     private int maxSpawnItem = 20;
@@ -24,6 +25,9 @@ public class MatchManager : MonoSingleton<MatchManager>
     private Vector3 spawnRedTeamPosition = new Vector3(19f, 6f, 5f);
     private Vector3 spawnBlueTeamPosition = new Vector3(-135f, 6f, -140f);
 
+    //@TK : 일단 타워 정보만 넣기. (차후 모든 entities 다 넣을 수 있음)
+    Dictionary<Team, List<GameEntity>> matchStaticEntities = new Dictionary<Team, List<GameEntity>>();
+    
     public Action<int, int> OnChangedMatchScore;
     public Action<int, int> OnChangedPlayerStat;
     public Action<DateTime> OnUpdateMatchTimer;
@@ -39,8 +43,11 @@ public class MatchManager : MonoSingleton<MatchManager>
     private void Start()
     {
         matchCamera = FindAnyObjectByType<MatchCameraController>();
+
         playerChampion = FindAnyObjectByType<Champion>();
         playerTransform = playerChampion.transform;
+        playerChampion.OnDeadComplete += OnChampionDeadComplete;
+
         //아이템 스폰 위치 임시 지정
         spawnItemPositions = new List<Vector3>();
         spawnItemPositions.Add(new Vector3(-34f, 3f, -70f));
@@ -48,17 +55,7 @@ public class MatchManager : MonoSingleton<MatchManager>
         spawnItemPositions.Add(new Vector3(-84f, 3f, -65f));
         spawnItemPositions.Add(new Vector3(-60f, 3f, -94f));
 
-        playerChampion.OnDeadComplete += OnChampionDeadComplete;
-
-        UIMatchHUDData matchHUD = new UIMatchHUDData();
-        matchHUD.teamScoreText = "<color=red>0</color> vs <color=blue>0</color>";
-        matchHUD.playerStatText = "0 / 0";
-        matchHUD.timerText = "00:00";
-        UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
-        UIChampionHUDData championHUD = new UIChampionHUDData();
-        championHUD.champion = playerChampion;
-        UIManager.Instance.OpenUI<UIChampionHUD>(championHUD);
-        
+        SetMatchUI();
     }
 
     private void Update()
@@ -141,6 +138,18 @@ public class MatchManager : MonoSingleton<MatchManager>
             isSpawned = true;
             StartCoroutine(CoSpawnItem());
         }
+    }
+
+    private void SetMatchUI()
+    {
+        UIMatchHUDData matchHUD = new UIMatchHUDData();
+        matchHUD.teamScoreText = "<color=red>0</color> vs <color=blue>0</color>";
+        matchHUD.playerStatText = "0 / 0";
+        matchHUD.timerText = "00:00";
+        UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
+        UIChampionHUDData championHUD = new UIChampionHUDData();
+        championHUD.champion = playerChampion;
+        UIManager.Instance.OpenUI<UIChampionHUD>(championHUD);
     }
 
     int count = 0;
