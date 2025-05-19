@@ -139,6 +139,11 @@ public class Champion : GameEntity
 
     public void SetAttackTarget(GameEntity entity)
     {
+        if (entity.IsInvincible() == true)
+        {
+            return;
+        }
+
         attackTarget = entity;
         autoAttackCoroutine = StartCoroutine(CoAutoAttack());
     }
