@@ -67,7 +67,8 @@ public class Tower : GameEntity
         Logger.Log("CoolTime : " + attackCoolTime);
         //TODO 투사체 보내기
         Projectile projectile = Instantiate(projectileObj, projectileTransform.position, Quaternion.identity).AddComponent<Projectile>();
-        projectile.InitProjectile(ProjectileType.Guided, target, 10f, 10f, () => Attack(this, target));
+        float damage = Formula.CalcDamage(this);
+        projectile.InitProjectile(ProjectileType.Guided, target, 10f, 10f, () => Attack(damage, target));
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
     }
@@ -75,21 +76,25 @@ public class Tower : GameEntity
     private void OnTriggerEnter(Collider other)
     {
         Logger.Log("TriggerEnter : " + other.gameObject.name);
-        if (gameObject.GetComponent<GameEntity>().GetTeam()!= other.gameObject.GetComponent<GameEntity>().GetTeam())
+        GameEntity entity = other.gameObject.GetComponent<GameEntity>();
+        if (entity != null)
         {
-            enemys.Add(other.gameObject.GetComponent<GameEntity>());
-            //if(indexTargetEnemy < 0)    //   만약 타워의 타겟이 없다면
-            //{
-            //    indexTargetEnemy = other.gameObject.GetComponent<Enemy>.index;  // 범위 안에 들어온 적의 주소를 획득한다.
-            //}
+            if (IsOpposingTeam(entity))
+            {
+                enemys.Add(entity);
+            }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        GameEntity entity = other.gameObject.GetComponent<GameEntity>();
+        if(entity != null)
         {
-            enemys.Remove(other.gameObject.GetComponent<GameEntity>());
+            if (IsOpposingTeam(entity))
+            {
+                enemys.Remove(entity);
+            }
         }
     }
 
