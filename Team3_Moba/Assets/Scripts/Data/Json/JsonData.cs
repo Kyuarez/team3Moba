@@ -32,7 +32,7 @@ public class ChampionTable
     public float attack_range;
     public float move_speed;
     public float recovery;
-    public int level;
+    public int max_level;
     public int current_exp;
     public List<int> skill_list;
 }
@@ -49,4 +49,11 @@ public class SkillTable
     public float duration_time;
     public float duration_damage;
     public float buff_amount;
+}
+
+public class LevelTable
+{
+    // id = level
+    public int id;
+    public int require_exp;
 }
