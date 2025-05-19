@@ -1,5 +1,6 @@
 using Mono.Cecil;
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class GameEntity : MonoBehaviour
@@ -22,6 +23,13 @@ public class GameEntity : MonoBehaviour
     public event Action<float, float> OnHPChanged;
     public event Action OnDead;
 
+    protected float recoveryDelay = 10f;         // 회복 코루틴을 닿는데 필요한 시간( 해당 시간 만큼 데미지를 받지 않아야지 회복)
+    protected float recoveryAmount;              // 초당 회복력
+    private float damagedTime;                   //마지막으로 데미지 입은 시간
+    private Coroutine recoveryCoroutine;
+
+    
+
     protected virtual void Start()
     {
         EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
@@ -41,6 +49,7 @@ public class GameEntity : MonoBehaviour
 
         this.maxHP = data.hp;
         this.currentHP = maxHP;
+
     }
     public virtual void InitData(ChampionTable data)
     {
@@ -49,6 +58,7 @@ public class GameEntity : MonoBehaviour
 
         this.maxHP = data.hp;
         this.currentHP = maxHP;
+        this.recoveryAmount = data.recovery;
     }
 
     public float GetHP()
@@ -77,6 +87,17 @@ public class GameEntity : MonoBehaviour
             OnDead?.Invoke();
         }
 
+
+        damagedTime = Time.time;
+        if (recoveryCoroutine != null)
+        {
+            StopCoroutine(recoveryCoroutine);
+            recoveryCoroutine = null;
+        }
+
+        recoveryCoroutine = StartCoroutine(coRecoveryCoroutine());
+
+
     }
 
     public void Attack(GameEntity attacker, GameEntity target)
@@ -92,4 +113,23 @@ public class GameEntity : MonoBehaviour
     {
         return team;
     }
+
+    public IEnumerator coRecoveryCoroutine()
+    {
+        while (true)
+        {
+            if (Time.time - damagedTime < recoveryDelay || currentHP >= maxHP)
+            {
+                yield return null;
+                continue;
+            }
+
+            currentHP += recoveryAmount * Time.deltaTime;
+            currentHP = Mathf.Min(currentHP, maxHP);
+            OnHPChanged?.Invoke(currentHP, maxHP);
+
+            yield return null;
+        }
+    }
+
 }
