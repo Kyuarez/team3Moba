@@ -184,7 +184,7 @@ public class Champion : GameEntity
     private IEnumerator CoAttackWithCoolTime()
     {
         isAttacking = true;
-        Logger.Log($"Player Attack to {attackTarget.gameObject.name}");
+        //Logger.Log($"Player Attack to {attackTarget.gameObject.name}");
         championAnimator.SetTrigger("OnAttack");
         Attack(Formula.CalcDamage(this), attackTarget);
         yield return new WaitForSeconds(attackCoolTime);

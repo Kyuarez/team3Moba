@@ -1,6 +1,8 @@
 using Mono.Cecil;
 using System;
-using UnityEditor.Experimental.GraphView;
+
+using System.Collections;
+
 using UnityEngine;
 
 public class GameEntity : MonoBehaviour
@@ -18,10 +20,17 @@ public class GameEntity : MonoBehaviour
     protected float maxHP;
     protected float currentHP;
 
-    // move variable - º¸·ù ÅÂ±Ô´Ô°ú »óÀÇ ÈÄ °áÁ¤
-    //@TK : Â÷ÈÄ MVC ÆĞÅÏ¿¡ ¸Â°Ô Stat°ü¸®ÇÏ´Â º°µµ Å¬·¡½º ÇÊ¿ä
+    // move variable - ë³´ë¥˜ íƒœê·œë‹˜ê³¼ ìƒì˜ í›„ ê²°ì •
+    //@TK : ì°¨í›„ MVC íŒ¨í„´ì— ë§ê²Œ Statê´€ë¦¬í•˜ëŠ” ë³„ë„ í´ë˜ìŠ¤ í•„ìš”
     public event Action<float, float> OnHPChanged;
     public event Action OnDead;
+
+    protected float recoveryDelay = 10f;         // íšŒë³µ ì½”ë£¨í‹´ì„ ë‹¿ëŠ”ë° í•„ìš”í•œ ì‹œê°„( í•´ë‹¹ ì‹œê°„ ë§Œí¼ ë°ë¯¸ì§€ë¥¼ ë°›ì§€ ì•Šì•„ì•¼ì§€ íšŒë³µ)
+    protected float recoveryAmount;              // ì´ˆë‹¹ íšŒë³µë ¥
+    private float damagedTime;                   //ë§ˆì§€ë§‰ìœ¼ë¡œ ë°ë¯¸ì§€ ì…ì€ ì‹œê°„
+    private Coroutine recoveryCoroutine;
+
+    
 
     protected virtual void Start()
     {
@@ -42,6 +51,7 @@ public class GameEntity : MonoBehaviour
 
         this.maxHP = data.hp;
         this.currentHP = maxHP;
+
     }
     public virtual void InitData(ChampionTable data)
     {
@@ -50,6 +60,7 @@ public class GameEntity : MonoBehaviour
 
         this.maxHP = data.hp;
         this.currentHP = maxHP;
+        this.recoveryAmount = data.recovery;
     }
 
     public float GetHP()
@@ -62,23 +73,34 @@ public class GameEntity : MonoBehaviour
         return attackDamage;
     }
 
-    public void Heal(float hpValue) // ÈúÀ» ¹Ş¾ÒÀ»¶§
+    public void Heal(float hpValue) // íì„ ë°›ì•˜ì„ë•Œ
     {
         currentHP = Mathf.Min(maxHP, currentHP + hpValue);
         OnHPChanged?.Invoke(currentHP, maxHP);
     }
 
-    public void TakeDamage(float damageValue) // µ¥¹ÌÁö¸¦ ¹Ş¾ÒÀ»¶§
+    public void TakeDamage(float damageValue) // ë°ë¯¸ì§€ë¥¼ ë°›ì•˜ì„ë•Œ
     {
-        //Logger.Log("°ø°İ : " + damageValue);
+        //Logger.Log("ê³µê²© : " + damageValue);
         currentHP = Mathf.Max(0, currentHP - damageValue);
         OnHPChanged?.Invoke(currentHP, maxHP);
 
-        //»ç¸Á Ã³¸®
+        //ì‚¬ë§ ì²˜ë¦¬
         if (currentHP <= 0)
         {
             OnDead?.Invoke();
         }
+
+
+        damagedTime = Time.time;
+        if (recoveryCoroutine != null)
+        {
+            StopCoroutine(recoveryCoroutine);
+            recoveryCoroutine = null;
+        }
+
+        recoveryCoroutine = StartCoroutine(coRecoveryCoroutine());
+
 
     }
 
@@ -96,9 +118,25 @@ public class GameEntity : MonoBehaviour
     {
         return team;
     }
-
     public bool IsOpposingTeam(GameEntity other)
     {
         return team != other.GetTeam();
+    }
+    public IEnumerator coRecoveryCoroutine()
+    {
+        while (true)
+        {
+            if (Time.time - damagedTime < recoveryDelay || currentHP >= maxHP)
+            {
+                yield return null;
+                continue;
+            }
+
+            currentHP += recoveryAmount * Time.deltaTime;
+            currentHP = Mathf.Min(currentHP, maxHP);
+            OnHPChanged?.Invoke(currentHP, maxHP);
+
+            yield return null;
+        }
     }
 }
