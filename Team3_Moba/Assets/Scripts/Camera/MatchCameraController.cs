@@ -18,14 +18,8 @@ public class MatchCameraController : MonoBehaviour
     private float edgeSize = 20f;
    
     public bool IsLocked => cameraState == MatchCameraState.Lock;
-    public Transform Target
-    {
-        get
-        {
-            //@tk : 나중에 Netcode로 넘어가면, MatchManager에서 IsOwner 체크해서 전달
-            return MatchManager.Instance.PlayerTransform;
-        }
-    }
+    
+    private Transform target;
 
 
     private void OnEnable()
@@ -36,6 +30,11 @@ public class MatchCameraController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if(target == null)
+        {
+            return;
+        }
+
         switch (cameraState)
         {
             case MatchCameraState.Free:
@@ -56,7 +55,7 @@ public class MatchCameraController : MonoBehaviour
 
     private void LockMove()
     {
-        transform.position = Target.position + lockOffset;
+        transform.position = target.position + lockOffset;
     }
 
     private void FreeMove()
@@ -74,5 +73,10 @@ public class MatchCameraController : MonoBehaviour
             move.z -= 1;
 
         transform.Translate(move.normalized * cameraSpeed * Time.deltaTime, Space.World);
+    }
+
+    public void SetTarget(Transform target)
+    {
+        this.target = target;
     }
 }

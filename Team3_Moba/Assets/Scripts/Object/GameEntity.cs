@@ -1,16 +1,13 @@
-using Mono.Cecil;
 using System;
-
 using System.Collections;
-
+using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
-public class GameEntity : MonoBehaviour
-{
+public class GameEntity : NetworkBehaviour 
+{ 
     [SerializeField] protected Team team;
     [SerializeField] protected int entityID;
-
+    
     //  attack variable
     protected float attackDamage;
     protected float attackRange;
@@ -127,6 +124,10 @@ public class GameEntity : MonoBehaviour
     public Team GetTeam()
     {
         return team;
+    }
+    public void SetTeam(Team team)
+    {
+        this.team = team;
     }
     public bool IsOpposingTeam(GameEntity other)
     {
