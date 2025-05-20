@@ -30,6 +30,7 @@ public class ChampionTable
     public int mp;
     public float attack;
     public float attack_range;
+    public float attack_cool_time;
     public float move_speed;
     public float recovery;
     public int max_level;

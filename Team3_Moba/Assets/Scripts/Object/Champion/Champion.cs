@@ -52,20 +52,18 @@ public class Champion : GameEntity
                 return;
             }
 
+            agent.enabled = false;
             if (IsHost)
             {
                 SetTeam(Team.Red);
-                agent.enabled = false;
                 transform.position = spawnRedTeamPosition;
-                agent.enabled = true;
             }
             else if(IsClient)
             {
                 SetTeam(Team.Blue);
-                agent.enabled = false;
                 transform.position = spawnBlueTeamPosition;
-                agent.enabled = true;
             }
+            agent.enabled = true;
 
             PostNetworkSpawn();
         };
@@ -100,6 +98,7 @@ public class Champion : GameEntity
         agent = GetComponent<NavMeshAgent>();
         attackTarget = null;
         OnDead += OnDeadAction;
+        OnDeadComplete += OnChampionDeadComplete;
     }
 
     protected override void Start()
@@ -120,7 +119,6 @@ public class Champion : GameEntity
         agent.angularSpeed = 10000f;
         agent.acceleration = 10000f;
         rotateSpeed = 3.0f;
-
 
         currentExp = data.current_exp;
         currentLevel = 1;
@@ -205,7 +203,7 @@ public class Champion : GameEntity
         //@tk : 플레이어와 타겟과의 거리
         while (true)
         {
-            if (attackTarget == null)
+            if (attackTarget == null || attackTarget.GetHP() <= 0)
             {
                 break;
             }
@@ -230,7 +228,6 @@ public class Champion : GameEntity
     private IEnumerator CoAttackWithCoolTime()
     {
         isAttacking = true;
-        //Logger.Log($"Player Attack to {attackTarget.gameObject.name}");
         championAnimator.SetTrigger("OnAttack");
         Attack(Formula.CalcDamage(this), attackTarget);
         yield return new WaitForSeconds(attackCoolTime);
@@ -251,16 +248,7 @@ public class Champion : GameEntity
     {
         yield return new WaitForSeconds(respawnTimeChampion);
         championAnimator.SetTrigger("OnRespawn");
-        RespawnChampion();
-    }
-
-    private void RespawnChampion()
-    {
-        currentHP = maxHP;
-        Logger.Log("부활  " + currentHP);
-
         OnDeadComplete?.Invoke();
-        agent.enabled = true;
     }
 
     public void OnGetExpItem(int expAmount)
@@ -291,7 +279,8 @@ public class Champion : GameEntity
 
     public void OnChampionDeadComplete()
     {
-        //
+        SetHP(maxHP.Value);
+
         if (GetTeam() == Team.Red)
         {
             transform.position = spawnRedTeamPosition;
@@ -300,5 +289,7 @@ public class Champion : GameEntity
         {
             transform.position = spawnBlueTeamPosition;
         }
+        
+        agent.enabled = true;
     }
 } 

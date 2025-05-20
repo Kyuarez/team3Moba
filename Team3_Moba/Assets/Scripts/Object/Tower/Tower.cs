@@ -53,6 +53,8 @@ public class Tower : GameEntity
     {
         base.OnNetworkSpawn();
         SetTeam(Team.Red);
+        EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
+        InitData(data);
     }
 
     void Update()
