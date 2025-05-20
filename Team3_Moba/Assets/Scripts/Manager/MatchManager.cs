@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
+
 
 public enum Team
 {
@@ -10,29 +12,18 @@ public enum Team
     Blue,
 }
 
-public class MatchManager : MonoSingleton<MatchManager>
+public class MatchManager : MonoNetSingleton<MatchManager>
 {
-    private MatchCameraController matchCamera;
 
-    private Transform playerTransform;
-    private Champion playerChampion;
-    
     private List<Vector3> spawnItemPositions;
     private bool isSpawned;
     private int maxSpawnItem = 20;
     private int currentSpawnCount = 0;
-
-    private Vector3 spawnRedTeamPosition = new Vector3(19f, 6f, 5f);
-    private Vector3 spawnBlueTeamPosition = new Vector3(-135f, 6f, -140f);
-
-    //@TK : 일단 타워 정보만 넣기. (차후 모든 entities 다 넣을 수 있음)
-    Dictionary<Team, List<GameEntity>> matchStaticEntities = new Dictionary<Team, List<GameEntity>>();
     
     public Action<int, int> OnChangedMatchScore;
     public Action<int, int> OnChangedPlayerStat;
     public Action<DateTime> OnUpdateMatchTimer;
 
-    public Transform PlayerTransform => playerTransform;
 
     protected override void Awake()
     {
@@ -40,14 +31,9 @@ public class MatchManager : MonoSingleton<MatchManager>
         TableManager table = new TableManager();
         table.OnLoadGameAction();
     }
+
     private void Start()
     {
-        matchCamera = FindAnyObjectByType<MatchCameraController>();
-
-        playerChampion = FindAnyObjectByType<Champion>();
-        playerTransform = playerChampion.transform;
-        playerChampion.OnDeadComplete += OnChampionDeadComplete;
-
         //아이템 스폰 위치 임시 지정
         spawnItemPositions = new List<Vector3>();
         spawnItemPositions.Add(new Vector3(-34f, 3f, -70f));
@@ -55,78 +41,10 @@ public class MatchManager : MonoSingleton<MatchManager>
         spawnItemPositions.Add(new Vector3(-84f, 3f, -65f));
         spawnItemPositions.Add(new Vector3(-60f, 3f, -94f));
 
-        SetMatchUI();
     }
 
     private void Update()
     {
-        //InputManager
-        if (Input.GetMouseButtonDown(1))
-        {
-            if (playerChampion.GetHP() == 0)
-            {
-                return;
-            }
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-            {
-                //TODO : 스킬매니저에서 예약된 스킬이 있을 때 발동
-                if (SkillManager.Instance.CheckReservationSkill())
-                {
-                    if(SkillManager.Instance.ExecuteSkill(playerChampion, hit) == true)
-                    {
-                        return;
-                    }
-                }
-
-                GameEntity entity = hit.collider.gameObject.GetComponent<GameEntity>();
-                if (entity != null)
-                {
-                    if (playerChampion.IsOpposingTeam(entity))
-                    {
-                        playerChampion.SetAttackTarget(entity);
-                    }
-                }
-                else
-                {
-                    playerChampion.ResetAttackTarget();
-                    playerChampion.Move(hit.point);
-                }
-
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            if (playerChampion.GetHP() == 0)
-            {
-                return;
-            }
-
-            SkillTable skill = playerChampion.GetSkillData(SkillInputType.Q);
-            if(playerChampion.PlayerCoolTime.GetRemainingTime(skill.skill_name) != 0)
-            {
-                return;
-            }
-
-            if(skill != null)
-            {
-                //TODO : 바로 시전인지 타겟 설정인지 
-                SkillManager.Instance.SetReservationSkill(skill);
-                if(skill.excute_type == SkillExecuteType.Immediately)
-                {
-                    SkillManager.Instance.ExecuteSkill(playerChampion);
-                }
-            }
-        }
-
-        //camera lock - free
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            matchCamera.SetMatchCameraState(!matchCamera.IsLocked);
-        }
 
         if(isSpawned == false)
         {
@@ -140,17 +58,7 @@ public class MatchManager : MonoSingleton<MatchManager>
         }
     }
 
-    private void SetMatchUI()
-    {
-        UIMatchHUDData matchHUD = new UIMatchHUDData();
-        matchHUD.teamScoreText = "<color=red>0</color> vs <color=blue>0</color>";
-        matchHUD.playerStatText = "0 / 0";
-        matchHUD.timerText = "00:00";
-        UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
-        UIChampionHUDData championHUD = new UIChampionHUDData();
-        championHUD.champion = playerChampion;
-        UIManager.Instance.OpenUI<UIChampionHUD>(championHUD);
-    }
+    
 
     int count = 0;
     IEnumerator CoSpawnItem()
@@ -165,7 +73,8 @@ public class MatchManager : MonoSingleton<MatchManager>
         ExpItem expItem = item.GetComponent<ExpItem>();
         if(expItem != null)
         {
-            expItem.Initialize("TestItem", 3, playerChampion.OnGetExpItem);
+            //TODO : 클라이언트 아이디로 구분해서 EXP 늘어나게
+            //expItem.Initialize("TestItem", 3, playerChampion.OnGetExpItem);
         }
 
         if(item != null)
@@ -180,18 +89,5 @@ public class MatchManager : MonoSingleton<MatchManager>
     public void DecreaseExpItemCount()
     {
         Mathf.Min(0, --currentSpawnCount);
-    }
-
-    public void OnChampionDeadComplete()
-    {
-
-        if (playerChampion.GetTeam() == Team.Red)
-        {
-            playerChampion.transform.position = spawnRedTeamPosition;
-        }
-        else if(playerChampion.GetTeam() == Team.Blue)
-        {
-            playerChampion.transform.position = spawnBlueTeamPosition;
-        }
     }
 }

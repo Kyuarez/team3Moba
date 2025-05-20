@@ -1,15 +1,14 @@
-using Mono.Cecil;
 using System;
-
 using System.Collections;
-
+using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
-public class GameEntity : MonoBehaviour
-{
-    [SerializeField] protected Team team;
+
+public class GameEntity : NetworkBehaviour 
+{ 
     [SerializeField] protected int entityID;
+    
+    [SerializeReference] protected NetworkVariable<Team> team;
 
     //  attack variable
     protected float attackDamage;
@@ -31,7 +30,11 @@ public class GameEntity : MonoBehaviour
     protected float recoveryAmount;              // 초당 회복력
     private float damagedTime;                   //마지막으로 데미지 입은 시간
     private Coroutine recoveryCoroutine;
-    
+
+    protected virtual void Awake()
+    {
+        team = new NetworkVariable<Team>(Team.None);
+    }
 
     protected virtual void Start()
     {
@@ -100,9 +103,7 @@ public class GameEntity : MonoBehaviour
             recoveryCoroutine = null;
         }
 
-        recoveryCoroutine = StartCoroutine(coRecoveryCoroutine());
-
-
+        recoveryCoroutine = StartCoroutine(CoRecovery());
     }
 
     public void Attack(float damage, GameEntity target)
@@ -126,13 +127,38 @@ public class GameEntity : MonoBehaviour
 
     public Team GetTeam()
     {
-        return team;
+        return team.Value;
+    }
+    public void SetTeam(Team team)
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+
+        ReqSetTeamServerRpc(team);
     }
     public bool IsOpposingTeam(GameEntity other)
     {
-        return team != other.GetTeam();
+        return team.Value != other.GetTeam();
     }
-    public IEnumerator coRecoveryCoroutine()
+
+    [ServerRpc]
+    public void ReqSetTeamServerRpc(Team team)
+    {
+        if (IsServer)
+        {
+            AckSetTeamClientRpc(team);
+        }
+    }
+
+    [ClientRpc]
+    public void AckSetTeamClientRpc(Team team)
+    {
+        this.team.Value = team;
+    }
+
+    public IEnumerator CoRecovery()
     {
         while (true)
         {
