@@ -7,20 +7,16 @@ public class InputManager : NetworkBehaviour
     private MatchCameraController matchCamera;
     private Champion playerChampion;
 
-    private void Awake()
+    public void SetInputManager(Champion playerChampion)
     {
-        matchCamera = FindAnyObjectByType<MatchCameraController>();
-        playerChampion = GetComponent<Champion>();
-
-        matchCamera.SetTarget(transform);
+        this.playerChampion = playerChampion;
+        matchCamera = Camera.main.GetComponent<MatchCameraController>();
+        matchCamera.SetTarget(playerChampion.transform);
     }
-
-
 
     private void Update()
     {
-
-        if (!playerChampion.IsOwner)
+        if (!IsOwner)
         {
             return;
         }

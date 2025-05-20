@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.Netcode;
 using System;
-using UnityEditor.Experimental.GraphView;
-using Unity.VisualScripting;
 
 public class Champion : GameEntity
 {
@@ -41,6 +40,46 @@ public class Champion : GameEntity
     public CoolTimeManager PlayerCoolTime => coolTime;
     public int CurrentLevel => currentLevel;
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        NetworkManager.Singleton.OnClientConnectedCallback += (clientId) =>
+        {
+            if (!IsOwner)
+            {
+                return;
+            }
+
+            if (IsHost)
+            {
+                SetTeam(Team.Red);
+                agent.enabled = false;
+                transform.position = spawnRedTeamPosition;
+                agent.enabled = true;
+            }
+            else if(IsClient)
+            {
+                SetTeam(Team.Blue);
+                agent.enabled = false;
+                transform.position = spawnBlueTeamPosition;
+                agent.enabled = true;
+            }
+
+            PostNetworkSpawn();
+        };
+
+    }
+
+    public void PostNetworkSpawn()
+    {
+        ChampionTable data = TableManager.Instance.FindTableData<ChampionTable>(entityID);
+        InitData(data);
+        coolTime = new CoolTimeManager();
+
+        InputManager input = GetComponent<InputManager>();
+        input.SetInputManager(this);
+        UIManager.Instance.SetMatchUI(this);
+    }
 
     public SkillTable GetSkillData(SkillInputType skillInputType)
     {
@@ -52,24 +91,18 @@ public class Champion : GameEntity
         return skillDict[skillInputType];
     }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+        championAnimator = GetComponent<Animator>();
+        agent = GetComponent<NavMeshAgent>();
+        attackTarget = null;
         OnDead += OnDeadAction;
     }
 
     protected override void Start()
     {
-        ChampionTable data = TableManager.Instance.FindTableData<ChampionTable>(entityID);
-        InitData(data);
-        coolTime = new CoolTimeManager();
-    }
-
-    private void OnEnable()
-    {
-        championAnimator = GetComponent<Animator>();
-        agent = GetComponent<NavMeshAgent>();
-
-        attackTarget = null;
+        //
     }
 
     private void Update()
@@ -252,5 +285,20 @@ public class Champion : GameEntity
         }
 
         OnExpChanged?.Invoke(currentExp, requireExp);
+    }
+
+    private Vector3 spawnRedTeamPosition = new Vector3(19f, 6f, 5f);
+    private Vector3 spawnBlueTeamPosition = new Vector3(-135f, 6f, -140f);
+    public void OnChampionDeadComplete()
+    {
+        //
+        if (GetTeam() == Team.Red)
+        {
+            transform.position = spawnRedTeamPosition;
+        }
+        else if (GetTeam() == Team.Blue)
+        {
+            transform.position = spawnBlueTeamPosition;
+        }
     }
 } 

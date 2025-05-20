@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using Unity.Netcode;
 
 public enum TowerLevelType
 {
@@ -20,21 +21,24 @@ public class Tower : GameEntity
     private bool isAttacking;
     private List<Tower> invincibleConditionList;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         projectileTransform = transform.Find("ProjectileTransform");
-    }
 
-    private void OnEnable()
-    {
         enemys = new List<GameEntity>();
         isAttacking = false;
         GameEntity entity = GetComponent<GameEntity>();
         entity.OnDead += OnTowerDestroyed;
 
+    }
+
+    protected override void Start()
+    {
+        base.Start();
         SetInvincibleCondition();
 
-        if(invincibleConditionList != null && invincibleConditionList.Count > 0)
+        if (invincibleConditionList != null && invincibleConditionList.Count > 0)
         {
             isInvincible = true;
         }
@@ -45,10 +49,17 @@ public class Tower : GameEntity
         base.InitData(data);
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        SetTeam(Team.Red);
+    }
+
     void Update()
     {
-        UpdateCurrentEnemys();
-        AttackClosestTarget();
+        //@tk : GetTeam을 제대로 받지 않음 주석처리 (차후 확인)
+        //UpdateCurrentEnemys();
+        //AttackClosestTarget();
     }
 
     private void SetInvincibleCondition()
@@ -188,11 +199,25 @@ public class Tower : GameEntity
     {
         Logger.Log("CoolTime : " + attackCoolTime);
         //TODO 투사체 보내기
-        Projectile projectile = Instantiate(projectileObj, projectileTransform.position, Quaternion.identity).AddComponent<Projectile>();
-        float damage = Formula.CalcDamage(this);
-        projectile.InitProjectile(ProjectileType.Guided, target, 10f, 10f, () => Attack(damage, target));
+        ReqProjectileServerRpc();
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
+    }
+
+    [ServerRpc]
+    private void ReqProjectileServerRpc()
+    {
+        if (IsServer)
+        {
+            ShotProjectileClientRpc();
+        }
+    }
+
+    [ClientRpc]
+    private void ShotProjectileClientRpc()
+    {
+        Projectile projectile = Instantiate(projectileObj, projectileTransform.position, Quaternion.identity).AddComponent<Projectile>();
+        float damage = Formula.CalcDamage(this);
     }
 
     void OnTowerDestroyed()

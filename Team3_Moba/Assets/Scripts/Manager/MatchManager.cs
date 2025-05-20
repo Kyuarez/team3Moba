@@ -31,6 +31,7 @@ public class MatchManager : MonoNetSingleton<MatchManager>
         TableManager table = new TableManager();
         table.OnLoadGameAction();
     }
+
     private void Start()
     {
         //아이템 스폰 위치 임시 지정
@@ -89,7 +90,4 @@ public class MatchManager : MonoNetSingleton<MatchManager>
     {
         Mathf.Min(0, --currentSpawnCount);
     }
-
-
-
 }

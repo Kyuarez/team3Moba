@@ -3,11 +3,13 @@ using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
+
 public class GameEntity : NetworkBehaviour 
 { 
-    [SerializeField] protected Team team;
     [SerializeField] protected int entityID;
     
+    [SerializeReference] protected NetworkVariable<Team> team;
+
     //  attack variable
     protected float attackDamage;
     protected float attackRange;
@@ -28,7 +30,11 @@ public class GameEntity : NetworkBehaviour
     protected float recoveryAmount;              // 초당 회복력
     private float damagedTime;                   //마지막으로 데미지 입은 시간
     private Coroutine recoveryCoroutine;
-    
+
+    protected virtual void Awake()
+    {
+        team = new NetworkVariable<Team>(Team.None);
+    }
 
     protected virtual void Start()
     {
@@ -98,8 +104,6 @@ public class GameEntity : NetworkBehaviour
         }
 
         recoveryCoroutine = StartCoroutine(coRecoveryCoroutine());
-
-
     }
 
     public void Attack(float damage, GameEntity target)
@@ -123,16 +127,37 @@ public class GameEntity : NetworkBehaviour
 
     public Team GetTeam()
     {
-        return team;
+        return team.Value;
     }
     public void SetTeam(Team team)
     {
-        this.team = team;
+        if (!IsOwner)
+        {
+            return;
+        }
+
+        ReqSetTeamServerRpc(team);
     }
     public bool IsOpposingTeam(GameEntity other)
     {
-        return team != other.GetTeam();
+        return team.Value != other.GetTeam();
     }
+
+    [ServerRpc]
+    public void ReqSetTeamServerRpc(Team team)
+    {
+        if (IsServer)
+        {
+            AckSetTeamClientRpc(team);
+        }
+    }
+
+    [ClientRpc]
+    public void AckSetTeamClientRpc(Team team)
+    {
+        this.team.Value = team;
+    }
+
     public IEnumerator coRecoveryCoroutine()
     {
         while (true)

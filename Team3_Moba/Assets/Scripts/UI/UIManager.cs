@@ -81,4 +81,16 @@ public class UIManager : MonoSingleton<UIManager>
             frontUI = lastChild.GetComponent<UIBase>();
         }
     }
+
+    public void SetMatchUI(Champion playerChampion)
+    {
+        UIMatchHUDData matchHUD = new UIMatchHUDData();
+        matchHUD.teamScoreText = "<color=red>0</color> vs <color=blue>0</color>";
+        matchHUD.playerStatText = "0 / 0";
+        matchHUD.timerText = "00:00";
+        UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
+        UIChampionHUDData championHUD = new UIChampionHUDData();
+        championHUD.champion = playerChampion;
+        UIManager.Instance.OpenUI<UIChampionHUD>(championHUD);
+    }
 }
