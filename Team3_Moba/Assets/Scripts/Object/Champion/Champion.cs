@@ -37,6 +37,8 @@ public class Champion : GameEntity
     public event Action<int> OnLevelChanged;
 
 
+    private Vector3 spawnRedTeamPosition = new Vector3(19f, 6f, 5f);
+    private Vector3 spawnBlueTeamPosition = new Vector3(-135f, 6f, -140f);
     public CoolTimeManager PlayerCoolTime => coolTime;
     public int CurrentLevel => currentLevel;
 
@@ -287,8 +289,6 @@ public class Champion : GameEntity
         OnExpChanged?.Invoke(currentExp, requireExp);
     }
 
-    private Vector3 spawnRedTeamPosition = new Vector3(19f, 6f, 5f);
-    private Vector3 spawnBlueTeamPosition = new Vector3(-135f, 6f, -140f);
     public void OnChampionDeadComplete()
     {
         //

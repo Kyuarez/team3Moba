@@ -103,7 +103,7 @@ public class GameEntity : NetworkBehaviour
             recoveryCoroutine = null;
         }
 
-        recoveryCoroutine = StartCoroutine(coRecoveryCoroutine());
+        recoveryCoroutine = StartCoroutine(CoRecovery());
     }
 
     public void Attack(float damage, GameEntity target)
@@ -158,7 +158,7 @@ public class GameEntity : NetworkBehaviour
         this.team.Value = team;
     }
 
-    public IEnumerator coRecoveryCoroutine()
+    public IEnumerator CoRecovery()
     {
         while (true)
         {
