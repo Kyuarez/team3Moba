@@ -53,12 +53,6 @@ public class GameEntity : NetworkBehaviour
 
     }
 
-    protected virtual void Start()
-    {
-        EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
-        InitData(data);
-    }
-
     public int GetEntityID()
     {
         return entityID;
@@ -136,9 +130,8 @@ public class GameEntity : NetworkBehaviour
         }
     }
 
-    public void TakeDamage(float damageValue) // 데미지를 받았을때
+    public void TakeDamage(float damageValue)
     {
-        //Logger.Log("공격 : " + damageValue);
         float hpData = Mathf.Max(0f, currentHP.Value - damageValue);
         SetHP(hpData);
 

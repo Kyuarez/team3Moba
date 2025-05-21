@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.Netcode;
-
 
 public enum Team
 {
@@ -12,58 +8,53 @@ public enum Team
     Blue,
 }
 
-public class MatchManager : MonoNetSingleton<MatchManager>
+public class MatchManager : NetworkBehaviour
 {
+    public static MatchManager Instance { get; private set; }
 
+    public Team gameResult = Team.None;
+
+    public Action<Team> OnGameOver;
     public Action<int, int> OnChangedMatchScore;
     public Action<int, int> OnChangedPlayerStat;
     public Action<DateTime> OnUpdateMatchTimer;
 
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(Instance);
+        }
+        else
+        {
+            Destroy(Instance);
+        }
+
         TableManager table = new TableManager();
         table.OnLoadGameAction();
 
     }
 
-    private void Start()
+    [Rpc(SendTo.Server)]
+    public void ServerSetGameResultRpc(Team loseTeam)
     {
-
-
-    }
-
-    private void Update()
-    {
-
-    }
-
-    public void OnGameResult(Team team)
-    {
-        if (IsHost)
+        if(loseTeam == Team.Red)
         {
-            if (team == Team.Red)
-            {
-                Logger.Log("ÆÐ¹è");
-            }
-            else 
-            {
-                Logger.Log("½Â¸®");
-            }
+            ClientsOnGameoverRpc(Team.Blue);
         }
-        else if (IsClient)
+        else if(loseTeam == Team.Blue)
         {
-            if (team == Team.Blue)
-            {
-                Logger.Log("ÆÐ¹è");
-            }
-            else 
-            {
-                Logger.Log("½Â¸®");
-            }
+            ClientsOnGameoverRpc(Team.Red);
         }
     }
 
+    [Rpc(SendTo.Everyone)]
+    public void ClientsOnGameoverRpc(Team team)
+    {
+        Logger.Log($"½Â¸®ÆÀ : {team}");
+        OnGameOver?.Invoke(team);
+    }
 
 }

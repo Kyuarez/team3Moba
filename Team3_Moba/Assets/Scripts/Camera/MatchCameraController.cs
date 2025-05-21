@@ -4,6 +4,7 @@ public enum MatchCameraState
 {
     Free,
     Lock,
+    GameOver,
 }
 
 /// <summary>
@@ -21,6 +22,10 @@ public class MatchCameraController : MonoBehaviour
     
     private Transform target;
 
+    private void Start()
+    {
+        MatchManager.Instance.OnGameOver += OnGameOverCamera;
+    }
 
     private void OnEnable()
     {
@@ -42,6 +47,9 @@ public class MatchCameraController : MonoBehaviour
                 break;
             case MatchCameraState.Lock:
                 LockMove();
+                break;
+            case MatchCameraState.GameOver:
+                GameOverMove();
                 break;
             default:
                 break;
@@ -75,8 +83,21 @@ public class MatchCameraController : MonoBehaviour
         transform.Translate(move.normalized * cameraSpeed * Time.deltaTime, Space.World);
     }
 
+    private void GameOverMove()
+    {
+        //좌표 주면 되겠지?
+        //transform.Translate()
+    }
+
+
     public void SetTarget(Transform target)
     {
         this.target = target;
     }
+
+    public void OnGameOverCamera(Team team)
+    {
+        cameraState = MatchCameraState.GameOver;
+    }
+
 }

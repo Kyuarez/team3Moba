@@ -65,6 +65,15 @@ public class Champion : GameEntity
             }
             agent.enabled = true;
 
+            MatchManager.Instance.OnGameOver += (team) =>
+            {
+                InputManager input = GetComponent<InputManager>();
+                if (input != null) 
+                {
+                    input.enabled = false;
+                }
+            };
+
             PostNetworkSpawn();
         };
 
