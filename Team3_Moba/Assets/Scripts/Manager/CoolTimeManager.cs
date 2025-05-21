@@ -61,5 +61,4 @@ public class CoolTimeManager
 
         return coolTimeDict[key].RemainingTime;
     }
-
 }
