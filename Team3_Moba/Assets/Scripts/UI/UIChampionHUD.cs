@@ -78,13 +78,13 @@ public class UIChampionHUD : UIBase
 
     public void OnUpdateHP(float currentHP, float maxHP)
     {
-        championHPText.text = $"{currentHP} / {maxHP}";
+        championHPText.text = $"{currentHP.ToString("F0")} / {maxHP.ToString("F0")}";
         championHPSlider.fillAmount = currentHP / maxHP;
     }
 
     public void OnUpdateExp(float currentExp, float maxExp)
     {
-        championExpText.text = $"{currentExp} / {maxExp}";
+        championExpText.text = $"{currentExp.ToString("F0")} / {maxExp.ToString("F0")}";
         championExpSlider.fillAmount = currentExp / maxExp;
     }
 }

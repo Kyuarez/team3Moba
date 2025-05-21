@@ -9,6 +9,9 @@ public class GameEntity : NetworkBehaviour
     [SerializeField] protected int entityID;
     
     [SerializeReference] protected NetworkVariable<Team> team;
+    //  health variable
+    [SerializeReference] protected NetworkVariable<float> maxHP;
+    [SerializeReference] protected NetworkVariable<float> currentHP;
 
     //  attack variable
     protected float attackDamage;
@@ -16,9 +19,8 @@ public class GameEntity : NetworkBehaviour
     protected float attackCoolTime;
     protected float attackDelay;
 
-    //  health variable
-    protected float maxHP;
-    protected float currentHP;
+   
+
     protected bool isInvincible = false;
 
     // move variable - 보류 태규님과 상의 후 결정
@@ -34,6 +36,19 @@ public class GameEntity : NetworkBehaviour
     protected virtual void Awake()
     {
         team = new NetworkVariable<Team>(Team.None);
+        maxHP = new NetworkVariable<float>(0f);
+        currentHP = new NetworkVariable<float>(0f);
+
+        maxHP.OnValueChanged += (previous, next) =>
+        {
+            OnHPChanged?.Invoke(currentHP.Value, next);
+        };
+
+        currentHP.OnValueChanged += (previous, next) =>
+        {
+            OnHPChanged?.Invoke(next, maxHP.Value);
+        };
+
     }
 
     protected virtual void Start()
@@ -53,23 +68,27 @@ public class GameEntity : NetworkBehaviour
         this.attackRange = data.attack_range;
         this.attackCoolTime = data.attack_cool_time;
 
-        this.maxHP = data.hp;
-        this.currentHP = maxHP;
+        SetMaxHP(data.hp);
+        SetHP(data.hp);
 
     }
     public virtual void InitData(ChampionTable data)
     {
         this.attackDamage = data.attack;
         this.attackRange = data.attack_range;
+        this.attackCoolTime = data.attack_cool_time;
 
-        this.maxHP = data.hp;
-        this.currentHP = maxHP;
+        SetMaxHP(data.hp);
+        SetHP(data.hp);
+
         this.recoveryAmount = data.recovery;
     }
 
+
     public float GetHP()
     {
-        return currentHP;
+        Logger.Log($"GET HP : {NetworkObjectId} : {currentHP.Value}");
+        return currentHP.Value;
     }
 
     public float GetAttackDamage()
@@ -79,18 +98,51 @@ public class GameEntity : NetworkBehaviour
 
     public void Heal(float hpValue) // 힐을 받았을때
     {
-        currentHP = Mathf.Min(maxHP, currentHP + hpValue);
-        OnHPChanged?.Invoke(currentHP, maxHP);
+        float hpData = Mathf.Min(currentHP.Value + hpValue, maxHP.Value);
+        SetHP(hpData);
+    }
+    public void SetHP(float hp)
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        ServerSetHpRpc(hp);
+    }
+    [Rpc(SendTo.Server)]
+    public void ServerSetHpRpc(float hp)
+    {
+        if (IsServer)
+        {
+            currentHP.Value = hp;
+        }
+    }
+
+    public void SetMaxHP(float hp)
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        ServerSetMaxHpRpc(hp);
+    }
+    [Rpc(SendTo.Server)]
+    public void ServerSetMaxHpRpc(float hp)
+    {
+        if (IsServer)
+        {
+            maxHP.Value = hp;
+        }
     }
 
     public void TakeDamage(float damageValue) // 데미지를 받았을때
     {
         //Logger.Log("공격 : " + damageValue);
-        currentHP = Mathf.Max(0, currentHP - damageValue);
-        OnHPChanged?.Invoke(currentHP, maxHP);
+        float hpData = Mathf.Max(0f, currentHP.Value - damageValue);
+        SetHP(hpData);
 
         //사망 처리
-        if (currentHP <= 0)
+        if (hpData <= 0)
         {
             OnDead?.Invoke();
         }
@@ -108,16 +160,39 @@ public class GameEntity : NetworkBehaviour
 
     public void Attack(float damage, GameEntity target)
     {
-        if(target == null)
-        {
-            return;
-        }
-        if (target.IsInvincible() == true)
+        //RPC
+        if (!IsOwner)
         {
             return;
         }
 
-        target.TakeDamage(damage);
+        if (target == null || target.IsInvincible() == true)
+        {
+            return;
+        }
+
+        ServerAttackRpc(damage, target.NetworkObjectId);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void ServerAttackRpc(float damage, ulong networkObjectID)
+    {
+        if (IsServer)
+        {
+            ClientsAttackRpc(damage, networkObjectID);
+        }
+    }
+    [Rpc(SendTo.ClientsAndHost)]
+    public void ClientsAttackRpc(float damage, ulong networkObjectID)
+    {
+        if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectID, out var value))
+        {
+            GameEntity target = value.GetComponent<GameEntity>();
+            if (target != null)
+            {
+                target.TakeDamage(damage);
+            }   
+        }
     }
 
     public virtual bool IsInvincible()
@@ -136,43 +211,35 @@ public class GameEntity : NetworkBehaviour
             return;
         }
 
-        ReqSetTeamServerRpc(team);
+        ServerSetTeamRpc(team);
     }
     public bool IsOpposingTeam(GameEntity other)
     {
         return team.Value != other.GetTeam();
     }
 
-    [ServerRpc]
-    public void ReqSetTeamServerRpc(Team team)
+    [Rpc(SendTo.Server)]
+    public void ServerSetTeamRpc(Team team)
     {
         if (IsServer)
         {
-            AckSetTeamClientRpc(team);
+            this.team.Value = team;
         }
-    }
-
-    [ClientRpc]
-    public void AckSetTeamClientRpc(Team team)
-    {
-        this.team.Value = team;
     }
 
     public IEnumerator CoRecovery()
     {
         while (true)
         {
-            if (Time.time - damagedTime < recoveryDelay || currentHP >= maxHP)
+            if (Time.time - damagedTime < recoveryDelay || currentHP.Value >= maxHP.Value)
             {
                 yield return null;
                 continue;
             }
 
-            currentHP += recoveryAmount * Time.deltaTime;
-            currentHP = Mathf.Min(currentHP, maxHP);
-            OnHPChanged?.Invoke(currentHP, maxHP);
-
-            yield return null;
+            float hpData = Mathf.Min(currentHP.Value + recoveryAmount, maxHP.Value);
+            SetHP(hpData);
+            yield return new WaitForSeconds(1f);
         }
     }
 }
