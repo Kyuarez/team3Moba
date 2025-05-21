@@ -221,10 +221,14 @@ public class GameEntity : NetworkBehaviour
             Projectile projectile = obj.GetComponent<Projectile>();
             if(projectile != null)
             {
+                float damage = Formula.CalcDamage(this);
                 projectile.transform.position = (projectileTransform == null) ? transform.position : projectileTransform.position;
                 projectile.InitProjectile(ProjectileType.Guided, target, 10f, 10f, () =>
                 {
-                    this.Attack(Formula.CalcDamage(this), target);
+                    if (target != null)
+                    {
+                        target.TakeDamage(damage);
+                    }
                 });
             }
         }
