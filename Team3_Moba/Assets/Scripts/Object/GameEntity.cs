@@ -51,12 +51,6 @@ public class GameEntity : NetworkBehaviour
 
     }
 
-    protected virtual void Start()
-    {
-        EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
-        InitData(data);
-    }
-
     public int GetEntityID()
     {
         return entityID;

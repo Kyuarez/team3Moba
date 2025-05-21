@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using System.Collections;
 using Unity.Netcode;
 
-public enum TowerLevelType
+public enum TowerType
 {
-    Level1,
-    Level2, 
+    Tower,
+    TwinTower, 
     Nexus,
 }
 
 public class Tower : GameEntity
 {
-    //Test
-    [SerializeField] private TowerLevelType levelType;
+    [SerializeField] private Team initTeam;
+    [SerializeField] private TowerType towerType;
+    [SerializeField] private List<Tower> invincibleConditionList;
     [SerializeField] private GameObject projectileObj;
 
     private Transform projectileTransform;
     private List<GameEntity> enemys;
     private bool isAttacking;
-    private List<Tower> invincibleConditionList;
 
     protected override void Awake()
     {
@@ -30,88 +30,37 @@ public class Tower : GameEntity
         isAttacking = false;
         GameEntity entity = GetComponent<GameEntity>();
         entity.OnDead += OnTowerDestroyed;
-
-    }
-
-    protected override void Start()
-    {
-        base.Start();
-        SetInvincibleCondition();
-
-        if (invincibleConditionList != null && invincibleConditionList.Count > 0)
-        {
-            isInvincible = true;
-        }
-    }
-
-    public override void InitData(EntityTable data)
-    {
-        base.InitData(data);
     }
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        SetTeam(Team.Red);
+        SetTeam(initTeam);
         EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
         InitData(data);
+
+        if (invincibleConditionList != null && invincibleConditionList.Count > 0)
+        {
+            isInvincible = true;
+            foreach (Tower tower in invincibleConditionList)
+            {
+                tower.OnDead += () =>
+                {
+                    invincibleConditionList.Remove(tower);
+                };
+            }
+        }
     }
 
     void Update()
     {
-        //@tk : GetTeam을 제대로 받지 않음 주석처리 (차후 확인)
-        //UpdateCurrentEnemys();
-        //AttackClosestTarget();
-    }
-
-    private void SetInvincibleCondition()
-    {
-        invincibleConditionList = new List<Tower>();
-        Tower[] towers = UnityEngine.Object.FindObjectsByType<Tower>(FindObjectsSortMode.None);
-        List<Tower> teamTowers = new List<Tower>();
-        foreach (Tower tower in towers)
-        {
-            if (IsOpposingTeam(tower))
-            {
-                continue;
-            }
-
-            teamTowers.Add(tower);
-        }
-
-        if (levelType == TowerLevelType.Nexus)
-        {
-            foreach (Tower tower in teamTowers)
-            {
-                if(tower.levelType == TowerLevelType.Level2)
-                {
-                    invincibleConditionList.Add(tower);
-                    tower.OnDead += () =>
-                    {
-                        invincibleConditionList.Remove(tower);
-                    };
-                }
-            }
-        }
-        else if(levelType == TowerLevelType.Level2)
-        {
-            foreach (Tower tower in teamTowers)
-            {
-                if (tower.levelType == TowerLevelType.Level1)
-                {
-                    invincibleConditionList.Add(tower);
-                    tower.OnDead += () => 
-                    {
-                        invincibleConditionList.Remove(tower);
-                    };
-                }
-            }
-        }
+        UpdateCurrentEnemys();
+        AttackClosestTarget();
     }
 
     private void UpdateCurrentEnemys()
     {
-        if(isInvincible == true && levelType == TowerLevelType.Nexus)
+        if(isInvincible == true && towerType == TowerType.Nexus)
         {
             return;
         }
@@ -150,7 +99,7 @@ public class Tower : GameEntity
 
     private void AttackClosestTarget()
     {
-        if (isInvincible == true && levelType == TowerLevelType.Nexus)
+        if (isInvincible == true && towerType == TowerType.Nexus)
         {
             return;
         }
@@ -177,8 +126,8 @@ public class Tower : GameEntity
             //  Formula 의 공격 메서드를 호출한다.
             if (isAttacking == false)
             {
-                isAttacking = true;
-                StartCoroutine(CoAttackWithCooldown(target));
+                //isAttacking = true;
+                //StartCoroutine(CoAttackWithCooldown(target));
             }
         }
     }
@@ -201,22 +150,22 @@ public class Tower : GameEntity
     {
         Logger.Log("CoolTime : " + attackCoolTime);
         //TODO 투사체 보내기
-        ReqProjectileServerRpc();
+        ServerShootRpc();
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
     }
 
-    [ServerRpc]
-    private void ReqProjectileServerRpc()
+    [Rpc(SendTo.Server)]
+    private void ServerShootRpc()
     {
         if (IsServer)
         {
-            ShotProjectileClientRpc();
+            ClientsShootRpc();
         }
     }
 
-    [ClientRpc]
-    private void ShotProjectileClientRpc()
+    [Rpc(SendTo.ClientsAndHost)]
+    private void ClientsShootRpc()
     {
         Projectile projectile = Instantiate(projectileObj, projectileTransform.position, Quaternion.identity).AddComponent<Projectile>();
         float damage = Formula.CalcDamage(this);

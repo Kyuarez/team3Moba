@@ -101,11 +101,6 @@ public class Champion : GameEntity
         OnDeadComplete += OnChampionDeadComplete;
     }
 
-    protected override void Start()
-    {
-        //
-    }
-
     private void Update()
     {
         championAnimator.SetFloat("MoveFactor", agent.velocity.magnitude / agent.speed, animSmoothTime, Time.deltaTime);

@@ -14,7 +14,6 @@ public enum Team
 
 public class MatchManager : MonoNetSingleton<MatchManager>
 {
-
     private List<Vector3> spawnItemPositions;
     private bool isSpawned;
     private int maxSpawnItem = 20;
@@ -30,6 +29,7 @@ public class MatchManager : MonoNetSingleton<MatchManager>
         base.Awake();
         TableManager table = new TableManager();
         table.OnLoadGameAction();
+
     }
 
     private void Start()
