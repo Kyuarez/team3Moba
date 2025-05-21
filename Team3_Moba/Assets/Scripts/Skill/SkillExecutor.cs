@@ -7,10 +7,7 @@ public abstract class SkillActor
 public class LaunchSkillActor : SkillActor
 {
     public override void Execute(SkillTable data, GameEntity caster, GameEntity target = null)
-    {
-        Projectile projectile = PoolManager.Instance.SpawnObject(data.skill_name).AddComponent<Projectile>();
-        projectile.transform.position = caster.transform.position;
-        
+    {        
         ProjectileType projectileType = ProjectileType.Guided;
         if(data.excute_type == SkillExecuteType.SetTarget)
         {
@@ -21,7 +18,9 @@ public class LaunchSkillActor : SkillActor
             projectileType = ProjectileType.NoneGuided;
         }
 
-        projectile.InitProjectile(projectileType, target, 10f, 10f, () => caster.Attack(data.damage, target));
+        caster.ServerShootRpc(target.NetworkObjectId, data.skill_name);
     }
+
+
 }
 

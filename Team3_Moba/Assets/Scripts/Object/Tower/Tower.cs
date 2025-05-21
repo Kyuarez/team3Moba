@@ -15,17 +15,13 @@ public class Tower : GameEntity
     [SerializeField] private Team initTeam;
     [SerializeField] private TowerType towerType;
     [SerializeField] private List<Tower> invincibleConditionList;
-    [SerializeField] private GameObject projectileObj;
 
-    private Transform projectileTransform;
     private List<GameEntity> enemys;
     private bool isAttacking;
 
     protected override void Awake()
     {
         base.Awake();
-        projectileTransform = transform.Find("ProjectileTransform");
-
         enemys = new List<GameEntity>();
         isAttacking = false;
         GameEntity entity = GetComponent<GameEntity>();
@@ -54,12 +50,17 @@ public class Tower : GameEntity
 
     void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         UpdateCurrentEnemys();
         AttackClosestTarget();
     }
 
     private void UpdateCurrentEnemys()
     {
+
         if(isInvincible == true && towerType == TowerType.Nexus)
         {
             return;
@@ -116,18 +117,20 @@ public class Tower : GameEntity
                 targetIndex = i;
             }
         }
-        //// Update tower logic here
-        //// For example, check for enemies in range and attack them
+        
         attackCoolTime = 3f;
         if (targetIndex > -1)   // 근접한 적의 주소가 감지 된다면 주소를 기반으로 타겟을 정한다.
         {
             GameEntity target = enemys[targetIndex];
+            if(target.GetHP() <= 0)
+            {
+                return;
+            }
 
-            //  Formula 의 공격 메서드를 호출한다.
             if (isAttacking == false)
             {
-                //isAttacking = true;
-                //StartCoroutine(CoAttackWithCooldown(target));
+                isAttacking = true;
+                StartCoroutine(CoAttackWithCooldown(target));
             }
         }
     }
@@ -148,27 +151,9 @@ public class Tower : GameEntity
 
     IEnumerator CoAttackWithCooldown(GameEntity target)
     {
-        Logger.Log("CoolTime : " + attackCoolTime);
-        //TODO 투사체 보내기
-        ServerShootRpc();
+        ServerShootRpc(target.NetworkObjectId, "cannon");
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
-    }
-
-    [Rpc(SendTo.Server)]
-    private void ServerShootRpc()
-    {
-        if (IsServer)
-        {
-            ClientsShootRpc();
-        }
-    }
-
-    [Rpc(SendTo.ClientsAndHost)]
-    private void ClientsShootRpc()
-    {
-        Projectile projectile = Instantiate(projectileObj, projectileTransform.position, Quaternion.identity).AddComponent<Projectile>();
-        float damage = Formula.CalcDamage(this);
     }
 
     void OnTowerDestroyed()
