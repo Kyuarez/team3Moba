@@ -30,6 +30,7 @@ public class MatchManager : MonoNetSingleton<MatchManager>
         base.Awake();
         TableManager table = new TableManager();
         table.OnLoadGameAction();
+
     }
 
     private void Start()
