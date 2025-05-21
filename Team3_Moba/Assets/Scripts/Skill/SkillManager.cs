@@ -41,16 +41,10 @@ public class SkillManager : MonoSingleton<SkillManager>
             return false;
         }
 
-        Champion chapion = caster as Champion;
-        if (chapion != null)
-        {
-            chapion.PlayerCoolTime.SetCoolTime(reservationSkill.skill_name, reservationSkill.cool_time);
-        }
-
         if (reservationSkill.excute_type == SkillExecuteType.SetTarget)
         {
             GameEntity target = hit.collider.gameObject.GetComponent<GameEntity>();
-            if(target != null)
+            if(target != null && caster.GetTeam() != target.GetTeam())
             {
                 return Execute(caster, target);
             }
@@ -70,6 +64,11 @@ public class SkillManager : MonoSingleton<SkillManager>
         {
             Logger.Log($"{reservationSkill.skill_name} is act!");
             skillActor.Execute(reservationSkill, caster, target);
+            Champion chapion = caster as Champion;
+            if (chapion != null)
+            {
+                chapion.PlayerCoolTime.SetCoolTime(reservationSkill.skill_name, reservationSkill.cool_time);
+            }
             ResetReservationSkill();
             return true;
         }

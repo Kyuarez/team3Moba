@@ -19,8 +19,6 @@ public class GameEntity : NetworkBehaviour
     protected float attackCoolTime;
     protected float attackDelay;
 
-   
-
     protected bool isInvincible = false;
 
     // move variable - 보류 태규님과 상의 후 결정
@@ -33,8 +31,12 @@ public class GameEntity : NetworkBehaviour
     private float damagedTime;                   //마지막으로 데미지 입은 시간
     private Coroutine recoveryCoroutine;
 
+    protected Transform projectileTransform;
+
     protected virtual void Awake()
     {
+        projectileTransform = transform.Find("ProjectileTransform");
+
         team = new NetworkVariable<Team>(Team.None);
         maxHP = new NetworkVariable<float>(0f);
         currentHP = new NetworkVariable<float>(0f);
@@ -49,6 +51,12 @@ public class GameEntity : NetworkBehaviour
             OnHPChanged?.Invoke(next, maxHP.Value);
         };
 
+    }
+
+    protected virtual void Start()
+    {
+        EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
+        InitData(data);
     }
 
     public int GetEntityID()
@@ -186,6 +194,40 @@ public class GameEntity : NetworkBehaviour
             {
                 target.TakeDamage(damage);
             }   
+        }
+    }
+
+    [Rpc(SendTo.Server)]
+    public void ServerShootRpc(ulong targetNetworkObjID, string resPath)
+    {
+        if (IsServer)
+        {
+            ClientsShootRpc(targetNetworkObjID, resPath);
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void ClientsShootRpc(ulong targetNetworkObjID, string resPath)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetNetworkObjID, out var value))
+        {
+            GameEntity target = value.GetComponent<GameEntity>();
+            GameObject obj = PoolManager.Instance.SpawnObject(resPath);
+            if(obj == null)
+            {
+                Logger.LogError($"{resPath} is wrong");
+                return;
+            }
+
+            Projectile projectile = obj.GetComponent<Projectile>();
+            if(projectile != null)
+            {
+                projectile.transform.position = (projectileTransform == null) ? transform.position : projectileTransform.position;
+                projectile.InitProjectile(ProjectileType.Guided, target, 10f, 10f, () =>
+                {
+                    this.Attack(Formula.CalcDamage(this), target);
+                });
+            }
         }
     }
 

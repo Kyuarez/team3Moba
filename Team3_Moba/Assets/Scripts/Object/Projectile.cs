@@ -35,6 +35,15 @@ public class Projectile : MonoBehaviour
         }
     }
 
+    private void ResetProjectile()
+    {
+        projectileType = ProjectileType.NoneGuided;
+        target = null;
+        moveSpeed = 0f;
+        duration = 0f;
+        OnAttack = null;
+    }
+
     private void Update()
     {
         if (elapsedTime > duration) 
@@ -80,8 +89,8 @@ public class Projectile : MonoBehaviour
     private void DestroyProjectile()
     {
         //TODO : Pool인지 체크해서 처리
+        ResetProjectile();
         string path = gameObject.name.Replace("(Clone)", "");
-
         if (PoolManager.Instance.IsContainPool(path))
         {
             PoolManager.Instance.DespawnObject(path, gameObject);
