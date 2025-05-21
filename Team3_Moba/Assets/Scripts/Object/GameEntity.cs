@@ -89,7 +89,6 @@ public class GameEntity : NetworkBehaviour
 
     public float GetHP()
     {
-        Logger.Log($"GET HP : {NetworkObjectId} : {currentHP.Value}");
         return currentHP.Value;
     }
 

@@ -46,6 +46,13 @@ public class Tower : GameEntity
                 };
             }
         }
+
+        if (towerType == TowerType.Nexus)
+        {
+            OnDead += () => {
+                MatchManager.Instance.OnGameResult(team.Value);
+            };
+        }
     }
 
     void Update()
