@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-using Unity.Netcode;
 
 public enum TowerType
 {
@@ -45,6 +44,16 @@ public class Tower : GameEntity
                     invincibleConditionList.Remove(tower);
                 };
             }
+        }
+
+        if (towerType == TowerType.Nexus)
+        {
+            OnDead += () => {
+                if (IsOwner)
+                {
+                    MatchManager.Instance.ServerSetGameResultRpc(team.Value);
+                }
+            };
         }
     }
 

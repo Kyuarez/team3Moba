@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class ExpItem : MonoBehaviour
 {
@@ -31,7 +30,8 @@ public class ExpItem : MonoBehaviour
             {
                 OnGetExpItem?.Invoke(exp);
                 PoolManager.Instance.DespawnObject(poolPath, gameObject);
-                MatchManager.Instance.DecreaseExpItemCount();
+                //의존성 문제로 수정필요 - 05-22에 경험치 동기화 하면서 수정 예정
+                //SpawnManager.Instance.DecreaseExpItemCount();
                 break;
             }
         }

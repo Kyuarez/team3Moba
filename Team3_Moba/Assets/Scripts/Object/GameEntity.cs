@@ -50,13 +50,6 @@ public class GameEntity : NetworkBehaviour
         {
             OnHPChanged?.Invoke(next, maxHP.Value);
         };
-
-    }
-
-    protected virtual void Start()
-    {
-        EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
-        InitData(data);
     }
 
     public int GetEntityID()
@@ -72,7 +65,6 @@ public class GameEntity : NetworkBehaviour
 
         SetMaxHP(data.hp);
         SetHP(data.hp);
-
     }
     public virtual void InitData(ChampionTable data)
     {
@@ -136,9 +128,8 @@ public class GameEntity : NetworkBehaviour
         }
     }
 
-    public void TakeDamage(float damageValue) // 데미지를 받았을때
+    public void TakeDamage(float damageValue)
     {
-        //Logger.Log("공격 : " + damageValue);
         float hpData = Mathf.Max(0f, currentHP.Value - damageValue);
         SetHP(hpData);
 

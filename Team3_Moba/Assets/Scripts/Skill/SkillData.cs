@@ -1,4 +1,3 @@
-using UnityEngine;
 
 public enum SkillInputType
 {
@@ -20,6 +19,3 @@ public enum SkillActionType
     Buff,
     Launch,
 }
-
-
-
