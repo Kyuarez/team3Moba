@@ -4,14 +4,7 @@ using UnityEngine;
 
 public class ExpItem : NetworkBehaviour
 {
-    private int exp;
-    private Action<int> OnGetExpItem;
-
-    public void Initialize(int exp, Action<int> OnGetItem)
-    {
-        this.exp = exp;
-        this.OnGetExpItem = OnGetItem;
-    }
+    [SerializeField] private int exp;
 
     private void Update()
     {
@@ -27,8 +20,33 @@ public class ExpItem : NetworkBehaviour
             Champion champion = hit.GetComponent<Champion>();
             if (champion != null)
             {
-                //TODO
+                ServerGetItemRpc(champion.NetworkObjectId);
             }
         }
     }
+
+    [Rpc(SendTo.Server)]
+    public void ServerGetItemRpc(ulong networkObjectID)
+    {
+        if (!IsServer) return;
+
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectID, out var championObject)) 
+        {
+            Champion champion = championObject.GetComponent<Champion>();
+            if (champion != null)
+            {
+                champion.OnGetExpItem(exp);
+                DespawnItemRpc();
+            }
+        }
+    }
+
+
+    [Rpc(SendTo.Server)]
+    private void DespawnItemRpc()
+    {
+        NetworkObject.Despawn();
+    }
+
+
 }

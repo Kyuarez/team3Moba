@@ -254,6 +254,12 @@ public class Champion : GameEntity
         if(currentExp >= requireExp)
         {
             currentLevel++;
+            //TODO Level에 따른 스탯 변경
+            ChampionTable championData = TableManager.Instance.FindTableData<ChampionTable>(entityID);
+            SetHP(Formula.CalcHP(championData.hp, currentLevel));
+            attackDamage = Formula.CalcAttack(championData.attack, currentLevel);
+            recoveryAmount = Formula.CalcRecovery(championData.recovery, currentLevel);
+
             OnLevelChanged?.Invoke(currentLevel);
             currentExp -= requireExp;
             

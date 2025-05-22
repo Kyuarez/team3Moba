@@ -674,6 +674,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  expItemObj: {fileID: 9041211338071153317, guid: b89af0e79168030439c4fec20eef512d, type: 3}
 --- !u!4 &1288278631
 Transform:
   m_ObjectHideFlags: 0
@@ -735,6 +736,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  gameResult: 0
 --- !u!114 &1473730247
 MonoBehaviour:
   m_ObjectHideFlags: 0
