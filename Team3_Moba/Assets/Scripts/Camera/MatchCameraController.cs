@@ -1,10 +1,11 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum MatchCameraState
 {
     Free,
     Lock,
-    GameOver,
 }
 
 /// <summary>
@@ -14,13 +15,14 @@ public class MatchCameraController : MonoBehaviour
 {
     [SerializeField] private MatchCameraState cameraState;
     [SerializeField] private Vector3 lockOffset;
-    
+
     private float cameraSpeed = 10f;
     private float edgeSize = 20f;
-   
-    public bool IsLocked => cameraState == MatchCameraState.Lock;
-    
+
     private Transform target;
+
+    public bool IsLocked => cameraState == MatchCameraState.Lock;
+
 
     private void Start()
     {
@@ -35,7 +37,7 @@ public class MatchCameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(target == null)
+        if (target == null)
         {
             return;
         }
@@ -47,9 +49,6 @@ public class MatchCameraController : MonoBehaviour
                 break;
             case MatchCameraState.Lock:
                 LockMove();
-                break;
-            case MatchCameraState.GameOver:
-                GameOverMove();
                 break;
             default:
                 break;
@@ -83,13 +82,6 @@ public class MatchCameraController : MonoBehaviour
         transform.Translate(move.normalized * cameraSpeed * Time.deltaTime, Space.World);
     }
 
-    private void GameOverMove()
-    {
-        //좌표 주면 되겠지?
-        //transform.Translate()
-    }
-
-
     public void SetTarget(Transform target)
     {
         this.target = target;
@@ -97,7 +89,34 @@ public class MatchCameraController : MonoBehaviour
 
     public void OnGameOverCamera(Team team)
     {
-        cameraState = MatchCameraState.GameOver;
+        target = null;
+        //타겟 주기
+        if (team == Team.Blue)
+        {
+            StartCoroutine(CoGameOverCamerea(new Vector3(3.6f, 3f, -6f)));
+        }
+        else if (team == Team.Red)
+        {
+            StartCoroutine(CoGameOverCamerea(new Vector3(-122.4f, 3f, -128f)));
+
+        }
+    }
+
+
+    IEnumerator CoGameOverCamerea(Vector3 nexusPosition)
+    {
+        Vector3 destination = nexusPosition + lockOffset;
+        float duration = 2.0f; // 카메라 이동 시간
+        float elapsedTime = 0f;
+        Vector3 startPosition = transform.position;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            transform.position = Vector3.Lerp(startPosition, destination, elapsedTime / duration);
+            yield return null;
+        }
+
+        transform.position = destination;
     }
 
 }

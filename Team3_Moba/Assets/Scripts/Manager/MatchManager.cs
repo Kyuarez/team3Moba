@@ -19,7 +19,6 @@ public class MatchManager : NetworkBehaviour
     public Action<int, int> OnChangedPlayerStat;
     public Action<DateTime> OnUpdateMatchTimer;
 
-
     private void Awake()
     {
         if (Instance == null)

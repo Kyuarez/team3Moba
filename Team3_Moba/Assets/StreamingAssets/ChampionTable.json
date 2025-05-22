@@ -6,7 +6,7 @@
       "mp": "100",
       "attack": "500",
       "attack_range": "3",
-      "attack_cool_time": "3",
+      "attack_cool_time": "1",
       "move_speed": "30",
       "recovery": "10",
       "max_level": "10",

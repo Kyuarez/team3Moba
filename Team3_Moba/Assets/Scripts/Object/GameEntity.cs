@@ -50,7 +50,6 @@ public class GameEntity : NetworkBehaviour
         {
             OnHPChanged?.Invoke(next, maxHP.Value);
         };
-
     }
 
     public int GetEntityID()
@@ -66,7 +65,6 @@ public class GameEntity : NetworkBehaviour
 
         SetMaxHP(data.hp);
         SetHP(data.hp);
-
     }
     public virtual void InitData(ChampionTable data)
     {
