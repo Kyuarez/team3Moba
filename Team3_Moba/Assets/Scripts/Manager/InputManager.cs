@@ -6,16 +6,25 @@ public class InputManager : NetworkBehaviour
     private MatchCameraController matchCamera;
     private Champion playerChampion;
 
+    private bool isInputActive = true;
+
+    private void Awake()
+    {
+        isInputActive = true;
+    }
+
     public void SetInputManager(Champion playerChampion)
     {
         this.playerChampion = playerChampion;
         matchCamera = Camera.main.GetComponent<MatchCameraController>();
         matchCamera.SetTarget(playerChampion.transform);
+
+        MatchManager.Instance.OnGameOver += OnGameOverInput;
     }
 
     private void Update()
     {
-        if (!IsOwner)
+        if (!IsOwner || isInputActive == false)
         {
             return;
         }
@@ -55,7 +64,6 @@ public class InputManager : NetworkBehaviour
                     playerChampion.ResetAttackTarget();
                     playerChampion.Move(hit.point);
                 }
-
             }
         }
 
@@ -90,4 +98,8 @@ public class InputManager : NetworkBehaviour
         }
     }
 
+    public void OnGameOverInput(Team team)
+    {
+        isInputActive = false;
+    }
 }

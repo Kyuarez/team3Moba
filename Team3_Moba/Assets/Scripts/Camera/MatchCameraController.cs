@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public enum MatchCameraState
@@ -32,7 +31,6 @@ public class MatchCameraController : MonoBehaviour
     private void OnEnable()
     {
         cameraState = MatchCameraState.Lock;
-        //cameraState = MatchCameraState.Free;
     }
 
     private void LateUpdate()
@@ -98,10 +96,8 @@ public class MatchCameraController : MonoBehaviour
         else if (team == Team.Red)
         {
             StartCoroutine(CoGameOverCamerea(new Vector3(-122.4f, 3f, -128f)));
-
         }
     }
-
 
     IEnumerator CoGameOverCamerea(Vector3 nexusPosition)
     {
@@ -115,7 +111,6 @@ public class MatchCameraController : MonoBehaviour
             transform.position = Vector3.Lerp(startPosition, destination, elapsedTime / duration);
             yield return null;
         }
-
         transform.position = destination;
     }
 

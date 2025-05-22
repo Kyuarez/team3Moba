@@ -23,14 +23,12 @@ public class SpawnManager : NetworkBehaviour
 
     private void Update()
     {
-
         if (isSpawned == false)
         {
             if (currentSpawnCount >= maxSpawnItem)
             {
                 return;
             }
-
             isSpawned = true;
             StartCoroutine(CoSpawnItem());
         }

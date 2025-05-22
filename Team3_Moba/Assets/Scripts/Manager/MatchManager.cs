@@ -30,10 +30,8 @@ public class MatchManager : NetworkBehaviour
         {
             Destroy(Instance);
         }
-
         TableManager table = new TableManager();
         table.OnLoadGameAction();
-
     }
 
     [Rpc(SendTo.Server)]

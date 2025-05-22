@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using Unity.Netcode;
 using System;
 
 public class Champion : GameEntity
@@ -45,38 +44,27 @@ public class Champion : GameEntity
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        NetworkManager.Singleton.OnClientConnectedCallback += (clientId) =>
+
+        if (!IsOwner)
         {
-            if (!IsOwner)
-            {
-                return;
-            }
+            return;
+        }
 
-            agent.enabled = false;
-            if (IsHost)
-            {
-                SetTeam(Team.Red);
-                transform.position = spawnRedTeamPosition;
-            }
-            else if(IsClient)
-            {
-                SetTeam(Team.Blue);
-                transform.position = spawnBlueTeamPosition;
-            }
-            agent.enabled = true;
+        agent.enabled = false;
+        if (IsHost)
+        {
+            SetTeam(Team.Red);
+            transform.position = spawnRedTeamPosition;
+        }
+        else if (IsClient)
+        {
+            SetTeam(Team.Blue);
+            transform.position = spawnBlueTeamPosition;
+        }
+        agent.enabled = true;
 
-            MatchManager.Instance.OnGameOver += (team) =>
-            {
-                InputManager input = GetComponent<InputManager>();
-                if (input != null) 
-                {
-                    input.enabled = false;
-                }
-            };
-
-            PostNetworkSpawn();
-        };
-
+        
+        PostNetworkSpawn();
     }
 
     public void PostNetworkSpawn()
@@ -293,7 +281,6 @@ public class Champion : GameEntity
         {
             transform.position = spawnBlueTeamPosition;
         }
-        
         agent.enabled = true;
     }
 } 
