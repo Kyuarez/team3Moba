@@ -2,8 +2,12 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
+public class UIConnectNetData : UIBaseData
+{
+    //
+}
 
-public class UIConnectNet : MonoBehaviour
+public class UIConnectNet : UIBase
 {
     [SerializeField] private Button hostButton;
     [SerializeField] private Button serverButton;
@@ -11,20 +15,20 @@ public class UIConnectNet : MonoBehaviour
 
     private void Awake()
     {
-        //@tk : 팝업 매니저 (네트워크와 잘 연동되게) 만들기 전에는 그냥 하나 씬에 넣기
         hostButton.onClick.AddListener(() => {
+            //동기 처리 먼저 (순서를 지켜야 한다.)
+            UIManager.Instance.CloseUI(this);
             NetworkManager.Singleton.StartHost();
-            Destroy(gameObject);
         });
 
         serverButton.onClick.AddListener(() => {
+            UIManager.Instance.CloseUI(this);
             NetworkManager.Singleton.StartServer();
-            Destroy(gameObject);
         });
 
         clientButton.onClick.AddListener(() => {
+            UIManager.Instance.CloseUI(this);
             NetworkManager.Singleton.StartClient();
-            Destroy(gameObject);
         });
     }
 }

@@ -20,7 +20,6 @@ public class UIChampionHUD : UIBase
 
     public override void SetInfo(UIBaseData uidata)
     {
-
         base.SetInfo(uidata);
         UIChampionHUDData data = uidata as UIChampionHUDData;
 
@@ -63,7 +62,7 @@ public class UIChampionHUD : UIBase
     }
 
     //TODO : Event 연결 (챔피언 데이터와 동기화)
-    private void Bind(Champion champion)
+    public void Bind(Champion champion)
     {
         champion.OnLevelChanged += OnUpdateLevel; 
         champion.OnHPChanged += OnUpdateHP;

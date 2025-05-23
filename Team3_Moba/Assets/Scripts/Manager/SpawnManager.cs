@@ -24,6 +24,11 @@ public class SpawnManager : NetworkBehaviour
 
     private void Update()
     {
+        if (!IsServer)
+        {
+            return;
+        }
+
         if (isSpawned == false)
         {
             if (currentSpawnCount.Value >= maxSpawnItem)

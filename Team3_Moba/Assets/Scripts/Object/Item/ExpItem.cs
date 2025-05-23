@@ -35,12 +35,26 @@ public class ExpItem : NetworkBehaviour
             Champion champion = championObject.GetComponent<Champion>();
             if (champion != null)
             {
-                champion.OnGetExpItem(exp);
+                ClientsGetItemRpc(networkObjectID, championObject.OwnerClientId);
                 DespawnItemRpc();
             }
         }
     }
-
+    [Rpc(SendTo.Everyone)]
+    public void ClientsGetItemRpc(ulong networkObjectID, ulong targetClientID)
+    {
+        if (NetworkManager.Singleton.LocalClientId == targetClientID)
+        {
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectID, out var championObject))
+            {
+                Champion champion = championObject.GetComponent<Champion>();
+                if (champion != null)
+                {
+                    champion.OnGetExpItem(exp);
+                }
+            }
+        }
+    }
 
     [Rpc(SendTo.Server)]
     private void DespawnItemRpc()

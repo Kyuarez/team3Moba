@@ -19,8 +19,10 @@ public class UIMatchHUD : UIBase
     public override void Initialize(Transform anchor)
     {
         base.Initialize(anchor);
-        OnOpen += OnRegisterMatchEvent;
-        OnClose += OnRegisterMatchEvent;
+        MatchManager.Instance.OnChangedMatchScore += OnChangeMatchScore;
+        MatchManager.Instance.OnUpdateMatchTimer += OnUpdateMatchTimer;
+
+        OnClose += OnUnRegisterMatchEvent;
     }
 
     public override void SetInfo(UIBaseData uidata)
@@ -31,17 +33,9 @@ public class UIMatchHUD : UIBase
         playerStatText.text = data.playerStatText;
         timerText.text = data.timerText;
     }
-
-    public void OnRegisterMatchEvent()
-    {
-        MatchManager.Instance.OnChangedMatchScore += OnChangeMatchScore;
-        MatchManager.Instance.OnChangedPlayerStat += OnChangedPlayerStat;
-        MatchManager.Instance.OnUpdateMatchTimer += OnUpdateMatchTimer;
-    }
     public void OnUnRegisterMatchEvent()
     {
         MatchManager.Instance.OnChangedMatchScore -= OnChangeMatchScore;
-        MatchManager.Instance.OnChangedPlayerStat -= OnChangedPlayerStat;
         MatchManager.Instance.OnUpdateMatchTimer -= OnUpdateMatchTimer;
     }
     public void OnChangeMatchScore(int redScore, int blueScore)
