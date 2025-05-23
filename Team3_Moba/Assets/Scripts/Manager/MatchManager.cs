@@ -14,6 +14,8 @@ public class MatchManager : NetworkBehaviour
 {
     public static MatchManager Instance { get; private set; }
 
+    [SerializeField] private Champion _playerPrefab;
+
     public Team gameResult = Team.None;
 
     private NetworkVariable<int> redTeamKills = new NetworkVariable<int>();
@@ -39,10 +41,30 @@ public class MatchManager : NetworkBehaviour
         table.OnLoadGameAction();
     }
 
+    public event Action OnGameStart;
+
     private void Start()
     {
         UIConnectNetData connectUI = new UIConnectNetData();
         UIManager.Instance.OpenUI<UIConnectNet>(connectUI);
+
+        NetworkManager.Singleton.OnConnectionEvent += (networkManager, connectionEventData) =>
+        {
+            if (networkManager.ConnectedClients.Count == 2)
+            {
+                OnGameStart?.Invoke();
+
+                if (NetworkManager.Singleton.IsServer)
+                {
+                    foreach (var client in NetworkManager.Singleton.ConnectedClients)
+                    {
+                        var instance = Instantiate(_playerPrefab);
+                        var networkObject = instance.GetComponent<NetworkObject>();
+                        networkObject.SpawnAsPlayerObject(client.Key);
+                    }
+                }
+            }
+        };
     }
 
     private void Update()

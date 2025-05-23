@@ -14,7 +14,9 @@ public enum CursorState
 //마우스 커서 관리
 public class CursorManager : MonoBehaviour
 {
+    // NOTE: 테스트용
     [SerializeField] private Team playerTeam;
+
     [SerializeField] private RectTransform cursor;
     [SerializeField] private Sprite baseCursorSprite;
     [SerializeField] private Sprite attackCursorSprite;
@@ -39,6 +41,7 @@ public class CursorManager : MonoBehaviour
 
     private IEnumerator Start()
     {
+        // FIX: 게임 시작 이벤트가 필요한 것
         yield return new WaitUntil(() => NetworkManager.Singleton.LocalClient?.PlayerObject != null);
         var player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Champion>();
         if (player != null) 

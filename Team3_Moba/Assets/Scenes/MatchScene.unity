@@ -211,6 +211,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CursorManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7179571918919067666, guid: e7e257ecf362b6842b0f5df2693cbe88, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -279,7 +283,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 149292678}
-    PlayerPrefab: {fileID: 6703181299618585744, guid: 20519e0d49948c54985a2019c3ed5a99, type: 3}
+    PlayerPrefab: {fileID: 0}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: ec5a983098e7e144b96cd05755622356, type: 2}
@@ -736,6 +740,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  _playerPrefab: {fileID: 581128812550074909, guid: 20519e0d49948c54985a2019c3ed5a99, type: 3}
   gameResult: 0
 --- !u!114 &1473730247
 MonoBehaviour:
