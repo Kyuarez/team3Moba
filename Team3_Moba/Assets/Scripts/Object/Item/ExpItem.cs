@@ -24,13 +24,12 @@ public class ExpItem : NetworkBehaviour
             }
         }
     }
-
     [Rpc(SendTo.Server)]
     public void ServerGetItemRpc(ulong networkObjectID)
     {
         if (!IsServer) return;
 
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectID, out var championObject)) 
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectID, out var championObject))
         {
             Champion champion = championObject.GetComponent<Champion>();
             if (champion != null)
@@ -55,7 +54,6 @@ public class ExpItem : NetworkBehaviour
             }
         }
     }
-
     [Rpc(SendTo.Server)]
     private void DespawnItemRpc()
     {

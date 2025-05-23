@@ -269,21 +269,20 @@ public class Champion : GameEntity
         }
         
         calcExp = currentExp.Value + expAmount;
-        SetExp(calcExp);
         if(calcExp >= requireExp)
         {
             int nextLevel = currentLevel.Value + 1;
-            SetLevel(nextLevel);
-            //TODO Level에 따른 스탯 변경
             ChampionTable championData = TableManager.Instance.FindTableData<ChampionTable>(entityID);
+            //TODO Level에 따른 스탯 변경
+            SetLevel(nextLevel);
             SetMaxHP(Formula.CalcHP(championData.hp, nextLevel));
             SetHP(Formula.CalcHP(championData.hp, nextLevel));
             attackDamage = Formula.CalcAttack(championData.attack, nextLevel);
             recoveryAmount = Formula.CalcRecovery(championData.recovery, nextLevel);
 
             OnLevelChanged?.Invoke(nextLevel);
-            calcExp = currentExp.Value - requireExp;
-            SetExp(calcExp);
+            int calcRestExp = calcExp - requireExp;
+            SetExp(calcRestExp);
             
             LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(nextLevel);
             requireExp = levelTable.require_exp;
@@ -293,6 +292,10 @@ public class Champion : GameEntity
                 calcExp = requireExp;
                 SetExp(requireExp);
             }
+        }
+        else
+        {
+            SetExp(calcExp);
         }
 
         OnExpChanged?.Invoke(calcExp, requireExp);
