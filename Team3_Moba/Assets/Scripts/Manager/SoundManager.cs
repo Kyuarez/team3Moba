@@ -19,6 +19,7 @@ public class SoundManager : MonoSingleton<SoundManager>
         base.Awake();
 
         //TableManager.Instance.SetSoundData();
+        //TableManager.Instance.FindTableData<SoundTable>();
     }
 
     public void AddBGMDict(int soundID, string soundResPath)

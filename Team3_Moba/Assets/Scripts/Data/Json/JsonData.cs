@@ -58,3 +58,10 @@ public class LevelTable
     public int id;
     public int require_exp;
 }
+
+
+public class SoundTable
+{
+    public int id;
+    public string soundName;
+}
