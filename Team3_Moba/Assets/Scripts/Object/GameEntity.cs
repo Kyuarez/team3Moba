@@ -79,6 +79,7 @@ public class GameEntity : NetworkBehaviour
     }
 
 
+
     public float GetHP()
     {
         return currentHP.Value;

@@ -63,5 +63,7 @@ public class LevelTable
 public class SoundTable
 {
     public int id;
-    public string soundName;
+    public string sound_type;
+    public string path;
+    public string sound_name;
 }

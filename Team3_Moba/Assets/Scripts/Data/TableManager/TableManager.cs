@@ -80,11 +80,20 @@ public partial class TableManager
             if (typedDict != null && typedDict.TryGetValue(id, out var result))
                 return result;
         }
-
         Debug.LogError($"[TableManager] No data found for type {typeof(T).Name} and ID {id}");
         return null;
     }
-
+    public Dictionary<int, T> FindAllTableData<T>() where T : class
+    {
+        if (tableMap.TryGetValue(typeof(T), out var obj))
+        {
+            var typedDict = obj as Dictionary<int, T>;
+            if (typedDict != null)
+                return typedDict;
+        }
+        Logger.LogError($"[TableManager] No data found for type {typeof(T).Name}");
+        return new Dictionary<int, T>();
+    }
     #region DataTable
     private Dictionary<Type, object> tableMap = new Dictionary<Type, object>();
 

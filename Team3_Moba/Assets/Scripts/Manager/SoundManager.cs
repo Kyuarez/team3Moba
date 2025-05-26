@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class SoundManager : MonoSingleton<SoundManager>
 {
+    public enum SoundType
+    {
+        BGM,
+        SFX,
+    }
+    public SoundType soundType;
+
     public AudioSource bgmSource;
     public AudioSource sfxSource;
 
@@ -18,13 +25,43 @@ public class SoundManager : MonoSingleton<SoundManager>
     {
         base.Awake();
 
-        //TableManager.Instance.SetSoundData();
-        //TableManager.Instance.FindTableData<SoundTable>();
+
+
+        //  사운드 데이터를 불러오는 부분은 TableManager에서 처리하도록 변경
+        //SoundTable data = TableManager.Instance.FindTableData<SoundTable>(1); // 예시로 ID 1의 SoundTable 데이터를 가져옴
+        //data.path = "BGM"; // 예시로 경로를 설정
+        //AddBGMDict(data.id, data.path); // 예시로 BGM 사운드 추가
+        //PlaySFX(data.id); // 예시로 SFX 재생
+        //PlaySFX(2, new Vector3(0, 0, 0)); // 예시로 SFX를 특정 위치에서 재생
+
+
+    }
+    private void Start()
+    {
+        var soundTableDict = TableManager.Instance.FindAllTableData<SoundTable>();
+        foreach (var soundTable in soundTableDict)
+        {
+            if (soundTable.Value.sound_type == SoundType.BGM.ToString())
+            {
+                AddBGMDict(soundTable.Value.id, soundTable.Value.path,soundTable.Value.sound_name);
+            }
+            else if (soundTable.Value.sound_type == SoundType.SFX.ToString())
+            {
+                AddSFXDict(soundTable.Value.id, soundTable.Value.path, soundTable.Value.sound_name);
+            }
+        }
+
+        //PlayBGM(1);
+        PlaySFX(3);
+        PlaySFX(4);
+        PlaySFX(5);
+        PlaySFX(6);
     }
 
-    public void AddBGMDict(int soundID, string soundResPath)
+    public void AddBGMDict(int soundID, string soundResPath, string soundName)
     {
-        AudioClip clip = Resources.Load<AudioClip>("Sound/BGM/" + soundResPath);
+        Logger.LogWarning($"AddBGM : {soundID}, Sound/{soundResPath}");
+        AudioClip clip = Resources.Load<AudioClip>($"Sound/{soundResPath}/{soundName}");
         if (clip == null)
         {
             Logger.LogError($"AudioClip isn't in Resources : {soundResPath}");
@@ -39,9 +76,10 @@ public class SoundManager : MonoSingleton<SoundManager>
 
         bgmClipDict.Add(soundID, clip);
     }
-    public void AddSFXDict(int soundID, string soundResPath)
+    public void AddSFXDict(int soundID, string soundResPath,string soundName)
     {
-        AudioClip clip = Resources.Load<AudioClip>("Sound/SFX/" + soundResPath);
+        Logger.LogWarning($"AddBGM : {soundID}, Sound/{soundResPath}");
+        AudioClip clip = Resources.Load<AudioClip>($"Sound/{soundResPath}/{soundName}");
         if (clip == null)
         {
             Logger.LogError($"AudioClip isn't in Resources : {soundResPath}");

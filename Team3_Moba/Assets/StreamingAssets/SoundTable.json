@@ -1,0 +1,94 @@
+{
+  "SoundTable": [
+    {
+      "id": "1",
+      "sound_type": "BGM",
+      "path": "BGM",
+      "sound_name": "BGM_game_00"
+    },
+    {
+      "id": "2",
+      "sound_type": "SFX",
+      "path": "SFX/Champion",
+      "sound_name": "Attack"
+    },
+    {
+      "id": "3",
+      "sound_type": "SFX",
+      "path": "SFX/Champion",
+      "sound_name": "Hitted"
+    },
+    {
+      "id": "4",
+      "sound_type": "SFX",
+      "path": "SFX/Champion",
+      "sound_name": "Move"
+    },
+    {
+      "id": "5",
+      "sound_type": "SFX",
+      "path": "SFX/Champion",
+      "sound_name": "Death"
+    },
+    {
+      "id": "6",
+      "sound_type": "SFX",
+      "path": "SFX/Champion",
+      "sound_name": "Revival"
+    },
+    {
+      "id": "7",
+      "sound_type": "SFX",
+      "path": "SFX/Champion",
+      "sound_name": "InItem"
+    },
+    {
+      "id": "8",
+      "sound_type": "SFX",
+      "path": "SFX/GameSystem",
+      "sound_name": "BeginGame"
+    },
+    {
+      "id": "9",
+      "sound_type": "SFX",
+      "path": "SFX/GameSystem",
+      "sound_name": "ButtonTouch"
+    },
+    {
+      "id": "10",
+      "sound_type": "SFX",
+      "path": "SFX/GameSystem",
+      "sound_name": "Win"
+    },
+    {
+      "id": "11",
+      "sound_type": "SFX",
+      "path": "SFX/GameSystem",
+      "sound_name": "Lose"
+    },
+    {
+      "id": "12",
+      "sound_type": "SFX",
+      "path": "SFX/SKILL",
+      "sound_name": "fireBall"
+    },
+    {
+      "id": "13",
+      "sound_type": "SFX",
+      "path": "SFX/Tower",
+      "sound_name": "attack1"
+    },
+    {
+      "id": "14",
+      "sound_type": "SFX",
+      "path": "SFX/Tower",
+      "sound_name": "attack1"
+    },
+    {
+      "id": "15",
+      "sound_type": "SFX",
+      "path": "SFX/Tower",
+      "sound_name": "death1"
+    }
+  ]
+}
