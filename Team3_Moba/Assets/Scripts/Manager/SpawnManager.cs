@@ -61,10 +61,14 @@ public class SpawnManager : NetworkBehaviour
             return;
         }
         netObj.Spawn();  // 네트워크에 생성 전파
+        ExpItem expItem = obj.GetComponent<ExpItem>();
+        if(expItem != null)
+        {
+            expItem.OnDespawnExpItem += OnDecreaseCurrentSpawnCount;
+        }
         currentSpawnCount.Value++;
     }
 
-    int count = 0;
     IEnumerator CoSpawnItem()
     {
         yield return new WaitForSeconds(3f);
@@ -76,6 +80,10 @@ public class SpawnManager : NetworkBehaviour
         ServerSpawnRpc("ExpItem" ,positionTemp);
 
         isSpawned = false;
-        count = (count + 1) % 21;
+    }
+
+    public void OnDecreaseCurrentSpawnCount()
+    {
+        currentSpawnCount.Value--;
     }
 }

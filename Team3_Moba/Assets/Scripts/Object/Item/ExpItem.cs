@@ -5,6 +5,7 @@ using UnityEngine;
 public class ExpItem : NetworkBehaviour
 {
     [SerializeField] private int exp;
+    public Action OnDespawnExpItem;
 
     private void Update()
     {
@@ -27,7 +28,7 @@ public class ExpItem : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void ServerGetItemRpc(ulong networkObjectID)
     {
-        if (!IsServer) return;
+        if (!IsServer) return; // 삭제해도 될 것 같은 부분?
 
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectID, out var championObject))
         {
@@ -57,6 +58,7 @@ public class ExpItem : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void DespawnItemRpc()
     {
+        OnDespawnExpItem?.Invoke();
         NetworkObject.Despawn();
     }
 
