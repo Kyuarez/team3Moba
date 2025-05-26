@@ -93,16 +93,19 @@ public class MatchManager : NetworkBehaviour
         };
     }   
 
+    /// <summary>
+    /// parameter team : Á×Àº ´ë»óÀÇ ÆÀ
+    /// </summary>
     [Rpc(SendTo.Server)]
     public void ServerUpdateTeamKillRpc(Team team)
     {
         if (team == Team.Red)
         {
-            redTeamKills.Value++;
+            blueTeamKills.Value++;
         }
         else if (team == Team.Blue)
         {
-            blueTeamKills.Value++;
+            redTeamKills.Value++;
         }
     }
 

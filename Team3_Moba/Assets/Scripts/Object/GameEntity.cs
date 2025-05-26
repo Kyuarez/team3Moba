@@ -128,7 +128,7 @@ public class GameEntity : NetworkBehaviour
         }
     }
 
-    public void TakeDamage(float damageValue)
+    public void TakeDamage(float damageValue, bool isChampionAttack = false)
     {
         float hpData = Mathf.Max(0f, currentHP.Value - damageValue);
         SetHP(hpData);
@@ -136,9 +136,18 @@ public class GameEntity : NetworkBehaviour
         //사망 처리
         if (hpData <= 0)
         {
+            //attack판단을 해서 넘겨주긴 해야함.
+            Champion champion = this as Champion;
+            if (champion != null)
+            {
+                if (IsServer && isChampionAttack)
+                {
+                    MatchManager.Instance.ServerUpdateTeamKillRpc(team.Value);
+                }
+            }
+
             OnDead?.Invoke();
         }
-
 
         damagedTime = Time.time;
         if (recoveryCoroutine != null)
@@ -182,7 +191,9 @@ public class GameEntity : NetworkBehaviour
             GameEntity target = value.GetComponent<GameEntity>();
             if (target != null)
             {
-                target.TakeDamage(damage);
+                Champion champion = this as Champion;
+                bool isChampionAttack = (champion != null) ? true : false;
+                target.TakeDamage(damage, isChampionAttack);
             }   
         }
     }
@@ -218,7 +229,9 @@ public class GameEntity : NetworkBehaviour
                 {
                     if (target != null)
                     {
-                        target.TakeDamage(damage);
+                        Champion champion = this as Champion;
+                        bool isChampionAttack = (champion != null) ? true : false;
+                        target.TakeDamage(damage, isChampionAttack);
                     }
                 });
             }
