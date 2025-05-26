@@ -1,0 +1,64 @@
+{
+  "EffectTable": [
+    {
+      "id": "1",
+      "path": "/Champion",
+      "name": "Attack"
+    },
+    {
+      "id": "2",
+      "path": "/Champion",
+      "name": "Hitted"
+    },
+    {
+      "id": "3",
+      "path": "/Champion",
+      "name": "Revival"
+    },
+    {
+      "id": "4",
+      "path": "/GameSystem",
+      "name": "ExpItem"
+    },
+    {
+      "id": "5",
+      "path": "/GameSystem",
+      "name": "InItem"
+    },
+    {
+      "id": "6",
+      "path": "/GameSystem",
+      "name": "BeginGame"
+    },
+    {
+      "id": "7",
+      "path": "/GameSystem",
+      "name": "Win"
+    },
+    {
+      "id": "8",
+      "path": "/GameSystem",
+      "name": "Lose"
+    },
+    {
+      "id": "9",
+      "path": "/Skill",
+      "name": "fireBall"
+    },
+    {
+      "id": "10",
+      "path": "/Tower",
+      "name": "attack1"
+    },
+    {
+      "id": "11",
+      "path": "/Tower",
+      "name": "attack1"
+    },
+    {
+      "id": "12",
+      "path": "/Tower",
+      "name": "death1"
+    }
+  ]
+}
