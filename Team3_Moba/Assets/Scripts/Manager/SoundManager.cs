@@ -50,12 +50,6 @@ public class SoundManager : MonoSingleton<SoundManager>
                 AddSFXDict(soundTable.Value.id, soundTable.Value.path, soundTable.Value.sound_name);
             }
         }
-
-        //PlayBGM(1);
-        PlaySFX(3);
-        PlaySFX(4);
-        PlaySFX(5);
-        PlaySFX(6);
     }
 
     public void AddBGMDict(int soundID, string soundResPath, string soundName)
