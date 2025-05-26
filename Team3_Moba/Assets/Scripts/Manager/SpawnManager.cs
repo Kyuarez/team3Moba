@@ -6,10 +6,12 @@ using UnityEngine;
 //@TK : 아이템 스폰 (네트워크 작업 완료 후 미니언)
 public class SpawnManager : NetworkBehaviour
 {
+    [SerializeField] private GameObject expItemObj;
+
     private List<Vector3> spawnItemPositions;
     private bool isSpawned;
     private int maxSpawnItem = 20;
-    private int currentSpawnCount = 0;
+    private NetworkVariable<int> currentSpawnCount = new NetworkVariable<int>(0);
     private void Start()
     {
         //아이템 스폰 위치 임시 지정
@@ -18,14 +20,18 @@ public class SpawnManager : NetworkBehaviour
         spawnItemPositions.Add(new Vector3(-59f, 3f, -39f));
         spawnItemPositions.Add(new Vector3(-84f, 3f, -65f));
         spawnItemPositions.Add(new Vector3(-60f, 3f, -94f));
-
     }
 
     private void Update()
     {
+        if (!IsServer)
+        {
+            return;
+        }
+
         if (isSpawned == false)
         {
-            if (currentSpawnCount >= maxSpawnItem)
+            if (currentSpawnCount.Value >= maxSpawnItem)
             {
                 return;
             }
@@ -34,34 +40,50 @@ public class SpawnManager : NetworkBehaviour
         }
     }
 
-    int count = 0;
+    [Rpc(SendTo.Server)]
+    public void ServerSpawnRpc(string poolPath, Vector3 spawnPosition)
+    {
+        if (!IsServer || currentSpawnCount.Value >= maxSpawnItem)
+        {
+            return;
+        }
+
+        GameObject obj = Instantiate(expItemObj, spawnPosition, Quaternion.identity);
+        if (obj == null)
+        {
+            Logger.LogError($"{poolPath} has no NetworkObject!");
+            return;
+        }
+        NetworkObject netObj = obj.GetComponent<NetworkObject>();
+        if (netObj == null)
+        {
+            Logger.LogError($"{poolPath} has no NetworkObject!");
+            return;
+        }
+        netObj.Spawn();  // 네트워크에 생성 전파
+        ExpItem expItem = obj.GetComponent<ExpItem>();
+        if(expItem != null)
+        {
+            expItem.OnDespawnExpItem += OnDecreaseCurrentSpawnCount;
+        }
+        currentSpawnCount.Value++;
+    }
+
     IEnumerator CoSpawnItem()
     {
         yield return new WaitForSeconds(3f);
         Vector3 positionTemp = spawnItemPositions[UnityEngine.Random.Range(0, 4)];
-        float angle = (2f * Mathf.PI / 17) * currentSpawnCount;
+        float angle = (2f * Mathf.PI / 17) * currentSpawnCount.Value;
         int radius = 4;
         positionTemp.x += Mathf.Cos(angle) * radius;
         positionTemp.z += Mathf.Sin(angle) * radius;
-        GameObject item = PoolManager.Instance.SpawnObject("TestItem", positionTemp);
-        ExpItem expItem = item.GetComponent<ExpItem>();
-        if (expItem != null)
-        {
-            //TODO : 클라이언트 아이디로 구분해서 EXP 늘어나게
-            //expItem.Initialize("TestItem", 3, playerChampion.OnGetExpItem);
-        }
-
-        if (item != null)
-        {
-            currentSpawnCount++;
-        }
+        ServerSpawnRpc("ExpItem" ,positionTemp);
 
         isSpawned = false;
-        count = (count + 1) % 21;
     }
 
-    public void DecreaseExpItemCount()
+    public void OnDecreaseCurrentSpawnCount()
     {
-        Mathf.Min(0, --currentSpawnCount);
+        currentSpawnCount.Value--;
     }
 }

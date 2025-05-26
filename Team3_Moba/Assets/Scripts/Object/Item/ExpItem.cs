@@ -1,18 +1,11 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
-public class ExpItem : MonoBehaviour
+public class ExpItem : NetworkBehaviour
 {
-    private int exp;
-    private string poolPath;
-    private Action<int> OnGetExpItem;
-
-    public void Initialize(string poolPath, int exp, Action<int> OnGetItem)
-    {
-        this.poolPath = poolPath;
-        this.exp = exp;
-        this.OnGetExpItem = OnGetItem;
-    }
+    [SerializeField] private int exp;
+    public Action OnDespawnExpItem;
 
     private void Update()
     {
@@ -28,20 +21,46 @@ public class ExpItem : MonoBehaviour
             Champion champion = hit.GetComponent<Champion>();
             if (champion != null)
             {
-                OnGetExpItem?.Invoke(exp);
-                PoolManager.Instance.DespawnObject(poolPath, gameObject);
-                //의존성 문제로 수정필요 - 05-22에 경험치 동기화 하면서 수정 예정
-                //SpawnManager.Instance.DecreaseExpItemCount();
-                break;
+                ServerGetItemRpc(champion.NetworkObjectId);
             }
         }
     }
-
-    //@tk : 상호작용 영역
-    private void OnDrawGizmos()
+    [Rpc(SendTo.Server)]
+    public void ServerGetItemRpc(ulong networkObjectID)
     {
-        Gizmos.color = Color.blue;
-        float hitRadius = 0.5f; 
-        Gizmos.DrawWireSphere(transform.position, hitRadius); 
+        if (!IsServer) return; // 삭제해도 될 것 같은 부분?
+
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectID, out var championObject))
+        {
+            Champion champion = championObject.GetComponent<Champion>();
+            if (champion != null)
+            {
+                ClientsGetItemRpc(networkObjectID, championObject.OwnerClientId);
+                DespawnItemRpc();
+            }
+        }
     }
+    [Rpc(SendTo.Everyone)]
+    public void ClientsGetItemRpc(ulong networkObjectID, ulong targetClientID)
+    {
+        if (NetworkManager.Singleton.LocalClientId == targetClientID)
+        {
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectID, out var championObject))
+            {
+                Champion champion = championObject.GetComponent<Champion>();
+                if (champion != null)
+                {
+                    champion.OnGetExpItem(exp);
+                }
+            }
+        }
+    }
+    [Rpc(SendTo.Server)]
+    private void DespawnItemRpc()
+    {
+        OnDespawnExpItem?.Invoke();
+        NetworkObject.Despawn();
+    }
+
+
 }

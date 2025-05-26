@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using System;
+using Unity.Netcode;
 
 public class Champion : GameEntity
 {
@@ -23,9 +24,9 @@ public class Champion : GameEntity
     private Coroutine autoAttackCoroutine;
     private bool isAttacking = false;
 
-    private int currentLevel;
+    public NetworkVariable<int> currentLevel;
     private int maxLevel;
-    private int currentExp;
+    public NetworkVariable<int> currentExp;
     private int requireExp;
     
     private Dictionary<SkillInputType, SkillTable> skillDict;
@@ -39,17 +40,11 @@ public class Champion : GameEntity
     private Vector3 spawnRedTeamPosition = new Vector3(19f, 6f, 5f);
     private Vector3 spawnBlueTeamPosition = new Vector3(-135f, 6f, -140f);
     public CoolTimeManager PlayerCoolTime => coolTime;
-    public int CurrentLevel => currentLevel;
+    public int CurrentLevel => currentLevel.Value;
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-
-        if (!IsOwner)
-        {
-            return;
-        }
-
         agent.enabled = false;
         if (IsHost)
         {
@@ -62,20 +57,30 @@ public class Champion : GameEntity
             transform.position = spawnBlueTeamPosition;
         }
         agent.enabled = true;
-
         
-        PostNetworkSpawn();
+        ChampionTable data = TableManager.Instance.FindTableData<ChampionTable>(entityID);
+        InitData(data);
+
+        if (IsOwner)
+        {
+            PostNetworkSpawn();
+        }
     }
 
     public void PostNetworkSpawn()
     {
-        ChampionTable data = TableManager.Instance.FindTableData<ChampionTable>(entityID);
-        InitData(data);
-        coolTime = new CoolTimeManager();
-
         InputManager input = GetComponent<InputManager>();
         input.SetInputManager(this);
-        UIManager.Instance.SetMatchUI(this);
+        coolTime = new CoolTimeManager();
+
+        UIMatchHUDData matchHUD = new UIMatchHUDData();
+        matchHUD.teamScoreText = "<color=red>0</color> vs <color=blue>0</color>";
+        matchHUD.playerStatText = "0 / 0";
+        matchHUD.timerText = "00:00";
+        UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
+        UIChampionHUDData championHUD = new UIChampionHUDData();
+        championHUD.champion = this;
+        UIManager.Instance.OpenUI<UIChampionHUD>(championHUD);
     }
 
     public SkillTable GetSkillData(SkillInputType skillInputType)
@@ -91,6 +96,18 @@ public class Champion : GameEntity
     protected override void Awake()
     {
         base.Awake();
+        currentLevel = new NetworkVariable<int>(1);
+        currentExp = new NetworkVariable<int>(0);
+        currentLevel.OnValueChanged += (previous, next) =>
+        {
+            OnLevelChanged?.Invoke(next);
+        };
+
+        currentExp.OnValueChanged += (previous, next) =>
+        {
+            OnExpChanged?.Invoke(next, requireExp);
+        };
+
         championAnimator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         attackTarget = null;
@@ -112,11 +129,11 @@ public class Champion : GameEntity
         agent.acceleration = 10000f;
         rotateSpeed = 3.0f;
 
-        currentExp = data.current_exp;
-        currentLevel = 1;
+        SetExp(data.current_exp);
+        SetLevel(1);
         maxLevel = data.max_level;
         agent.speed = moveSpeed;
-        LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(currentLevel);
+        LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(currentLevel.Value);
         requireExp = levelTable.require_exp;
 
         skillDict = new Dictionary<SkillInputType, SkillTable>();
@@ -245,28 +262,43 @@ public class Champion : GameEntity
 
     public void OnGetExpItem(int expAmount)
     {
-        if(currentLevel >= maxLevel)
+        int calcExp = 0;
+        if(currentLevel.Value >= maxLevel)
         {
             return;
         }
-
-        currentExp += expAmount;
-        if(currentExp >= requireExp)
+        
+        calcExp = currentExp.Value + expAmount;
+        if(calcExp >= requireExp)
         {
-            currentLevel++;
-            OnLevelChanged?.Invoke(currentLevel);
-            currentExp -= requireExp;
+            int nextLevel = currentLevel.Value + 1;
+            ChampionTable championData = TableManager.Instance.FindTableData<ChampionTable>(entityID);
+            //TODO Level에 따른 스탯 변경
+            SetLevel(nextLevel);
+            SetMaxHP(Formula.CalcHP(championData.hp, nextLevel));
+            SetHP(Formula.CalcHP(championData.hp, nextLevel));
+            attackDamage = Formula.CalcAttack(championData.attack, nextLevel);
+            recoveryAmount = Formula.CalcRecovery(championData.recovery, nextLevel);
+
+            OnLevelChanged?.Invoke(nextLevel);
+            int calcRestExp = calcExp - requireExp;
+            SetExp(calcRestExp);
             
-            LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(currentLevel);
+            LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(nextLevel);
             requireExp = levelTable.require_exp;
            
-            if(currentLevel >= maxLevel)
+            if(nextLevel >= maxLevel)
             {
-                currentExp = requireExp;
+                calcExp = requireExp;
+                SetExp(requireExp);
             }
         }
+        else
+        {
+            SetExp(calcExp);
+        }
 
-        OnExpChanged?.Invoke(currentExp, requireExp);
+        OnExpChanged?.Invoke(calcExp, requireExp);
     }
 
     public void OnChampionDeadComplete()
@@ -282,5 +314,38 @@ public class Champion : GameEntity
             transform.position = spawnBlueTeamPosition;
         }
         agent.enabled = true;
+    }
+
+    public void SetExp(int exp)
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        ServerSetExpRpc(exp);
+    }
+    [Rpc(SendTo.Server)]
+    public void ServerSetExpRpc(int exp)
+    {
+        if (IsServer)
+        {
+            currentExp.Value = exp;
+        }
+    }
+    public void SetLevel(int level)
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        ServerSetLevelRpc(level);
+    }
+    [Rpc(SendTo.Server)]
+    public void ServerSetLevelRpc(int level)
+    {
+        if (IsServer)
+        {
+            currentLevel.Value = level;
+        }
     }
 } 

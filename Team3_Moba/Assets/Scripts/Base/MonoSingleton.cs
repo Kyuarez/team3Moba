@@ -9,11 +9,6 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         get
         {
-            if (instance == null)
-            {
-                instance = Object.FindAnyObjectByType<T>();
-            }
-
             return instance;
         }
     }

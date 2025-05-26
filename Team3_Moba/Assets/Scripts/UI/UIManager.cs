@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Unity.Netcode;
 
 public class UIManager : MonoSingleton<UIManager>
 {
@@ -75,22 +76,13 @@ public class UIManager : MonoSingleton<UIManager>
         ui.transform.SetParent(UIClosedTransform);
         frontUI = null;
 
-        var lastChild = UIOpenedTransform.GetChild(UIOpenedTransform.childCount - 1);
-        if(lastChild != null)
+        if(UIOpenedTransform.childCount > 0)
         {
-            frontUI = lastChild.GetComponent<UIBase>();
+            var lastChild = UIOpenedTransform.GetChild(UIOpenedTransform.childCount - 1);
+            if(lastChild != null)
+            {
+                frontUI = lastChild.GetComponent<UIBase>();
+            }
         }
-    }
-
-    public void SetMatchUI(Champion playerChampion)
-    {
-        UIMatchHUDData matchHUD = new UIMatchHUDData();
-        matchHUD.teamScoreText = "<color=red>0</color> vs <color=blue>0</color>";
-        matchHUD.playerStatText = "0 / 0";
-        matchHUD.timerText = "00:00";
-        UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
-        UIChampionHUDData championHUD = new UIChampionHUDData();
-        championHUD.champion = playerChampion;
-        UIManager.Instance.OpenUI<UIChampionHUD>(championHUD);
     }
 }
