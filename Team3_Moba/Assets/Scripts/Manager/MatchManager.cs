@@ -52,11 +52,10 @@ public class MatchManager : NetworkBehaviour
         {
             if (networkManager.ConnectedClients.Count == 2)
             {
+                OnGameStart?.Invoke();
+
                 if (NetworkManager.Singleton.IsServer)
                 {
-                    //게임 시작 호출
-                    ClientsStartGameRpc();
-
                     //플레이어 생성
                     foreach (var client in NetworkManager.Singleton.ConnectedClients)
                     {
@@ -95,11 +94,10 @@ public class MatchManager : NetworkBehaviour
         };
     }
 
-    [Rpc(SendTo.Everyone)]
-    public void ClientsStartGameRpc()
-    {
-        OnGameStart?.Invoke();
-    }
+    //[Rpc(SendTo.Everyone)]
+    //public void ClientsStartGameRpc()
+    //{
+    //}
 
     /// <summary>
     /// parameter team : 죽은 대상의 팀

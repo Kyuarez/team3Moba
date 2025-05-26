@@ -32,10 +32,12 @@ public class GameEntity : NetworkBehaviour
     private Coroutine recoveryCoroutine;
 
     protected Transform projectileTransform;
+    protected Transform markerTransform;
 
     protected virtual void Awake()
     {
         projectileTransform = transform.Find("ProjectileTransform");
+        markerTransform = transform.Find("Marker");
 
         team = new NetworkVariable<Team>(Team.None);
         maxHP = new NetworkVariable<float>(0f);
@@ -50,6 +52,30 @@ public class GameEntity : NetworkBehaviour
         {
             OnHPChanged?.Invoke(next, maxHP.Value);
         };
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        GameObject billboardPrefab = null;
+        Champion champion = this as Champion;
+        if (champion != null)
+        {
+            billboardPrefab = Resources.Load<GameObject>("UI/Billboard/UIChampionBillboard");
+        }
+        else
+        {
+            billboardPrefab = Resources.Load<GameObject>("UI/Billboard/UIEntityBillboard");
+        }
+
+        if (billboardPrefab != null) 
+        {
+            GameObject billboardObj = Instantiate(billboardPrefab);
+            billboardObj.transform.SetParent(markerTransform, false);
+            IBillboardActor billboardActor = billboardObj.GetComponent<IBillboardActor>();
+            billboardActor.Bind(this);
+        }
     }
 
     public int GetEntityID()
