@@ -34,6 +34,7 @@ public partial class TableManager
         LoadTable<ChampionTable>("ChampionTable", out championTable, x => x.id);
         LoadTable<SkillTable>("SkillTable", out skillTable, x => x.id);
         LoadTable<LevelTable>("LevelTable", out levelTable, x => x.id);
+        LoadTable<SoundTable>("SoundTable", out soundTable, x => x.id);
     }
 
     private void LoadTable<T>(string tableName, out Dictionary<int, T> outDict, System.Func<T, int> keySelector)
@@ -79,11 +80,20 @@ public partial class TableManager
             if (typedDict != null && typedDict.TryGetValue(id, out var result))
                 return result;
         }
-
         Debug.LogError($"[TableManager] No data found for type {typeof(T).Name} and ID {id}");
         return null;
     }
-
+    public Dictionary<int, T> FindAllTableData<T>() where T : class
+    {
+        if (tableMap.TryGetValue(typeof(T), out var obj))
+        {
+            var typedDict = obj as Dictionary<int, T>;
+            if (typedDict != null)
+                return typedDict;
+        }
+        Logger.LogError($"[TableManager] No data found for type {typeof(T).Name}");
+        return new Dictionary<int, T>();
+    }
     #region DataTable
     private Dictionary<Type, object> tableMap = new Dictionary<Type, object>();
 
@@ -91,5 +101,6 @@ public partial class TableManager
     private Dictionary<int, ChampionTable> championTable = new Dictionary<int, ChampionTable>();
     private Dictionary<int, SkillTable> skillTable = new Dictionary<int, SkillTable>();
     private Dictionary<int, LevelTable> levelTable = new Dictionary<int , LevelTable>();
+    private Dictionary<int, SoundTable> soundTable = new Dictionary<int, SoundTable>();
     #endregion
 }
