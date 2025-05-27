@@ -450,9 +450,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04e846a5609307440866edb1d4c5be87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerPrefab: {fileID: 581128812550074909, guid: 20519e0d49948c54985a2019c3ed5a99, type: 3}
-  _connectPanel: {fileID: 5575016946830646328}
-  _waitingPanel: {fileID: 7185043935765628045}
+  connectPanel: {fileID: 5575016946830646328}
+  waitingPanel: {fileID: 7185043935765628045}
   hostButton: {fileID: 3965936654166696413}
   serverButton: {fileID: 2370300896358985377}
   clientButton: {fileID: 2901299224702043018}
@@ -706,7 +705,7 @@ GameObject:
   - component: {fileID: 6338342545161613417}
   - component: {fileID: 6821845374799276870}
   m_Layer: 5
-  m_Name: MatchingPanel
+  m_Name: WaitingPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

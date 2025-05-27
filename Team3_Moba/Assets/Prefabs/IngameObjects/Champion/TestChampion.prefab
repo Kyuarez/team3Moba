@@ -97,6 +97,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 958723051179019323}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &331876223898593910
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4260745434697102122}
+  m_Layer: 0
+  m_Name: Marker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4260745434697102122
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331876223898593910}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.786, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2953036634735983564}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &394356943829018451
 GameObject:
   m_ObjectHideFlags: 0
@@ -1485,6 +1516,7 @@ Transform:
   - {fileID: 3682813797611746551}
   - {fileID: 2808614305578129268}
   - {fileID: 7995068894717644034}
+  - {fileID: 4260745434697102122}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1867673493981614592
@@ -1532,6 +1564,10 @@ MonoBehaviour:
     rid: -2
   currentHP:
     rid: -2
+  currentLevel:
+    m_InternalValue: 0
+  currentExp:
+    m_InternalValue: 0
   references:
     version: 2
     RefIds:

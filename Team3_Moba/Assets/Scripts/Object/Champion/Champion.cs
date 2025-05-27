@@ -245,7 +245,6 @@ public class Champion : GameEntity
 
     private void OnDeadAction()
     {
-        Logger.Log("바로 죽음  " + currentHP);
         agent.enabled = false;
         championAnimator.SetTrigger("OnDead");
         //TODO 애니메이션이 끝났다면 실행
@@ -258,6 +257,20 @@ public class Champion : GameEntity
         yield return new WaitForSeconds(respawnTimeChampion);
         championAnimator.SetTrigger("OnRespawn");
         OnDeadComplete?.Invoke();
+    }
+    public void OnChampionDeadComplete()
+    {
+        SetHP(maxHP.Value);
+
+        if (GetTeam() == Team.Red)
+        {
+            transform.position = spawnRedTeamPosition;
+        }
+        else if (GetTeam() == Team.Blue)
+        {
+            transform.position = spawnBlueTeamPosition;
+        }
+        agent.enabled = true;
     }
 
     public void OnGetExpItem(int expAmount)
@@ -301,20 +314,6 @@ public class Champion : GameEntity
         OnExpChanged?.Invoke(calcExp, requireExp);
     }
 
-    public void OnChampionDeadComplete()
-    {
-        SetHP(maxHP.Value);
-
-        if (GetTeam() == Team.Red)
-        {
-            transform.position = spawnRedTeamPosition;
-        }
-        else if (GetTeam() == Team.Blue)
-        {
-            transform.position = spawnBlueTeamPosition;
-        }
-        agent.enabled = true;
-    }
 
     public void SetExp(int exp)
     {

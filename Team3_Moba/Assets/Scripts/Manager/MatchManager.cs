@@ -22,7 +22,7 @@ public class MatchManager : NetworkBehaviour
     private NetworkVariable<int> blueTeamKills = new NetworkVariable<int>();
     private NetworkVariable<float> matchTime = new NetworkVariable<float>();
 
-    public Action<Team> OnGameOver;
+    public Action<Team, bool> OnGameOver; //½Â¸®ÆÀ, ÇöÀç Å¬¶óÀÌ¾ðÆ®°¡ ÀÌ°å´ÂÁö
     public Action<int, int> OnChangedMatchScore;
     public Action<DateTime> OnUpdateMatchTimer;
 
@@ -56,6 +56,7 @@ public class MatchManager : NetworkBehaviour
 
                 if (NetworkManager.Singleton.IsServer)
                 {
+                    //ÇÃ·¹ÀÌ¾î »ý¼º
                     foreach (var client in NetworkManager.Singleton.ConnectedClients)
                     {
                         var instance = Instantiate(_playerPrefab);
@@ -91,18 +92,26 @@ public class MatchManager : NetworkBehaviour
         {
             OnUpdateMatchTimer?.Invoke(GetMatchTime(next));
         };
-    }   
+    }
 
+    //[Rpc(SendTo.Everyone)]
+    //public void ClientsStartGameRpc()
+    //{
+    //}
+
+    /// <summary>
+    /// parameter team : Á×Àº ´ë»óÀÇ ÆÀ
+    /// </summary>
     [Rpc(SendTo.Server)]
     public void ServerUpdateTeamKillRpc(Team team)
     {
         if (team == Team.Red)
         {
-            redTeamKills.Value++;
+            blueTeamKills.Value++;
         }
         else if (team == Team.Blue)
         {
-            blueTeamKills.Value++;
+            redTeamKills.Value++;
         }
     }
 
@@ -120,14 +129,25 @@ public class MatchManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.Everyone)]
-    public void ClientsOnGameoverRpc(Team team)
+    public void ClientsOnGameoverRpc(Team winTeam)
     {
-        Logger.Log($"½Â¸®ÆÀ : {team}");
-        OnGameOver?.Invoke(team);
+        Logger.Log($"½Â¸®ÆÀ : {winTeam}");
+        bool isWin = false;
+        if (IsHost)
+        {
+            isWin = (winTeam == Team.Red);
+        }
+        else if (IsClient)
+        {
+            isWin = (winTeam == Team.Blue);
+        }
+
+        OnGameOver?.Invoke(winTeam, isWin);
     }
 
     public DateTime GetMatchTime(float matchTime)
     {
         return DateTime.MinValue.AddSeconds(matchTime);
     }
+
 }

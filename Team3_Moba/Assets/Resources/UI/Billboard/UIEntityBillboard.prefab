@@ -87,6 +87,8 @@ GameObject:
   - component: {fileID: 8429730555361604078}
   - component: {fileID: 5386353324352579741}
   - component: {fileID: 7167007192821367888}
+  - component: {fileID: 7840180508520969745}
+  - component: {fileID: 2014494457577039948}
   m_Layer: 5
   m_Name: UIEntityBillboard
   m_TagString: Untagged
@@ -178,6 +180,32 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &7840180508520969745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5134598974176389479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83a9836b39372c14486f561cc9141a2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 8429730555361604078}
+--- !u!114 &2014494457577039948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5134598974176389479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 966e961a07bab764ebd264889b5d1783, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hpBar: {fileID: 4577768296258556966}
 --- !u!1 &7545021995514436701
 GameObject:
   m_ObjectHideFlags: 0

@@ -85,21 +85,21 @@ public class MatchCameraController : MonoBehaviour
         this.target = target;
     }
 
-    public void OnGameOverCamera(Team team)
+    public void OnGameOverCamera(Team team, bool isWin)
     {
         target = null;
         //타겟 주기
         if (team == Team.Blue)
         {
-            StartCoroutine(CoGameOverCamerea(new Vector3(3.6f, 3f, -6f)));
+            StartCoroutine(CoGameOverCamerea(new Vector3(3.6f, 3f, -6f), isWin));
         }
         else if (team == Team.Red)
         {
-            StartCoroutine(CoGameOverCamerea(new Vector3(-122.4f, 3f, -128f)));
+            StartCoroutine(CoGameOverCamerea(new Vector3(-122.4f, 3f, -128f), isWin));
         }
     }
 
-    IEnumerator CoGameOverCamerea(Vector3 nexusPosition)
+    IEnumerator CoGameOverCamerea(Vector3 nexusPosition, bool isWin)
     {
         Vector3 destination = nexusPosition + lockOffset;
         float duration = 2.0f; // 카메라 이동 시간
@@ -112,6 +112,10 @@ public class MatchCameraController : MonoBehaviour
             yield return null;
         }
         transform.position = destination;
-    }
 
+        //UI가 켜지는건 이 시점에 해야 함.
+        UIResultData uiData = new UIResultData();
+        uiData.isWin = isWin;
+        UIManager.Instance.OpenUI<UIResult>(uiData);
+    }
 }
