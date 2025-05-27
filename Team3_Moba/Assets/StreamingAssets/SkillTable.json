@@ -4,49 +4,53 @@
       "id": "1",
       "skill_name": "fireBall",
       "damage": "100",
-      "description": "",
+      "description": "q",
       "cool_time": "25",
       "excute_type": "SetTarget",
       "action_type": "Launch",
       "duration_time": "0",
       "duration_damage": "0",
-      "buff_amount": "0"
+      "buff_amount": "0",
+      "skill_icon": "UI_Skill_Icon_Fireball"
     },
     {
       "id": "2",
       "skill_name": "airStrike",
       "damage": "0",
-      "description": "",
+      "description": "w",
       "cool_time": "20",
       "excute_type": "NoneTarget",
       "action_type": "Launch",
       "duration_time": "5",
       "duration_damage": "25",
-      "buff_amount": "0"
+      "buff_amount": "0",
+      "skill_icon": "UI_Skill_Icon_AirStrike"
     },
     {
       "id": "3",
       "skill_name": "toxic",
       "damage": "0",
-      "description": "",
+      "description": "e",
       "cool_time": "10",
       "excute_type": "NoneTarget",
       "action_type": "Buff",
       "duration_time": "10",
       "duration_damage": "10",
-      "buff_amount": "0"
+      "buff_amount": "0",
+      "skill_icon": "UI_Skill_Icon_Toxics"
     },
     {
       "id": "4",
       "skill_name": "ice",
       "damage": "75",
-      "description": "",
+      "description": "r",
       "cool_time": "10",
       "excute_type": "NoneTarget",
       "action_type": "Buff",
       "duration_time": "8",
       "duration_damage": "0",
-      "buff_amount": "0.8"
+      "buff_amount": "0.8",
+      "skill_icon": "UI_Skill_Icon_Ice"
     }
   ]
 }

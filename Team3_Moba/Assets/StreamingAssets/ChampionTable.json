@@ -4,16 +4,17 @@
       "id": "1",
       "hp": "500",
       "mp": "100",
-      "attack": "10",
+      "attack": "25",
       "attack_range": "3",
-      "attack_cool_time": "1",
-      "move_speed": "30",
+      "attack_cool_time": "3",
+      "move_speed": "10",
       "recovery": "10",
       "max_level": "10",
       "current_exp": "0",
       "skill_list": [
         "1"
-      ]
+      ],
+      "champion_icon": "Icon_Champion_1"
     }
   ]
 }
