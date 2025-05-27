@@ -72,5 +72,5 @@ public class EffectTable
 {
     public int id;
     public string path;
-    public string name;
+    public string effect_name;
 }
