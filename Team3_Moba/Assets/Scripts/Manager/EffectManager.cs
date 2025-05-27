@@ -20,13 +20,13 @@ public class EffectManager : MonoSingleton<EffectManager>
     }
     void Start()
     {
-        var EffectTableDict = TableManager.Instance.FindAllTableData<EffectTable>();
-        foreach (var EffectTable in EffectTableDict)
-        {
-            var effectList = EffectTable.Value;
-            Logger.Log("¿Ã∆Â∆Æ  : " + effectList.effect_name);
-            AddEffectDict(effectList.id, effectList.path, effectList.effect_name);
-        }
+        //var EffectTableDict = TableManager.Instance.FindAllTableData<EffectTable>();
+        //foreach (var EffectTable in EffectTableDict)
+        //{
+        //    var effectList = EffectTable.Value;
+        //    Logger.Log("¿Ã∆Â∆Æ  : " + effectList.effect_name);
+        //    AddEffectDict(effectList.id, effectList.path, effectList.effect_name);
+        //}
     }
 
 
