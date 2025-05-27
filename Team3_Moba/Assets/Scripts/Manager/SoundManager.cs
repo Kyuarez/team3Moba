@@ -24,17 +24,6 @@ public class SoundManager : MonoSingleton<SoundManager>
     protected override void Awake()
     {
         base.Awake();
-
-
-
-        //  사운드 데이터를 불러오는 부분은 TableManager에서 처리하도록 변경
-        //SoundTable data = TableManager.Instance.FindTableData<SoundTable>(1); // 예시로 ID 1의 SoundTable 데이터를 가져옴
-        //data.path = "BGM"; // 예시로 경로를 설정
-        //AddBGMDict(data.id, data.path); // 예시로 BGM 사운드 추가
-        //PlaySFX(data.id); // 예시로 SFX 재생
-        //PlaySFX(2, new Vector3(0, 0, 0)); // 예시로 SFX를 특정 위치에서 재생
-
-
     }
     private void Start()
     {

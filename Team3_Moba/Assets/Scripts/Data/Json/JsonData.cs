@@ -67,3 +67,10 @@ public class SoundTable
     public string path;
     public string sound_name;
 }
+
+public class EffectTable
+{
+    public int id;
+    public string path;
+    public string effect_name;
+}
