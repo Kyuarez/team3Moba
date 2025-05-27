@@ -223,7 +223,6 @@ public class GameEntity : NetworkBehaviour
                 target.TakeDamage(damage, isChampionAttack);
             }   
         }
-        //TODO
     }
 
     [Rpc(SendTo.Server)]
