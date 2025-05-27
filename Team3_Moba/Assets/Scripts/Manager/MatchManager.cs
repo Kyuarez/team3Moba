@@ -65,7 +65,7 @@ public class MatchManager : NetworkBehaviour
                     }
                 }
                 SoundManager.Instance.PlayBGM(1);
-                SoundManager.Instance.PlayBGM(8);
+                SoundManager.Instance.PlaySFX(8);
             }
         };
     }
@@ -139,14 +139,13 @@ public class MatchManager : NetworkBehaviour
         if (IsHost)
         {
             isWin = (winTeam == Team.Red);
-            SoundManager.Instance.PlaySFX(10); //패배 사운드 재생
+            SoundManager.Instance.PlaySFX(10); //승리 사운드 재생
         }
         else if (IsClient)
         {
             isWin = (winTeam == Team.Blue);
-            SoundManager.Instance.PlaySFX(10); //패배 사운드 재생
+            SoundManager.Instance.PlaySFX(10); //승리 사운드 재생
         }
-
         OnGameOver?.Invoke(winTeam, isWin);
     }
 
