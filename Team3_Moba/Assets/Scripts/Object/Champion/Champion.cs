@@ -245,12 +245,6 @@ public class Champion : GameEntity
 
     private void OnDeadAction()
     {
-        Logger.Log("바로 죽음  " + currentHP);
-        //if (IsServer)
-        //{
-        //    MatchManager.Instance.ServerUpdateTeamKillRpc(team.Value);
-        //}
-
         agent.enabled = false;
         championAnimator.SetTrigger("OnDead");
         //TODO 애니메이션이 끝났다면 실행
