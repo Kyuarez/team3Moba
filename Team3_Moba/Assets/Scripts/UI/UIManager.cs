@@ -85,4 +85,15 @@ public class UIManager : MonoSingleton<UIManager>
             }
         }
     }
+
+    public T GetOpenedUI<T>() where T : UIBase
+    {
+        Type uiType = typeof(T);
+        UIBase ui = null;
+        if (OpenUIPool.ContainsKey(uiType))
+        {
+            ui = OpenUIPool[uiType].GetComponent<UIBase>();
+        }
+        return (T)ui;
+    }
 }
