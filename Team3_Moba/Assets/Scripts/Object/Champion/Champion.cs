@@ -239,6 +239,7 @@ public class Champion : GameEntity
         isAttacking = true;
         championAnimator.SetTrigger("OnAttack");
         Attack(Formula.CalcDamage(this), attackTarget);
+        SoundManager.Instance.PlaySFX(2);
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
     }
@@ -247,6 +248,7 @@ public class Champion : GameEntity
     {
         agent.enabled = false;
         championAnimator.SetTrigger("OnDead");
+        SoundManager.Instance.PlaySFX(2);
         //TODO 애니메이션이 끝났다면 실행
         StartCoroutine(CoRespawnChampion());
     }
@@ -270,6 +272,7 @@ public class Champion : GameEntity
         {
             transform.position = spawnBlueTeamPosition;
         }
+        SoundManager.Instance.PlaySFX(5);
         agent.enabled = true;
     }
 
@@ -280,7 +283,8 @@ public class Champion : GameEntity
         {
             return;
         }
-        
+
+        SoundManager.Instance.PlaySFX(7);
         calcExp = currentExp.Value + expAmount;
         if(calcExp >= requireExp)
         {

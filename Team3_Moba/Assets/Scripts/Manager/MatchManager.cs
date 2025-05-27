@@ -64,6 +64,8 @@ public class MatchManager : NetworkBehaviour
                         networkObject.SpawnAsPlayerObject(client.Key);
                     }
                 }
+                SoundManager.Instance.PlayBGM(1);
+                SoundManager.Instance.PlayBGM(8);
             }
         };
     }
@@ -74,7 +76,6 @@ public class MatchManager : NetworkBehaviour
         {
             return;
         }
-
         matchTime.Value += Time.deltaTime;
     }
 
@@ -121,10 +122,12 @@ public class MatchManager : NetworkBehaviour
         if(loseTeam == Team.Red)
         {
             ClientsOnGameoverRpc(Team.Blue);
+            SoundManager.Instance.PlaySFX(11); //패배 사운드 재생
         }
         else if(loseTeam == Team.Blue)
         {
             ClientsOnGameoverRpc(Team.Red);
+            SoundManager.Instance.PlaySFX(11); //패배 사운드 재생
         }
     }
 
@@ -136,10 +139,12 @@ public class MatchManager : NetworkBehaviour
         if (IsHost)
         {
             isWin = (winTeam == Team.Red);
+            SoundManager.Instance.PlaySFX(10); //패배 사운드 재생
         }
         else if (IsClient)
         {
             isWin = (winTeam == Team.Blue);
+            SoundManager.Instance.PlaySFX(10); //패배 사운드 재생
         }
 
         OnGameOver?.Invoke(winTeam, isWin);
