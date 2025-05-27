@@ -29,7 +29,7 @@ public class UIChampionHUD : UIBase
             return;
         }
         ChampionTable table = TableManager.Instance.FindTableData<ChampionTable>(data.champion.GetEntityID());
-        //championImage.sprite = table.championIcon;
+        championImage.sprite = Resources.Load<Sprite>($"Textures/Champion/{table.champion_icon}");
         championLevelText.text = data.champion.CurrentLevel.ToString();
         championHPText.text = $"{table.hp} / {table.hp}";
         championHPSlider.fillAmount = table.hp / table.hp;
@@ -51,7 +51,7 @@ public class UIChampionHUD : UIBase
             {
                 UISkillSlotData skillSlotData = new UISkillSlotData();
                 skillSlotData.slotType = UISlotType.Skill;
-                //skillSlotData.slotIcon = 
+                skillSlotData.slotIcon = Resources.Load<Sprite>($"Textures/Skill/{skillTable.skill_icon}");
                 skillSlotData.skillInputType = skillInput;
                 skillSlotData.skillTable = skillTable;
                 skillSlotData.champion = champion;

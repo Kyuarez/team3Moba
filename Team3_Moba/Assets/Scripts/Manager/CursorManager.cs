@@ -39,16 +39,10 @@ public class CursorManager : MonoBehaviour
         cursorImage = cursor.GetComponent<Image>();
     }
 
-    private IEnumerator Start()
+    public void SetTeam(Team team)
     {
-        // FIX: 게임 시작 이벤트가 필요한 것
-        yield return new WaitUntil(() => NetworkManager.Singleton.LocalClient?.PlayerObject != null);
-        var player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Champion>();
-        if (player != null) 
-        {
-            playerTeam = player.GetTeam();
-            SetCursorState(CursorState.Base);
-        }
+        playerTeam = team;
+        SetCursorState(CursorState.Base);
     }
 
     private void Update()
