@@ -49,11 +49,13 @@ public class Champion : GameEntity
         if (IsHost)
         {
             SetTeam(Team.Red);
+            UIUtil.SetCursorTeam(Team.Red);
             transform.position = spawnRedTeamPosition;
         }
         else if (IsClient)
         {
             SetTeam(Team.Blue);
+            UIUtil.SetCursorTeam(Team.Blue);
             transform.position = spawnBlueTeamPosition;
         }
         agent.enabled = true;
@@ -72,15 +74,8 @@ public class Champion : GameEntity
         InputManager input = GetComponent<InputManager>();
         input.SetInputManager(this);
         coolTime = new CoolTimeManager();
-
-        UIMatchHUDData matchHUD = new UIMatchHUDData();
-        matchHUD.teamScoreText = "<color=red>0</color> vs <color=blue>0</color>";
-        matchHUD.playerStatText = "0 / 0";
-        matchHUD.timerText = "00:00";
-        UIManager.Instance.OpenUI<UIMatchHUD>(matchHUD);
-        UIChampionHUDData championHUD = new UIChampionHUDData();
-        championHUD.champion = this;
-        UIManager.Instance.OpenUI<UIChampionHUD>(championHUD);
+        UIUtil.OnMatchWithChampion(this);
+        Logger.Log($"ClientsID set! : {OwnerClientId} / {team.Value.ToString()}");
     }
 
     public SkillTable GetSkillData(SkillInputType skillInputType)

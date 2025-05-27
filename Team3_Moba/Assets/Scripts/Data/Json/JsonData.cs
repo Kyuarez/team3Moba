@@ -36,6 +36,7 @@ public class ChampionTable
     public int max_level;
     public int current_exp;
     public List<int> skill_list;
+    public string champion_icon;
 }
 
 public class SkillTable
@@ -50,6 +51,7 @@ public class SkillTable
     public float duration_time;
     public float duration_damage;
     public float buff_amount;
+    public string skill_icon;
 }
 
 public class LevelTable
