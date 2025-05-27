@@ -98,7 +98,7 @@ public class InputManager : NetworkBehaviour
         }
     }
 
-    public void OnGameOverInput(Team team)
+    public void OnGameOverInput(Team team, bool isWin)
     {
         isInputActive = false;
     }

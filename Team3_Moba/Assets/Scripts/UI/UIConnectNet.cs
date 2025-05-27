@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,40 +10,49 @@ public class UIConnectNetData : UIBaseData
 
 public class UIConnectNet : UIBase
 {
-    [SerializeField] private GameObject _connectPanel;
-    [SerializeField] private GameObject _waitingPanel;
+    [SerializeField] private GameObject connectPanel;
+    [SerializeField] private GameObject waitingPanel;
 
     [SerializeField] private Button hostButton;
     [SerializeField] private Button serverButton;
     [SerializeField] private Button clientButton;
 
-    private void Awake()
+    public override void Initialize(Transform anchor)
     {
-        _connectPanel.SetActive(true);
-        _waitingPanel.SetActive(false);
+        base.Initialize(anchor);
+        connectPanel.SetActive(true);
+        waitingPanel.SetActive(false);
 
         hostButton.onClick.AddListener(() => {
             NetworkManager.Singleton.StartHost();
-            _connectPanel.SetActive(false);
-            _waitingPanel.SetActive(true);
+            WaitingWithConnect();
         });
 
         serverButton.onClick.AddListener(() => {
             NetworkManager.Singleton.StartServer();
-            _connectPanel.SetActive(false);
-            _waitingPanel.SetActive(true);
+            WaitingWithConnect();
         });
 
         clientButton.onClick.AddListener(() => {
             NetworkManager.Singleton.StartClient();
-            _connectPanel.SetActive(false);
-            _waitingPanel.SetActive(true);
+            WaitingWithConnect();
         });
+    }
 
+    public override void SetInfo(UIBaseData uidata)
+    {
+        base.SetInfo(uidata);
         MatchManager.Instance.OnGameStart += () =>
         {
             UIManager.Instance.CloseUI(this);
         };
     }
 
+
+
+    public void WaitingWithConnect()
+    {
+        connectPanel.SetActive(false);
+        waitingPanel.SetActive(true);
+    }
 }

@@ -2,25 +2,16 @@ using UnityEngine;
 
 public class UIBillboard : MonoBehaviour
 {
-    private BillboardActor actor;
-    private Transform cameraTransform;
+    [SerializeField] private Canvas canvas;
 
-    public void SetActor(BillboardActor actor)
+    private void Start()
     {
-        actor = this.actor;
-    }
-
-    public void Initialize(GameEntity entity)
-    {
-        cameraTransform = Camera.main.transform;
-        //behavior.Initialize(entity);
+        canvas.renderMode = RenderMode.WorldSpace;
+        canvas.worldCamera = Camera.main;
     }
 
     private void LateUpdate()
     {
-        if (cameraTransform != null)
-        {
-            transform.forward = cameraTransform.forward;
-        }
+        transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
     }
 }

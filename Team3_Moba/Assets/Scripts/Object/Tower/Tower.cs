@@ -29,8 +29,8 @@ public class Tower : GameEntity
 
     public override void OnNetworkSpawn()
     {
-        base.OnNetworkSpawn();
         SetTeam(initTeam);
+        base.OnNetworkSpawn();
         EntityTable data = TableManager.Instance.FindTableData<EntityTable>(entityID);
         InitData(data);
 
