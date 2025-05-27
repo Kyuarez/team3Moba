@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.AI;
 using System;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 
 public class Champion : GameEntity
 {
     private CoolTimeManager coolTime;
 
-    private Animator championAnimator;
+    private NetworkAnimator championAnimator;
     private NavMeshAgent agent;
 
     private float moveSpeed;
@@ -28,7 +29,8 @@ public class Champion : GameEntity
     private int maxLevel;
     public NetworkVariable<int> currentExp;
     private int requireExp;
-    
+    private NetworkVariable<float> moveFactor = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
     private Dictionary<SkillInputType, SkillTable> skillDict;
 
     //@TK : 차후 MVC 패턴에 맞게 Stat관리하는 별도 클래스 필요 (Level등)
@@ -103,7 +105,7 @@ public class Champion : GameEntity
             OnExpChanged?.Invoke(next, requireExp);
         };
 
-        championAnimator = GetComponent<Animator>();
+        championAnimator = GetComponent<NetworkAnimator>();
         agent = GetComponent<NavMeshAgent>();
         attackTarget = null;
         OnDead += OnDeadAction;
@@ -112,7 +114,15 @@ public class Champion : GameEntity
 
     private void Update()
     {
-        championAnimator.SetFloat("MoveFactor", agent.velocity.magnitude / agent.speed, animSmoothTime, Time.deltaTime);
+        if (IsOwner)
+        {
+            float value = agent.velocity.magnitude / agent.speed;
+            if (Mathf.Abs(moveFactor.Value - value) > 0.01f)
+            {
+                moveFactor.Value = value;
+            }
+        }
+        championAnimator.Animator.SetFloat("MoveFactor", moveFactor.Value, animSmoothTime, Time.deltaTime);
         coolTime?.Update();
     }
 
