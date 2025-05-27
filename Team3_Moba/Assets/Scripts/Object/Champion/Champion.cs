@@ -243,7 +243,7 @@ public class Champion : GameEntity
     {
         agent.enabled = false;
         championAnimator.SetTrigger("OnDead");
-        SoundManager.Instance.PlaySFX(2);
+        SoundManager.Instance.PlaySFX(5);
         //TODO 애니메이션이 끝났다면 실행
         StartCoroutine(CoRespawnChampion());
     }

@@ -27,6 +27,7 @@ public class SkillManager : MonoSingleton<SkillManager>
         Champion chapion = caster as Champion;
         if(chapion != null) 
         {
+            SoundManager.Instance.PlaySFX(12);
             chapion.PlayerCoolTime.SetCoolTime(reservationSkill.skill_name, reservationSkill.cool_time);
         }
 
