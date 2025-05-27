@@ -242,8 +242,8 @@ public class Champion : GameEntity
     private void OnDeadAction()
     {
         agent.enabled = false;
-        championAnimator.SetTrigger("OnDead");
         SoundManager.Instance.PlaySFX(5);
+        championAnimator.SetTrigger("OnDead");
         //TODO 애니메이션이 끝났다면 실행
         StartCoroutine(CoRespawnChampion());
     }
@@ -267,7 +267,6 @@ public class Champion : GameEntity
         {
             transform.position = spawnBlueTeamPosition;
         }
-        SoundManager.Instance.PlaySFX(5);
         agent.enabled = true;
     }
 
