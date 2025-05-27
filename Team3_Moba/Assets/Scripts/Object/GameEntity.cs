@@ -159,7 +159,7 @@ public class GameEntity : NetworkBehaviour
     {
         float hpData = Mathf.Max(0f, currentHP.Value - damageValue);
         SetHP(hpData);
-
+        SoundManager.Instance.PlaySFX(3);
         //사망 처리
         if (hpData <= 0)
         {

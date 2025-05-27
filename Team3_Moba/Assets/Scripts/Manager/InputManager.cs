@@ -31,7 +31,7 @@ public class InputManager : NetworkBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-
+            SoundManager.Instance.PlaySFX(9);
             if (playerChampion.GetHP() == 0)
             {
                 return;

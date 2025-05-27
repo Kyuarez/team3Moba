@@ -23,7 +23,6 @@ public partial class TableManager
         instance = this;
 
         LoadAllTables();
-        Logger.Log("");
     }
 
 

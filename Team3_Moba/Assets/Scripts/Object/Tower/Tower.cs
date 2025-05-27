@@ -41,6 +41,7 @@ public class Tower : GameEntity
             {
                 tower.OnDead += () =>
                 {
+                    SoundManager.Instance.PlaySFX(15);
                     invincibleConditionList.Remove(tower);
                 };
             }
@@ -51,6 +52,7 @@ public class Tower : GameEntity
             OnDead += () => {
                 if (IsOwner)
                 {
+                    SoundManager.Instance.PlaySFX(15);
                     MatchManager.Instance.ServerSetGameResultRpc(team.Value);
                 }
             };
@@ -139,6 +141,7 @@ public class Tower : GameEntity
             if (isAttacking == false)
             {
                 isAttacking = true;
+                SoundManager.Instance.PlaySFX(13);
                 StartCoroutine(CoAttackWithCooldown(target));
             }
         }

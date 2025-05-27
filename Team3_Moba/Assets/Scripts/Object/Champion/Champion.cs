@@ -244,6 +244,7 @@ public class Champion : GameEntity
         isAttacking = true;
         championAnimator.SetTrigger("OnAttack");
         Attack(Formula.CalcDamage(this), attackTarget);
+        SoundManager.Instance.PlaySFX(2);
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
     }
@@ -251,6 +252,7 @@ public class Champion : GameEntity
     private void OnDeadAction()
     {
         agent.enabled = false;
+        SoundManager.Instance.PlaySFX(5);
         championAnimator.SetTrigger("OnDead");
         //TODO 애니메이션이 끝났다면 실행
         StartCoroutine(CoRespawnChampion());
@@ -285,7 +287,8 @@ public class Champion : GameEntity
         {
             return;
         }
-        
+
+        SoundManager.Instance.PlaySFX(7);
         calcExp = currentExp.Value + expAmount;
         if(calcExp >= requireExp)
         {
