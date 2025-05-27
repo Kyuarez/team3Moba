@@ -2,63 +2,8 @@
   "EffectTable": [
     {
       "id": "1",
-      "path": "/Champion",
+      "path": "Champion",
       "effect_name": "Attack"
-    },
-    {
-      "id": "2",
-      "path": "/Champion",
-      "effect_name": "Hitted"
-    },
-    {
-      "id": "3",
-      "path": "/Champion",
-      "effect_name": "Revival"
-    },
-    {
-      "id": "4",
-      "path": "/GameSystem",
-      "effect_name": "ExpItem"
-    },
-    {
-      "id": "5",
-      "path": "/GameSystem",
-      "effect_name": "InItem"
-    },
-    {
-      "id": "6",
-      "path": "/GameSystem",
-      "effect_name": "BeginGame"
-    },
-    {
-      "id": "7",
-      "path": "/GameSystem",
-      "effect_name": "Win"
-    },
-    {
-      "id": "8",
-      "path": "/GameSystem",
-      "effect_name": "Lose"
-    },
-    {
-      "id": "9",
-      "path": "/Skill",
-      "effect_name": "fireBall"
-    },
-    {
-      "id": "10",
-      "path": "/Tower",
-      "effect_name": "attack1"
-    },
-    {
-      "id": "11",
-      "path": "/Tower",
-      "effect_name": "attack1"
-    },
-    {
-      "id": "12",
-      "path": "/Tower",
-      "effect_name": "death1"
     }
   ]
 }

@@ -245,6 +245,7 @@ public class Champion : GameEntity
         championAnimator.SetTrigger("OnAttack");
         Attack(Formula.CalcDamage(this), attackTarget);
         SoundManager.Instance.PlaySFX(2);
+        EffectManager.Instance.PlayEffect(1, attackTarget.transform.position,new Vector3(1,1,1), Quaternion.identity);
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
     }

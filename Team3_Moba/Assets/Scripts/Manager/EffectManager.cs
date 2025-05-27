@@ -20,13 +20,13 @@ public class EffectManager : MonoSingleton<EffectManager>
     }
     void Start()
     {
-        //var EffectTableDict = TableManager.Instance.FindAllTableData<EffectTable>();
-        //foreach (var EffectTable in EffectTableDict)
-        //{
-        //    var effectList = EffectTable.Value;
-        //    Logger.Log("¿Ã∆Â∆Æ  : " + effectList.effect_name);
-        //    AddEffectDict(effectList.id, effectList.path, effectList.effect_name);
-        //}
+        var EffectTableDict = TableManager.Instance.FindAllTableData<EffectTable>();
+        foreach (var EffectTable in EffectTableDict)
+        {
+            var effectList = EffectTable.Value;
+            Logger.Log("¿Ã∆Â∆Æ  : " + effectList.effect_name);
+            AddEffectDict(effectList.id, effectList.path, effectList.effect_name);
+        }
     }
 
 
@@ -49,9 +49,11 @@ public class EffectManager : MonoSingleton<EffectManager>
 
     public void PlayEffect(int id, Vector3 position, Vector3 scale, Quaternion rotation)
     {
+
         ParticleSystem effect = Instantiate(effectDict[id], position, rotation);
         effect.gameObject.transform.localScale = scale;
         effect.Play();
+
         Destroy(effect.gameObject, effect.main.duration);
     }
 
