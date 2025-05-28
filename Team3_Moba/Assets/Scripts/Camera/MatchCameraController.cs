@@ -15,7 +15,7 @@ public class MatchCameraController : MonoBehaviour
     [SerializeField] private MatchCameraState cameraState;
     [SerializeField] private Vector3 lockOffset;
 
-    private float cameraSpeed = 10f;
+    private float cameraSpeed = 20f;
     private float edgeSize = 20f;
 
     private Transform target;

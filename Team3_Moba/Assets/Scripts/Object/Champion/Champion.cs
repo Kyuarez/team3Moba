@@ -9,17 +9,14 @@ using Unity.Netcode.Components;
 public class Champion : GameEntity
 {
     private CoolTimeManager coolTime;
-
     private NetworkAnimator championAnimator;
     private NavMeshAgent agent;
 
     private float moveSpeed;
     private float rotateSpeed;
     private float rotateVelocity;
-
     private float animSmoothTime = 0.1f;
-
-    private float respawnTimeChampion = 5.0f;
+    private float respawnTimeChampion = 15.0f;
 
     private GameEntity attackTarget;
     private Coroutine autoAttackCoroutine;
@@ -35,12 +32,14 @@ public class Champion : GameEntity
 
     //@TK : 차후 MVC 패턴에 맞게 Stat관리하는 별도 클래스 필요 (Level등)
     public event Action OnDeadComplete;
+    public event Action<float> OnChampionRespawnTimer; //부활 타이머 이벤트
     public event Action<float, float> OnExpChanged;
     public event Action<int> OnLevelChanged;
 
-
     private Vector3 spawnRedTeamPosition = new Vector3(19f, 6f, 5f);
     private Vector3 spawnBlueTeamPosition = new Vector3(-135f, 6f, -140f);
+    private GameObject model; //@tk : 죽었을 시, 화면에 안보이게 모델 active false
+
     public CoolTimeManager PlayerCoolTime => coolTime;
     public int CurrentLevel => currentLevel.Value;
     public int CurrentExp => currentExp.Value;
@@ -114,6 +113,7 @@ public class Champion : GameEntity
             OnExpChanged?.Invoke(currentExp.Value, next);
         };
 
+        model = transform.Find("Model").gameObject;
         championAnimator = GetComponent<NetworkAnimator>();
         agent = GetComponent<NavMeshAgent>();
         attackTarget = null;
@@ -261,18 +261,46 @@ public class Champion : GameEntity
 
     private void OnDeadAction()
     {
+        if (IsOwner)
+        {
+            SoundManager.Instance.PlaySFX(5);
+            VolumeHandler.Instance.PlayerDeadVolume();
+        }
+        
         agent.enabled = false;
-        SoundManager.Instance.PlaySFX(5);
+        ResetAttackTarget();
+        ResetRecovery();
         championAnimator.SetTrigger("OnDead");
-        //TODO 애니메이션이 끝났다면 실행
         StartCoroutine(CoRespawnChampion());
     }
 
 
     IEnumerator CoRespawnChampion()
     {
-        yield return new WaitForSeconds(respawnTimeChampion);
+        AnimatorStateInfo stateInfo = championAnimator.Animator.GetCurrentAnimatorStateInfo(0);
+        while (!stateInfo.IsName("Dead") || stateInfo.normalizedTime < 1.0f)
+        {
+            yield return null;
+            stateInfo = championAnimator.Animator.GetCurrentAnimatorStateInfo(0);
+        }
+
+        model.SetActive(false);
+        
+        //부활 타이머
+        float timer = respawnTimeChampion;
+        while (timer > 0f)
+        {
+            OnChampionRespawnTimer?.Invoke(timer);
+            yield return new WaitForSeconds(1f);
+            timer -= 1f;
+        }
+
+        if (IsOwner)
+        {
+            VolumeHandler.Instance.PlayerRespawnVolume();
+        }
         championAnimator.SetTrigger("OnRespawn");
+        model.SetActive(true);
         OnDeadComplete?.Invoke();
     }
     public void OnChampionDeadComplete()
@@ -286,6 +314,11 @@ public class Champion : GameEntity
         else if (GetTeam() == Team.Blue)
         {
             transform.position = spawnBlueTeamPosition;
+        }
+
+        if (IsServer)
+        {
+            ServerSetIsDeadRpc(false);
         }
         agent.enabled = true;
         EffectManager.Instance.PlayEffect(3,gameObject.transform.position,new Vector3(1,1,1),Quaternion.identity);
