@@ -88,7 +88,7 @@
       "id": "15",
       "sound_type": "SFX",
       "path": "SFX/Tower",
-      "sound_name": "death1"
+      "sound_name": "collapse"
     }
   ]
 }
