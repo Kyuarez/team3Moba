@@ -11,8 +11,10 @@ public class UIResultData : UIBaseData
 
 public class UIResult : UIBase
 {
+    [SerializeField] private Sprite victorySprite;
+    [SerializeField] private Sprite defeatSprite;
 
-    [SerializeField] private TextMeshProUGUI resultText;
+    [SerializeField] private Image resultImage;
     [SerializeField] private Button exitButton;
 
     public override void Initialize(Transform anchor)
@@ -29,12 +31,12 @@ public class UIResult : UIBase
         if(data.isWin == true)
         {
             SoundManager.Instance.PlaySFX(10); //승리 사운드 재생
-            resultText.text = "Victory!";
+            resultImage.sprite = victorySprite;
         }
         else
         {
             SoundManager.Instance.PlaySFX(11); //패배 사운드 재생
-            resultText.text = "Lose :/";
+            resultImage.sprite = defeatSprite;
         }
     }
     private void OnClickExitButton()

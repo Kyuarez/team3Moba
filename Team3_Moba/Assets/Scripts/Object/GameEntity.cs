@@ -10,6 +10,7 @@ public class GameEntity : NetworkBehaviour
     
     [SerializeReference] protected NetworkVariable<Team> team;
     //  health variable
+    [SerializeReference] protected NetworkVariable<bool> isDead; // 초당 회복력
     [SerializeReference] protected NetworkVariable<float> maxHP;
     [SerializeReference] protected NetworkVariable<float> currentHP;
 
@@ -38,12 +39,13 @@ public class GameEntity : NetworkBehaviour
 
     protected virtual void Awake()
     {
-        projectileTransform = transform.Find("ProjectileTransform");
-        markerTransform = transform.Find("Marker");
+        projectileTransform = transform.FindRecursiveChild("ProjectileTransform");
+        markerTransform = transform.FindRecursiveChild("Marker");
 
         team = new NetworkVariable<Team>(Team.None);
         maxHP = new NetworkVariable<float>(0f);
         currentHP = new NetworkVariable<float>(0f);
+        isDead = new NetworkVariable<bool>(false);
 
         maxHP.OnValueChanged += (previous, next) =>
         {
@@ -170,20 +172,15 @@ public class GameEntity : NetworkBehaviour
             {
                 if (IsServer && isChampionAttack)
                 {
+                    ServerSetIsDeadRpc(true);
                     MatchManager.Instance.ServerUpdateTeamKillRpc(team.Value);
                 }
             }
-
             OnDead?.Invoke();
         }
 
         damagedTime = Time.time;
-        if (recoveryCoroutine != null)
-        {
-            StopCoroutine(recoveryCoroutine);
-            recoveryCoroutine = null;
-        }
-
+        ResetRecovery();
         recoveryCoroutine = StartCoroutine(CoRecovery());
     }
 
@@ -298,10 +295,24 @@ public class GameEntity : NetworkBehaviour
         }
     }
 
+    public void ResetRecovery()
+    {
+        if (recoveryCoroutine != null)
+        {
+            StopCoroutine(recoveryCoroutine);
+            recoveryCoroutine = null;
+        }
+    }
+
     public IEnumerator CoRecovery()
     {
         while (true)
         {
+            if(isDead.Value == true)
+            {
+                yield break;
+            }
+
             if (Time.time - damagedTime < recoveryDelay || currentHP.Value >= maxHP.Value)
             {
                 yield return null;
@@ -312,5 +323,11 @@ public class GameEntity : NetworkBehaviour
             SetHP(hpData);
             yield return new WaitForSeconds(1f);
         }
+    }
+
+    [Rpc(SendTo.Server)]
+    public void ServerSetIsDeadRpc(bool isDead)
+    {
+        this.isDead.Value = isDead;
     }
 }
