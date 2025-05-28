@@ -28,7 +28,7 @@ public class Champion : GameEntity
     public NetworkVariable<int> currentLevel;
     private int maxLevel;
     public NetworkVariable<int> currentExp;
-    private int requireExp;
+    private NetworkVariable<int> requireExp;
     private NetworkVariable<float> moveFactor = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     private Dictionary<SkillInputType, SkillTable> skillDict;
@@ -43,6 +43,8 @@ public class Champion : GameEntity
     private Vector3 spawnBlueTeamPosition = new Vector3(-135f, 6f, -140f);
     public CoolTimeManager PlayerCoolTime => coolTime;
     public int CurrentLevel => currentLevel.Value;
+    public int CurrentExp => currentExp.Value;
+    public int MaxExp => requireExp.Value;
 
     public override void OnNetworkSpawn()
     {
@@ -67,6 +69,8 @@ public class Champion : GameEntity
 
         if (IsOwner)
         {
+            UIConnectNet ui = UIManager.Instance.GetOpenedUI<UIConnectNet>();
+            UIManager.Instance.CloseUI(ui);
             PostNetworkSpawn();
         }
     }
@@ -77,7 +81,6 @@ public class Champion : GameEntity
         input.SetInputManager(this);
         coolTime = new CoolTimeManager();
         UIUtil.OnMatchWithChampion(this);
-        Logger.Log($"ClientsID set! : {OwnerClientId} / {team.Value.ToString()}");
     }
 
     public SkillTable GetSkillData(SkillInputType skillInputType)
@@ -95,6 +98,7 @@ public class Champion : GameEntity
         base.Awake();
         currentLevel = new NetworkVariable<int>(1);
         currentExp = new NetworkVariable<int>(0);
+        requireExp = new NetworkVariable<int>(0);
         currentLevel.OnValueChanged += (previous, next) =>
         {
             OnLevelChanged?.Invoke(next);
@@ -102,7 +106,12 @@ public class Champion : GameEntity
 
         currentExp.OnValueChanged += (previous, next) =>
         {
-            OnExpChanged?.Invoke(next, requireExp);
+            OnExpChanged?.Invoke(next, requireExp.Value);
+        }; 
+
+        requireExp.OnValueChanged += (previous, next) =>
+        {
+            OnExpChanged?.Invoke(currentExp.Value, next);
         };
 
         championAnimator = GetComponent<NetworkAnimator>();
@@ -139,7 +148,7 @@ public class Champion : GameEntity
         maxLevel = data.max_level;
         agent.speed = moveSpeed;
         LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(currentLevel.Value);
-        requireExp = levelTable.require_exp;
+        SetMaxExp(levelTable.require_exp);
 
         skillDict = new Dictionary<SkillInputType, SkillTable>();
 
@@ -290,7 +299,7 @@ public class Champion : GameEntity
 
         SoundManager.Instance.PlaySFX(7);
         calcExp = currentExp.Value + expAmount;
-        if(calcExp >= requireExp)
+        if(calcExp >= requireExp.Value)
         {
             int nextLevel = currentLevel.Value + 1;
             ChampionTable championData = TableManager.Instance.FindTableData<ChampionTable>(entityID);
@@ -302,24 +311,22 @@ public class Champion : GameEntity
             recoveryAmount = Formula.CalcRecovery(championData.recovery, nextLevel);
 
             OnLevelChanged?.Invoke(nextLevel);
-            int calcRestExp = calcExp - requireExp;
+            int calcRestExp = calcExp - requireExp.Value;
             SetExp(calcRestExp);
             
             LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(nextLevel);
-            requireExp = levelTable.require_exp;
+            SetMaxExp(levelTable.require_exp);
            
             if(nextLevel >= maxLevel)
             {
-                calcExp = requireExp;
-                SetExp(requireExp);
+                calcExp = levelTable.require_exp;
+                SetExp(requireExp.Value);
             }
         }
         else
         {
             SetExp(calcExp);
         }
-
-        OnExpChanged?.Invoke(calcExp, requireExp);
     }
 
 
@@ -339,6 +346,23 @@ public class Champion : GameEntity
             currentExp.Value = exp;
         }
     }
+    public void SetMaxExp(int exp)
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        ServerSetMaxExpRpc(exp);
+    }
+    [Rpc(SendTo.Server)]
+    public void ServerSetMaxExpRpc(int exp)
+    {
+        if (IsServer)
+        {
+            requireExp.Value = exp;
+        }
+    }
+
     public void SetLevel(int level)
     {
         if (!IsOwner)

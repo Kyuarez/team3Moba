@@ -23,9 +23,9 @@ public class BillboardEntityActor : MonoBehaviour, IBillboardActor
     {
         gameEntity.OnHPChanged += OnUpdateHpBar;
 
-        // HACK: 타워 구현 때문에 일단 추가..
-        float currentHp = gameEntity.GetHP();
-        float maxHp = gameEntity.GetHP();
+        EntityTable table = TableManager.Instance.FindTableData<EntityTable>(gameEntity.GetEntityID());
+        float currentHp = table.hp;
+        float maxHp = table.hp;
         hpBar.fillAmount = currentHp / maxHp;
     }
 }

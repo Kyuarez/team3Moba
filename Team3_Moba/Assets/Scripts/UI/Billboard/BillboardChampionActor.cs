@@ -31,5 +31,15 @@ public class BillboardChampionActor : MonoBehaviour, IBillboardActor
             champion.OnHPChanged += OnUpdateHP;
             champion.OnExpChanged += OnUpdateExp;
         }
+
+        ChampionTable table = TableManager.Instance.FindTableData<ChampionTable>(champion.GetEntityID());
+        LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(1);
+        float currentHp = table.hp;
+        float maxHp = table.hp;
+        hpBar.fillAmount = currentHp / maxHp;
+        float currentExp = 0;
+        float maxExp = levelTable.require_exp;
+        expBar.fillAmount = currentExp / maxExp;
+        levelText.text = champion.CurrentLevel.ToString();
     }
 }
