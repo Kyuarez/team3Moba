@@ -119,32 +119,30 @@ public class MatchManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void ServerSetGameResultRpc(Team loseTeam)
     {
-        if(loseTeam == Team.Red)
+        if (loseTeam == Team.Red)
         {
             ClientsOnGameoverRpc(Team.Blue);
-            SoundManager.Instance.PlaySFX(11); //패배 사운드 재생
         }
         else if(loseTeam == Team.Blue)
         {
             ClientsOnGameoverRpc(Team.Red);
-            SoundManager.Instance.PlaySFX(11); //패배 사운드 재생
         }
     }
 
     [Rpc(SendTo.Everyone)]
     public void ClientsOnGameoverRpc(Team winTeam)
     {
+        SoundManager.Instance.PauseBGM(); //배경음악 정지
+        //매치 종료 효과음 추가해도 좋을듯
         Logger.Log($"승리팀 : {winTeam}");
         bool isWin = false;
         if (IsHost)
         {
             isWin = (winTeam == Team.Red);
-            SoundManager.Instance.PlaySFX(10); //승리 사운드 재생
         }
         else if (IsClient)
         {
             isWin = (winTeam == Team.Blue);
-            SoundManager.Instance.PlaySFX(10); //승리 사운드 재생
         }
         OnGameOver?.Invoke(winTeam, isWin);
     }
