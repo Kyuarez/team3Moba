@@ -1,5 +1,7 @@
 using System;
+using TMPro;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,8 +16,8 @@ public class UIConnectNet : UIBase
     [SerializeField] private GameObject waitingPanel;
 
     [SerializeField] private Button hostButton;
-    [SerializeField] private Button serverButton;
     [SerializeField] private Button clientButton;
+    [SerializeField] private TMP_InputField ipInputField;
 
     public override void Initialize(Transform anchor)
     {
@@ -23,20 +25,31 @@ public class UIConnectNet : UIBase
         connectPanel.SetActive(true);
         waitingPanel.SetActive(false);
 
-        hostButton.onClick.AddListener(() => {
-            NetworkManager.Singleton.StartHost();
-            WaitingWithConnect();
-        });
+        hostButton.onClick.AddListener(OnClickConnectHost);
+        clientButton.onClick.AddListener(OnClickConnectClient);
+        ipInputField.onEndEdit.AddListener(OnEndEditIpAddress);
+    }
 
-        serverButton.onClick.AddListener(() => {
-            NetworkManager.Singleton.StartServer();
-            WaitingWithConnect();
-        });
+    public void OnEndEditIpAddress(string ipAddress)
+    {
+        UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+#if UNITY_EDITOR
+        transport.SetConnectionData("127.0.0.1", 7777);
+#else
+        transport.SetConnectionData(ipAddress, 7777);
+#endif
+    }
 
-        clientButton.onClick.AddListener(() => {
-            NetworkManager.Singleton.StartClient();
-            WaitingWithConnect();
-        });
+    public void OnClickConnectClient()
+    {
+        NetworkManager.Singleton.StartClient();
+        WaitingWithConnect();
+    }
+
+    public void OnClickConnectHost()
+    {
+        NetworkManager.Singleton.StartHost();
+        WaitingWithConnect();
     }
 
     public void WaitingWithConnect()
