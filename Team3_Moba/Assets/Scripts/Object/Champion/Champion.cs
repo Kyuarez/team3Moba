@@ -321,7 +321,7 @@ public class Champion : GameEntity
             ServerSetIsDeadRpc(false);
         }
         agent.enabled = true;
-        EffectManager.Instance.PlayEffect(3,gameObject.transform.position,new Vector3(1,1,1),Quaternion.identity);
+        EffectManager.Instance.PlayEffect(3,gameObject.transform.position,new Vector3(2,2,2),Quaternion.identity);
     }
 
     public void OnGetExpItem(int expAmount)

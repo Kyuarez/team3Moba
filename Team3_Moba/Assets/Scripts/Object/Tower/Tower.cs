@@ -170,7 +170,7 @@ public class Tower : GameEntity
 
     void OnTowerDestroyed()
     {
-        EffectManager.Instance.PlayEffect(12, gameObject.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
+        EffectManager.Instance.PlayEffect(12, gameObject.transform.position, new Vector3(3, 3, 3), Quaternion.identity);
         Destroy(gameObject);
 
     }
