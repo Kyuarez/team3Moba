@@ -64,11 +64,15 @@ public class Champion : GameEntity
         }
         agent.enabled = true;
         
+       
+
         ChampionTable data = TableManager.Instance.FindTableData<ChampionTable>(entityID);
         InitData(data);
 
         if (IsOwner)
         {
+            UIConnectNet ui = UIManager.Instance.GetOpenedUI<UIConnectNet>();
+            UIManager.Instance.CloseUI(ui);
             PostNetworkSpawn();
         }
     }

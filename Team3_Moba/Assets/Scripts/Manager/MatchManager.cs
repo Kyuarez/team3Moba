@@ -41,8 +41,8 @@ public class MatchManager : NetworkBehaviour
         table.OnLoadGameAction();
     }
 
-    public event Action OnGameStart;
 
+    private bool isPlayerSpawned = false;
     private void Start()
     {
         UIConnectNetData connectUI = new UIConnectNetData();
@@ -52,11 +52,10 @@ public class MatchManager : NetworkBehaviour
         {
             if (networkManager.ConnectedClients.Count == 2)
             {
-                OnGameStart?.Invoke();
-
-                if (NetworkManager.Singleton.IsServer)
+                if (NetworkManager.Singleton.IsServer && !isPlayerSpawned)
                 {
                     //플레이어 생성
+                    isPlayerSpawned = true;
                     foreach (var client in NetworkManager.Singleton.ConnectedClients)
                     {
                         var instance = Instantiate(_playerPrefab);
@@ -64,6 +63,7 @@ public class MatchManager : NetworkBehaviour
                         networkObject.SpawnAsPlayerObject(client.Key);
                     }
                 }
+
                 SoundManager.Instance.PlayBGM(1);
                 SoundManager.Instance.PlaySFX(8);
             }
@@ -95,10 +95,15 @@ public class MatchManager : NetworkBehaviour
         };
     }
 
-    //[Rpc(SendTo.Everyone)]
-    //public void ClientsStartGameRpc()
-    //{
-    //}
+    [Rpc(SendTo.Everyone)]
+    public void ClientsStartGameRpc()
+    {
+        //UIConnectNet netUI = UIManager.Instance.GetOpenedUI<UIConnectNet>();
+        //if (netUI != null)
+        //{
+        //    UIManager.Instance.CloseUI(netUI);
+        //}
+    }
 
     /// <summary>
     /// parameter team : 죽은 대상의 팀
