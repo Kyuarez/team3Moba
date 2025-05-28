@@ -32,12 +32,13 @@ public class BillboardChampionActor : MonoBehaviour, IBillboardActor
             champion.OnExpChanged += OnUpdateExp;
         }
 
-        // HACK: 타워 구현 때문에 일단 추가..
-        float currentHp = champion.GetHP();
-        float maxHp = champion.GetHP();
+        ChampionTable table = TableManager.Instance.FindTableData<ChampionTable>(champion.GetEntityID());
+        LevelTable levelTable = TableManager.Instance.FindTableData<LevelTable>(1);
+        float currentHp = table.hp;
+        float maxHp = table.hp;
         hpBar.fillAmount = currentHp / maxHp;
-        float currentExp = champion.CurrentExp;
-        float maxExp = champion.MaxExp;
+        float currentExp = 0;
+        float maxExp = levelTable.require_exp;
         expBar.fillAmount = currentExp / maxExp;
         levelText.text = champion.CurrentLevel.ToString();
     }
