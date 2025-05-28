@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using static SoundManager;
+using UnityEngine.UIElements;
 
 public class EffectManager : MonoSingleton<EffectManager>
 {
@@ -47,6 +48,7 @@ public class EffectManager : MonoSingleton<EffectManager>
         effectDict.Add(effectID, effect);
     }
 
+    //고정된 위치 이펙트 생성
     public void PlayEffect(int id, Vector3 position, Vector3 scale, Quaternion rotation)
     {
 
@@ -56,6 +58,17 @@ public class EffectManager : MonoSingleton<EffectManager>
 
         Destroy(effect.gameObject, effect.main.duration);
     }
+
+    //부모 위치 따라가는 이펙트 생성
+    public void PlayEffect(int id, Transform parent, Vector3 scale)
+    {
+        ParticleSystem effect = Instantiate(effectDict[id], parent);
+        effect.gameObject.transform.localScale = scale;
+        effect.gameObject.transform.rotation = Quaternion.identity;
+        effect.Play();
+        Destroy(effect.gameObject, effect.main.duration);
+    }
+
 
 
 }
