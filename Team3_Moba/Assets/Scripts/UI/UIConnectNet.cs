@@ -39,17 +39,6 @@ public class UIConnectNet : UIBase
         });
     }
 
-    public override void SetInfo(UIBaseData uidata)
-    {
-        base.SetInfo(uidata);
-        MatchManager.Instance.OnGameStart += () =>
-        {
-            UIManager.Instance.CloseUI(this);
-        };
-    }
-
-
-
     public void WaitingWithConnect()
     {
         connectPanel.SetActive(false);

@@ -4,7 +4,7 @@ public class UIBillboard : MonoBehaviour
 {
     [SerializeField] private Canvas canvas;
 
-    private void Start()
+    private void Awake()
     {
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.worldCamera = Camera.main;

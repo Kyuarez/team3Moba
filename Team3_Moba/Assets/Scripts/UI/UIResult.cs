@@ -28,10 +28,12 @@ public class UIResult : UIBase
 
         if(data.isWin == true)
         {
+            SoundManager.Instance.PlaySFX(10); //승리 사운드 재생
             resultText.text = "Victory!";
         }
         else
         {
+            SoundManager.Instance.PlaySFX(11); //패배 사운드 재생
             resultText.text = "Lose :/";
         }
     }

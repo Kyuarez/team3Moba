@@ -34,6 +34,8 @@ public class GameEntity : NetworkBehaviour
     protected Transform projectileTransform;
     protected Transform markerTransform;
 
+    protected GameObject billboardObj;
+
     protected virtual void Awake()
     {
         projectileTransform = transform.Find("ProjectileTransform");
@@ -71,8 +73,7 @@ public class GameEntity : NetworkBehaviour
 
         if (billboardPrefab != null) 
         {
-            GameObject billboardObj = Instantiate(billboardPrefab);
-            billboardObj.transform.SetParent(markerTransform, false);
+            billboardObj = Instantiate(billboardPrefab, markerTransform);
             IBillboardActor billboardActor = billboardObj.GetComponent<IBillboardActor>();
             billboardActor.Bind(this);
         }

@@ -44,7 +44,7 @@ public class SkillManager : MonoSingleton<SkillManager>
         if (reservationSkill.excute_type == SkillExecuteType.SetTarget)
         {
             GameEntity target = hit.collider.gameObject.GetComponent<GameEntity>();
-            if(target != null && caster.GetTeam() != target.GetTeam())
+            if(target != null && caster.GetTeam() != target.GetTeam() && !target.IsInvincible())
             {
                 return Execute(caster, target);
             }
