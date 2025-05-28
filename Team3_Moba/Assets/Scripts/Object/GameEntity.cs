@@ -222,7 +222,8 @@ public class GameEntity : NetworkBehaviour
                 Champion champion = this as Champion;
                 bool isChampionAttack = (champion != null) ? true : false;
                 target.TakeDamage(damage, isChampionAttack);
-                EffectManager.Instance.PlayEffect(1, target.transform.position, new Vector3(1, 1, 1), Quaternion.identity); // 공격 및 피격 이펙트가 공존한다.
+                EffectManager.Instance.PlayEffect(1, target.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
+                EffectManager.Instance.PlayEffect(2, target.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
             }
         }
     }
@@ -250,10 +251,13 @@ public class GameEntity : NetworkBehaviour
             }
 
             Projectile projectile = obj.GetComponent<Projectile>();
-            if(projectile != null)
+            EffectManager.Instance.PlayEffect(10, projectile.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
+
+            if (projectile != null)
             {
                 float damage = Formula.CalcDamage(this);
                 projectile.transform.position = (projectileTransform == null) ? transform.position : projectileTransform.position;
+                EffectManager.Instance.PlayEffect(9, projectile.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
                 projectile.InitProjectile(ProjectileType.Guided, target, 10f, 10f, () =>
                 {
                     if (target != null)

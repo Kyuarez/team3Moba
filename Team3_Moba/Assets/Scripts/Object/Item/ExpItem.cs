@@ -37,6 +37,7 @@ public class ExpItem : NetworkBehaviour
             {
                 ClientsGetItemRpc(networkObjectID, championObject.OwnerClientId);
                 DespawnItemRpc();
+                EffectManager.Instance.PlayEffect(5, gameObject.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
             }
         }
     }

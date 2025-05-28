@@ -288,6 +288,7 @@ public class Champion : GameEntity
             transform.position = spawnBlueTeamPosition;
         }
         agent.enabled = true;
+        EffectManager.Instance.PlayEffect(3,gameObject.transform.position,new Vector3(1,1,1),Quaternion.identity);
     }
 
     public void OnGetExpItem(int expAmount)

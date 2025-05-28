@@ -24,7 +24,7 @@ public class EffectManager : MonoSingleton<EffectManager>
         foreach (var EffectTable in EffectTableDict)
         {
             var effectList = EffectTable.Value;
-            Logger.Log("¿Ã∆Â∆Æ  : " + effectList.effect_name);
+            //Logger.Log("¿Ã∆Â∆Æ  : " + effectList.effect_name);
             AddEffectDict(effectList.id, effectList.path, effectList.effect_name);
         }
     }
@@ -32,7 +32,7 @@ public class EffectManager : MonoSingleton<EffectManager>
 
     public void AddEffectDict(int effectID, string effectResPath, string effectName)
     {
-        Logger.LogWarning($"AddEffect : {effectID}, Effect/{effectResPath}");
+        Logger.LogWarning($"Effect/{effectResPath}/{effectName}");
         ParticleSystem effect = Resources.Load<ParticleSystem>($"Effect/{effectResPath}/{effectName}");
         if (effect == null)
         {

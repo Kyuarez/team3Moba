@@ -11,9 +11,39 @@
       "effect_name": "Hitted"
     },
     {
+      "id": "3",
+      "path": "Champion",
+      "effect_name": "Revival"
+    },
+    {
+      "id": "4",
+      "path": "GameSystem",
+      "effect_name": "ExpItem"
+    },
+    {
+      "id": "5",
+      "path": "GameSystem",
+      "effect_name": "InItem"
+    },
+    {
+      "id": "9",
+      "path": "Skill",
+      "effect_name": "FireBall"
+    },
+    {
+      "id": "10",
+      "path": "Tower",
+      "effect_name": "Attack1"
+    },
+    {
+      "id": "11",
+      "path": "Tower",
+      "effect_name": "Attack1"
+    },
+    {
       "id": "12",
-      "path": "Towner",
-      "effect_name": "death1"
+      "path": "Tower",
+      "effect_name": "Death1"
     }
   ]
 }

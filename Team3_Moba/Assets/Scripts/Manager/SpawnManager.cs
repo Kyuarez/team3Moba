@@ -61,6 +61,7 @@ public class SpawnManager : NetworkBehaviour
             return;
         }
         netObj.Spawn();  // 네트워크에 생성 전파
+        EffectManager.Instance.PlayEffect(4, netObj.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
         ExpItem expItem = obj.GetComponent<ExpItem>();
         if(expItem != null)
         {
