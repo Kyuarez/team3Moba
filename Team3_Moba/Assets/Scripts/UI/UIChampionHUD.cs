@@ -12,6 +12,8 @@ public class UIChampionHUD : UIBase
 {
     [SerializeField] private Image championImage;
     [SerializeField] private TextMeshProUGUI championLevelText;
+    [SerializeField] private Image coverImage;
+    [SerializeField] private TextMeshProUGUI championRespawnText;
     [SerializeField] private Image championHPSlider;
     [SerializeField] private TextMeshProUGUI championHPText;
     [SerializeField] private Image championExpSlider;
@@ -67,6 +69,9 @@ public class UIChampionHUD : UIBase
         champion.OnLevelChanged += OnUpdateLevel; 
         champion.OnHPChanged += OnUpdateHP;
         champion.OnExpChanged += OnUpdateExp;
+        champion.OnDead += OnDeadAction;
+        champion.OnChampionRespawnTimer += OnUpdateRespawnTimer;
+        champion.OnDeadComplete += OnDeadCompleteAction;
     }
 
     public void OnUpdateLevel(int currentLevel)
@@ -84,5 +89,21 @@ public class UIChampionHUD : UIBase
     {
         championExpText.text = $"{currentExp.ToString("F0")} / {maxExp.ToString("F0")}";
         championExpSlider.fillAmount = currentExp / maxExp;
+    }
+
+    public void OnDeadAction()
+    {
+        coverImage.gameObject.SetActive(true);
+        championRespawnText.gameObject.SetActive(true);
+    }
+    public void OnUpdateRespawnTimer(float respawnTime)
+    {
+        championRespawnText.text = $"{respawnTime.ToString("F0")}";
+    }
+    public void OnDeadCompleteAction()
+    {
+        coverImage.gameObject.SetActive(false);
+        championRespawnText.gameObject.SetActive(false);
+        championRespawnText.text = string.Empty;
     }
 }
