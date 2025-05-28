@@ -64,8 +64,6 @@ public class Champion : GameEntity
         }
         agent.enabled = true;
         
-       
-
         ChampionTable data = TableManager.Instance.FindTableData<ChampionTable>(entityID);
         InitData(data);
 
