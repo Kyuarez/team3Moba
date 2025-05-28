@@ -223,7 +223,7 @@ public class Champion : GameEntity
 
     private IEnumerator CoAutoAttack()
     {
-        //@tk : 플레이어와 타겟과의 거리
+        //@tk : 플레이어와 타겟과의 거리  
         while (true)
         {
             if (attackTarget == null || attackTarget.GetHP() <= 0)
@@ -234,6 +234,7 @@ public class Champion : GameEntity
             float distance = Vector3.Distance(transform.position, attackTarget.transform.position);
             if (distance < attackRange)
             {
+                LookTarget(attackTarget.transform);
                 StopMove();
                 if (isAttacking == false)
                 {
@@ -246,6 +247,12 @@ public class Champion : GameEntity
             }
             yield return null;
         }
+    }
+
+    private void LookTarget(Transform target)
+    {
+        Quaternion rotationToLookat = Quaternion.LookRotation(target.position - transform.position);
+        transform.rotation = Quaternion.Euler(0f, rotationToLookat.eulerAngles.y, 0f);
     }
 
     private IEnumerator CoAttackWithCoolTime()

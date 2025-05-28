@@ -42,7 +42,7 @@ public partial class TableManager
         string path = Application.streamingAssetsPath + $"/{tableName}.json";
         if (!File.Exists(path))
         {
-            Debug.LogError($"File not found: {path}");
+            Logger.LogError($"File not found: {path}");
             outDict = new Dictionary<int, T>();
             return;
         }
@@ -55,7 +55,6 @@ public partial class TableManager
         while (!www.isDone) { }
         jsonText = www.downloadHandler.text;
 #endif
-        Logger.Log(tableName.ToString());
         Dictionary<string, List<T>> parsed = JsonConvert.DeserializeObject<Dictionary<string, List<T>>>(jsonText);
         List<T> items = parsed[tableName];
 
