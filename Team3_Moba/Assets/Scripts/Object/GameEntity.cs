@@ -221,7 +221,7 @@ public class GameEntity : NetworkBehaviour
                 Champion champion = this as Champion;
                 bool isChampionAttack = (champion != null) ? true : false;
                 target.TakeDamage(damage, isChampionAttack);
-                EffectManager.Instance.PlayEffect(1, target.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
+                EffectManager.Instance.PlayEffect(1, target.transform.position, new Vector3(1, 1, 1), Quaternion.identity); // 공격 및 피격 이펙트가 공존한다.
             }
         }
     }

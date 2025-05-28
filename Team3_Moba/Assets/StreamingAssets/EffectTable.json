@@ -4,6 +4,16 @@
       "id": "1",
       "path": "Champion",
       "effect_name": "Attack"
+    },
+    {
+      "id": "2",
+      "path": "Champion",
+      "effect_name": "Hitted"
+    },
+    {
+      "id": "12",
+      "path": "Towner",
+      "effect_name": "death1"
     }
   ]
 }
