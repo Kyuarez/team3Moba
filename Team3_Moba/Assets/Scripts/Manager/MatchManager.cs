@@ -76,6 +76,10 @@ public class MatchManager : NetworkBehaviour
         {
             return;
         }
+        if (!isPlayerSpawned)
+        {
+            return;
+        }
         matchTime.Value += Time.deltaTime;
     }
 

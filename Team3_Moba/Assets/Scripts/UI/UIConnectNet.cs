@@ -1,4 +1,6 @@
 using System;
+using System.Net.Sockets;
+using System.Net;
 using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -19,6 +21,8 @@ public class UIConnectNet : UIBase
     [SerializeField] private Button hostButton;
     [SerializeField] private Button clientButton;
     [SerializeField] private TMP_InputField ipInputField;
+    [SerializeField] private TextMeshProUGUI hostIPText;
+
 
     public override void Initialize(Transform anchor)
     {
@@ -35,11 +39,10 @@ public class UIConnectNet : UIBase
 
     public void OnEndEditIpAddress(string ipAddress)
     {
-        UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
 #if UNITY_EDITOR
-        transport.SetConnectionData("127.0.0.1", 7777);
+        NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = "127.0.0.1";
 #else
-        transport.SetConnectionData(ipAddress, 7777);
+        NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = ipAddress;
 #endif
     }
 
@@ -63,7 +66,16 @@ public class UIConnectNet : UIBase
 
     public void WaitingWithConnect()
     {
+        string ipText = string.Empty;
+        foreach (var ip in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
+        {
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
+            {
+                ipText = ip.ToString();
+            }
+        }
         connectPanel.SetActive(false);
         waitingPanel.SetActive(true);
+        hostIPText.text = $"Host IP: {ipText}";
     }
 }
