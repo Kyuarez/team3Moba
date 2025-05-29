@@ -12,9 +12,10 @@ public class UIConnectNetData : UIBaseData
 
 public class UIConnectNet : UIBase
 {
+    [SerializeField] private GameObject titlePanel;
     [SerializeField] private GameObject connectPanel;
     [SerializeField] private GameObject waitingPanel;
-
+    [SerializeField] private Button titleButton;
     [SerializeField] private Button hostButton;
     [SerializeField] private Button clientButton;
     [SerializeField] private TMP_InputField ipInputField;
@@ -22,9 +23,11 @@ public class UIConnectNet : UIBase
     public override void Initialize(Transform anchor)
     {
         base.Initialize(anchor);
-        connectPanel.SetActive(true);
+        titlePanel.SetActive(true);
+        connectPanel.SetActive(false);
         waitingPanel.SetActive(false);
 
+        titleButton.onClick.AddListener(OnClickTitleButton);
         hostButton.onClick.AddListener(OnClickConnectHost);
         clientButton.onClick.AddListener(OnClickConnectClient);
         ipInputField.onEndEdit.AddListener(OnEndEditIpAddress);
@@ -38,6 +41,12 @@ public class UIConnectNet : UIBase
 #else
         transport.SetConnectionData(ipAddress, 7777);
 #endif
+    }
+
+    public void OnClickTitleButton()
+    {
+        titlePanel.SetActive(false);
+        connectPanel.SetActive(true);
     }
 
     public void OnClickConnectClient()

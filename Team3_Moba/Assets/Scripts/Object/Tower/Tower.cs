@@ -163,7 +163,7 @@ public class Tower : GameEntity
 
     IEnumerator CoAttackWithCooldown(GameEntity target)
     {
-        ServerShootRpc(target.NetworkObjectId, "cannon", projectileSpeed, projectileDuration, 10);
+        ServerShootRpc(target.NetworkObjectId, "cannon", attackDamage, projectileSpeed, projectileDuration, 10);
         yield return new WaitForSeconds(attackCoolTime);
         isAttacking = false;
     }

@@ -292,6 +292,14 @@ public class Champion : GameEntity
         }
 
         model.SetActive(false);
+        if (GetTeam() == Team.Red)
+        {
+            transform.position = spawnRedTeamPosition;
+        }
+        else if (GetTeam() == Team.Blue)
+        {
+            transform.position = spawnBlueTeamPosition;
+        }
         
         //부활 타이머
         float timer = respawnTimeChampion;
@@ -312,15 +320,6 @@ public class Champion : GameEntity
     }
     public void OnChampionDeadComplete()
     {
-        if (GetTeam() == Team.Red)
-        {
-            transform.position = spawnRedTeamPosition;
-        }
-        else if (GetTeam() == Team.Blue)
-        {
-            transform.position = spawnBlueTeamPosition;
-        }
-
         if (IsServer)
         {
             ServerSetIsDeadRpc(false);
