@@ -306,14 +306,12 @@ public class Champion : GameEntity
         {
             VolumeHandler.Instance.PlayerRespawnVolume();
         }
-        championAnimator.SetTrigger("OnRespawn");
         model.SetActive(true);
+        championAnimator.SetTrigger("OnRespawn");
         OnDeadComplete?.Invoke();
     }
     public void OnChampionDeadComplete()
     {
-        SetHP(maxHP.Value);
-
         if (GetTeam() == Team.Red)
         {
             transform.position = spawnRedTeamPosition;
@@ -327,6 +325,7 @@ public class Champion : GameEntity
         {
             ServerSetIsDeadRpc(false);
         }
+        SetHP(maxHP.Value);
         agent.enabled = true;
         EffectManager.Instance.PlayEffect(3,gameObject.transform.position,new Vector3(2,2,2),Quaternion.identity);
     }

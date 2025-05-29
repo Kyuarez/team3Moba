@@ -174,18 +174,22 @@ public class GameEntity : NetworkBehaviour
             Champion champion = this as Champion;
             if (champion != null)
             {
+                ServerSetIsDeadRpc(true);
+
                 if (IsServer && isChampionAttack)
                 {
-                    ServerSetIsDeadRpc(true);
                     MatchManager.Instance.ServerUpdateTeamKillRpc(team.Value);
                 }
             }
             OnDead?.Invoke();
         }
 
-        damagedTime = Time.time;
-        ResetRecovery();
-        recoveryCoroutine = StartCoroutine(CoRecovery());
+        if (isDead.Value == false) 
+        {
+            damagedTime = Time.time;
+            ResetRecovery();
+            recoveryCoroutine = StartCoroutine(CoRecovery());
+        }
     }
 
     public void Attack(float damage, GameEntity target)
