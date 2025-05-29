@@ -228,23 +228,21 @@ public class GameEntity : NetworkBehaviour
                 bool isChampionAttack = (champion != null) ? true : false;
                 EffectManager.Instance.PlayEffect(1, target.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
                 target.TakeDamage(damage, isChampionAttack);
-                //해당 이펙트는 없애거나 바꿀듯, 파이어 볼이 맞았을때는 이 이팩트로
-                //EffectManager.Instance.PlayEffect(2, target.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
             }
         }
     }
 
     [Rpc(SendTo.Server)]
-    public void ServerShootRpc(ulong targetNetworkObjID, string resPath, float projectileSpeed, float projectileDuration, int effectID)
+    public void ServerShootRpc(ulong targetNetworkObjID, string resPath, float damage, float projectileSpeed, float projectileDuration, int effectID)
     {
         if (IsServer)
         {
-            ClientsShootRpc(targetNetworkObjID, resPath, projectileSpeed, projectileDuration, effectID);
+            ClientsShootRpc(targetNetworkObjID, resPath, damage, projectileSpeed, projectileDuration, effectID);
         }
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void ClientsShootRpc(ulong targetNetworkObjID, string resPath, float projectileSpeed, float projectileDuration, int effectID)
+    public void ClientsShootRpc(ulong targetNetworkObjID, string resPath, float damage, float projectileSpeed, float projectileDuration, int effectID)
     {
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetNetworkObjID, out var value))
         {
@@ -260,7 +258,6 @@ public class GameEntity : NetworkBehaviour
 
             if (projectile != null)
             {
-                float damage = Formula.CalcDamage(this);
                 projectile.transform.position = (projectileTransform == null) ? transform.position : projectileTransform.position;
 
                 EffectManager.Instance.PlayEffect(effectID, projectile.transform.transform, new Vector3(1, 1, 1));
