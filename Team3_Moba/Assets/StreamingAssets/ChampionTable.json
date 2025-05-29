@@ -4,7 +4,7 @@
       "id": "1",
       "hp": "500",
       "mp": "100",
-      "attack": "250",
+      "attack": "25",
       "attack_range": "3",
       "attack_cool_time": "1",
       "move_speed": "15",
