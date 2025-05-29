@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using static SoundManager;
+using UnityEngine.UIElements;
 
 public class EffectManager : MonoSingleton<EffectManager>
 {
@@ -20,19 +21,19 @@ public class EffectManager : MonoSingleton<EffectManager>
     }
     void Start()
     {
-        //var EffectTableDict = TableManager.Instance.FindAllTableData<EffectTable>();
-        //foreach (var EffectTable in EffectTableDict)
-        //{
-        //    var effectList = EffectTable.Value;
-        //    Logger.Log("이펙트  : " + effectList.effect_name);
-        //    AddEffectDict(effectList.id, effectList.path, effectList.effect_name);
-        //}
+        var EffectTableDict = TableManager.Instance.FindAllTableData<EffectTable>();
+        foreach (var EffectTable in EffectTableDict)
+        {
+            var effectList = EffectTable.Value;
+            //Logger.Log("이펙트  : " + effectList.effect_name);
+            AddEffectDict(effectList.id, effectList.path, effectList.effect_name);
+        }
     }
 
 
     public void AddEffectDict(int effectID, string effectResPath, string effectName)
     {
-        Logger.LogWarning($"AddEffect : {effectID}, Effect/{effectResPath}");
+        Logger.LogWarning($"Effect/{effectResPath}/{effectName}");
         ParticleSystem effect = Resources.Load<ParticleSystem>($"Effect/{effectResPath}/{effectName}");
         if (effect == null)
         {
@@ -47,13 +48,27 @@ public class EffectManager : MonoSingleton<EffectManager>
         effectDict.Add(effectID, effect);
     }
 
+    //고정된 위치 이펙트 생성
     public void PlayEffect(int id, Vector3 position, Vector3 scale, Quaternion rotation)
     {
+
         ParticleSystem effect = Instantiate(effectDict[id], position, rotation);
         effect.gameObject.transform.localScale = scale;
         effect.Play();
+
         Destroy(effect.gameObject, effect.main.duration);
     }
+
+    //부모 위치 따라가는 이펙트 생성
+    public void PlayEffect(int id, Transform parent, Vector3 scale)
+    {
+        ParticleSystem effect = Instantiate(effectDict[id], parent);
+        effect.gameObject.transform.localScale = scale;
+        effect.gameObject.transform.rotation = Quaternion.identity;
+        effect.Play();
+        Destroy(effect.gameObject, effect.main.duration);
+    }
+
 
 
 }

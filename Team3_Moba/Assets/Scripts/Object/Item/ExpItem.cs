@@ -50,6 +50,7 @@ public class ExpItem : NetworkBehaviour
                 Champion champion = championObject.GetComponent<Champion>();
                 if (champion != null)
                 {
+                    EffectManager.Instance.PlayEffect(5, gameObject.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
                     champion.OnGetExpItem(exp);
                 }
             }

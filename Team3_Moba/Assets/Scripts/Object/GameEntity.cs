@@ -218,8 +218,11 @@ public class GameEntity : NetworkBehaviour
             {
                 Champion champion = this as Champion;
                 bool isChampionAttack = (champion != null) ? true : false;
+                EffectManager.Instance.PlayEffect(1, target.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
                 target.TakeDamage(damage, isChampionAttack);
-            }   
+                //해당 이펙트는 없애거나 바꿀듯, 파이어 볼이 맞았을때는 이 이팩트로
+                //EffectManager.Instance.PlayEffect(2, target.transform.position, new Vector3(1, 1, 1), Quaternion.identity);
+            }
         }
     }
 
@@ -246,10 +249,15 @@ public class GameEntity : NetworkBehaviour
             }
 
             Projectile projectile = obj.GetComponent<Projectile>();
-            if(projectile != null)
+            //타워 탑에서 공격 나오는것은 좋음, 이후에 프로젝타일에도 이펙트를 더 달아주면 좋을것 같음
+            EffectManager.Instance.PlayEffect(10, projectile.transform, new Vector3(1, 1, 1));
+
+            if (projectile != null)
             {
                 float damage = Formula.CalcDamage(this);
                 projectile.transform.position = (projectileTransform == null) ? transform.position : projectileTransform.position;
+                //이 이펙트도 프로젝타일에 달아줘야됨
+                EffectManager.Instance.PlayEffect(9, projectile.transform.transform, new Vector3(1, 1, 1));
                 projectile.InitProjectile(ProjectileType.Guided, target, 10f, 10f, () =>
                 {
                     if (target != null)
