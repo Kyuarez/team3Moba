@@ -20,6 +20,8 @@ public class EntityTable
     public int damage;
     public float attack_range;
     public float attack_cool_time;
+    public float attack_duration;
+    public float attack_speed;
     public int hp;
 }
 
@@ -48,6 +50,8 @@ public class SkillTable
     public float cool_time;
     public SkillExecuteType excute_type;
     public SkillActionType action_type;
+    public float skill_speed;
+    public float skill_duration;
     public float duration_time;
     public float duration_damage;
     public float buff_amount;

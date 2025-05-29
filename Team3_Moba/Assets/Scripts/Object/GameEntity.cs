@@ -19,6 +19,8 @@ public class GameEntity : NetworkBehaviour
     protected float attackRange;
     protected float attackCoolTime;
     protected float attackDelay;
+    protected float projectileSpeed;
+    protected float projectileDuration;
 
     protected bool isInvincible = false;
 
@@ -91,6 +93,8 @@ public class GameEntity : NetworkBehaviour
         this.attackDamage = data.damage;
         this.attackRange = data.attack_range;
         this.attackCoolTime = data.attack_cool_time;
+        this.projectileSpeed = data.attack_speed;
+        this.projectileDuration = data.attack_duration;
 
         SetMaxHP(data.hp);
         SetHP(data.hp);
@@ -227,16 +231,16 @@ public class GameEntity : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    public void ServerShootRpc(ulong targetNetworkObjID, string resPath)
+    public void ServerShootRpc(ulong targetNetworkObjID, string resPath, float projectileSpeed, float projectileDuration, int effectID)
     {
         if (IsServer)
         {
-            ClientsShootRpc(targetNetworkObjID, resPath);
+            ClientsShootRpc(targetNetworkObjID, resPath, projectileSpeed, projectileDuration, effectID);
         }
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void ClientsShootRpc(ulong targetNetworkObjID, string resPath)
+    public void ClientsShootRpc(ulong targetNetworkObjID, string resPath, float projectileSpeed, float projectileDuration, int effectID)
     {
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetNetworkObjID, out var value))
         {
@@ -249,16 +253,14 @@ public class GameEntity : NetworkBehaviour
             }
 
             Projectile projectile = obj.GetComponent<Projectile>();
-            //타워 탑에서 공격 나오는것은 좋음, 이후에 프로젝타일에도 이펙트를 더 달아주면 좋을것 같음
-            EffectManager.Instance.PlayEffect(10, projectile.transform, new Vector3(1, 1, 1));
 
             if (projectile != null)
             {
                 float damage = Formula.CalcDamage(this);
                 projectile.transform.position = (projectileTransform == null) ? transform.position : projectileTransform.position;
-                //이 이펙트도 프로젝타일에 달아줘야됨
-                EffectManager.Instance.PlayEffect(9, projectile.transform.transform, new Vector3(1, 1, 1));
-                projectile.InitProjectile(ProjectileType.Guided, target, 10f, 10f, () =>
+
+                EffectManager.Instance.PlayEffect(effectID, projectile.transform.transform, new Vector3(1, 1, 1));
+                projectile.InitProjectile(ProjectileType.Guided, target, projectileSpeed, projectileDuration, () =>
                 {
                     if (target != null)
                     {

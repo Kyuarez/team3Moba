@@ -17,7 +17,7 @@ public class LaunchSkillActor : SkillActor
             projectileType = ProjectileType.NoneGuided;
         }
 
-        caster.ServerShootRpc(target.NetworkObjectId, data.skill_name);
+        caster.ServerShootRpc(target.NetworkObjectId, data.skill_name, data.skill_speed, data.skill_duration, 9);
     }
 
 
