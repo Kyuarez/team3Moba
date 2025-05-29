@@ -37,6 +37,7 @@ public class CursorManager : MonoBehaviour
 
         currentState = CursorState.None;
         cursorImage = cursor.GetComponent<Image>();
+        cursorImage.sprite = baseCursorSprite;
     }
 
     public void SetTeam(Team team)
@@ -67,7 +68,7 @@ public class CursorManager : MonoBehaviour
     {   
         if (currentState == CursorState.None)
         {
-            SetCursorState(CursorState.Base);
+            SetCursorState(CursorState.None);
             return;
         }
 
