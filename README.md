@@ -26,6 +26,8 @@ Moba 장르의 멀티플레이 게임입니다.
 - StreamingAsset 폴더에 json들을 각 모델에 맞게 파싱해서 데이터 화
 - TableManager를 통해 데이터 접근 및 읽기 (각 시트 별로 Dictionary<key, data> 단위로 저장)
 
+*StreamingAsset폴더에 저장한 이유는 json을 원시 파일로 관리하기 위해서이다.
+
 ```mermaid
 sequenceDiagram
     participant GameLogic as Game Logic
@@ -63,8 +65,78 @@ sequenceDiagram
 ```
 
 
-### Google Fit API & Android Native Code(Java)
+### Skill System
+스킬 시스템은 데이터 기반으로 정의된 스킬을 플레이어 입력에 따라 실행하고, 다양한 스킬 액션 타입(Launch, Buff 등)을 유연하게 처리하는 구조입니다.
+개별 스킬 Act하는 부분을 전략 패턴(특정 작업을 클래스 화해서 런타임에 변환)적으로 구현했습니다.
+
+```mermaid
+classDiagram
+    direction LR
+    class SkillManager {
+        - reservationSkill: SkillTable
+        - skillActorDict: Dictionary<SkillActionType, SkillActor>
+        + Awake()
+        + ExecuteSkill(caster: GameEntity)
+        + ExecuteSkill(caster: GameEntity, hit: RaycastHit)
+        - Execute(caster: GameEntity, target: GameEntity)
+        + SetReservationSkill(skill: SkillTable)
+        + ResetReservationSkill()
+    }
+
+    class SkillActor {
+        <<abstract>>
+        + Execute(data: SkillTable, caster: GameEntity, target: GameEntity)
+    }
+
+    class LaunchSkillActor {
+        + Execute(data: SkillTable, caster: GameEntity, target: GameEntity)
+    }
+
+    class SkillTable {
+        + id: int
+        + skill_name: string
+        + cool_time: float
+        + excute_type: SkillExecuteType
+        + action_type: SkillActionType
+        // ... more properties
+    }
+
+    class GameEntity {
+        // ... properties
+        + ServerShootRpc(targetId, skillName, damage, ...)
+        + GetTeam(): Team
+        + IsInvincible(): bool
+    }
+
+    class Champion {
+        // ... properties
+        + PlayerCoolTime: PlayerCoolTime
+    }
+
+    enum SkillExecuteType {
+        Immediately
+        NoneTarget
+        SetTarget
+    }
+
+    enum SkillActionType {
+        Buff
+        Launch
+        // ... other types
+    }
+
+    SkillManager --o SkillTable : uses (reservationSkill)
+    SkillManager ..> SkillActor : instantiates/uses (skillActorDict)
+    SkillActor <|-- LaunchSkillActor
+    SkillManager --|> MonoSingleton
+    LaunchSkillActor ..> GameEntity : calls ServerShootRpc
+    SkillManager ..> GameEntity : casts/uses
+    GameEntity <|-- Champion
+    SkillManager ..> SoundManager : plays SFX
+    SkillManager ..> PlayerCoolTime : sets cooltime
+    SkillTable ..> SkillExecuteType
+    SkillTable ..> SkillActionType
+```
 
 
-### AR Foundation
 
