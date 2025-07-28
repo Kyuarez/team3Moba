@@ -28,45 +28,38 @@ Moba 장르의 멀티플레이 게임입니다.
 
 ```mermaid
 sequenceDiagram
-    participant GoogleSpreadsheet as G-Sheet
-    participant ExporterTool as Export Tool
-    participant LocalJSON as JSON Files
-    participant UnityEditor as Unity Editor
-    participant TableManager as TableManager
     participant GameLogic as Game Logic
-
-    G-Sheet->>ExporterTool: 데이터 업데이트
-    ExporterTool->>LocalJSON: 각 테이블별 JSON 파일 생성 (e.g., EntityTable.json)
-    UnityEditor->>LocalJSON: JSON 파일 포함 (StreamingAssets)
+    participant TableManager as TableManager
+    participant StreamingAssets as StreamingAssets JSON
+    participant InGameData as In-Game Data (Dictionary)
 
     activate TableManager
     GameLogic->>TableManager: OnLoadGameAction() 호출
     TableManager->>TableManager: 싱글턴 인스턴스 초기화
     TableManager->>TableManager: LoadAllTables() 호출
 
-    loop 각 데이터 테이블 (e.g., Entity, Champion, Skill)
+    loop 각 데이터 테이블 (e.g., "EntityTable.json", "ChampionTable.json"...)
         Note right of TableManager: **플랫폼별 파일 로딩 분리**
-        TableManager->>LocalJSON: JSON 파일 로드 요청 (e.g., "EntityTable.json")
+        TableManager->>StreamingAssets: JSON 파일 로드 요청
         alt UNITY_EDITOR || UNITY_STANDALONE
-            LocalJSON-->>TableManager: File.ReadAllText()로 파일 내용 반환
+            StreamingAssets-->>TableManager: File.ReadAllText()로 파일 내용 반환
         else UNITY_ANDROID || IOS
-            LocalJSON-->>TableManager: UnityWebRequest.Get()으로 웹 요청 및 데이터 반환
+            StreamingAssets-->>TableManager: UnityWebRequest.Get()으로 웹 요청 및 데이터 반환
         end
 
         TableManager->>TableManager: JsonConvert.DeserializeObject<Dictionary<string, List<T>>> (JSON 파싱)
         TableManager->>TableManager: List<T> 형태로 데이터 추출
 
-        Note right of TableManager: **제네릭 데이터 변환 및 Dictionary 정리**
-        TableManager->>TableManager: `keySelector(T item)`를 사용하여 ID 추출
-        TableManager->>TableManager: `Dictionary<int, T>`로 변환 및 저장 (O(1) 조회 구조)
-        TableManager->>TableManager: `tableMap` (Dictionary<Type, object>)에 등록
-
+        Note right of TableManager: **[강조 2] 제네릭 데이터 변환 & [강조 3] Dictionary 정리**
+        TableManager->>TableManager: `keySelector(T item)`를 사용하여 각 데이터의 고유 ID 추출
+        TableManager->>InGameData: `Dictionary<int, T>`로 변환 후 데이터 저장
+        TableManager->>InGameData: `tableMap` (Dictionary<Type, object>)에 등록 (타입별 관리)
     end
     deactivate TableManager
 
-    GameLogic->>TableManager: FindTableData<T>(id) or FindAllTableData<T>()
-    Note right of TableManager: **제네릭 접근 & Dictionary 빠른 조회**
-    TableManager-->>GameLogic: 요청된 테이블 데이터 반환
+    GameLogic->>TableManager: FindTableData<T>(id) 또는 FindAllTableData<T>()
+    Note right of InGameData: **제네릭 접근 & Dictionary 빠른 조회**
+    InGameData-->>GameLogic: 요청된 테이블 데이터 반환 (O(1) 속도)
 ```
 
 
