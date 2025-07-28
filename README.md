@@ -71,10 +71,9 @@ sequenceDiagram
 
 ```mermaid
 classDiagram
-    direction LR
     class SkillManager {
         - reservationSkill: SkillTable
-        - skillActorDict: Dictionary<SkillActionType, SkillActor>
+        - skillActorDict: Dictionary~SkillActionType, SkillActor~
         + Awake()
         + ExecuteSkill(caster: GameEntity)
         + ExecuteSkill(caster: GameEntity, hit: RaycastHit)
@@ -98,44 +97,8 @@ classDiagram
         + cool_time: float
         + excute_type: SkillExecuteType
         + action_type: SkillActionType
-        // ... more properties
-    }
+       
 
-    class GameEntity {
-        // ... properties
-        + ServerShootRpc(targetId, skillName, damage, ...)
-        + GetTeam(): Team
-        + IsInvincible(): bool
-    }
-
-    class Champion {
-        // ... properties
-        + PlayerCoolTime: PlayerCoolTime
-    }
-
-    enum SkillExecuteType {
-        Immediately
-        NoneTarget
-        SetTarget
-    }
-
-    enum SkillActionType {
-        Buff
-        Launch
-        // ... other types
-    }
-
-    SkillManager --o SkillTable : uses (reservationSkill)
-    SkillManager ..> SkillActor : instantiates/uses (skillActorDict)
-    SkillActor <|-- LaunchSkillActor
-    SkillManager --|> MonoSingleton
-    LaunchSkillActor ..> GameEntity : calls ServerShootRpc
-    SkillManager ..> GameEntity : casts/uses
-    GameEntity <|-- Champion
-    SkillManager ..> SoundManager : plays SFX
-    SkillManager ..> PlayerCoolTime : sets cooltime
-    SkillTable ..> SkillExecuteType
-    SkillTable ..> SkillActionType
 ```
 
 
