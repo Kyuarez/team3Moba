@@ -114,7 +114,7 @@ classDiagram
     }
 
     enum SkillExecuteType {
-        Immediately
+        Immediately  // <-- 이 부분!
         NoneTarget
         SetTarget
     }
