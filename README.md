@@ -24,7 +24,7 @@ Moba 장르의 멀티플레이 게임입니다.
 게임의 모든 데이터를 Google Spreadsheet에서 중앙 집중식으로 관리하고, 이를 JSON 형태로 추출하여 게임 런타임에 효율적으로 불러와 사용하는 시스템입니다.
 - 구글 스프레드 시트에서 Export Json 확장 툴로 json 파일로 변환
 - StreamingAsset 폴더에 json들을 각 모델에 맞게 파싱해서 데이터 화
-- TableManager를 통해 데이터 접근 및 읽기
+- TableManager를 통해 데이터 접근 및 읽기 (각 시트 별로 Dictionary<key, data> 단위로 저장)
 
 ```mermaid
 sequenceDiagram
@@ -37,7 +37,6 @@ sequenceDiagram
 
     G-Sheet->>ExporterTool: 데이터 업데이트
     ExporterTool->>LocalJSON: 각 테이블별 JSON 파일 생성 (e.g., EntityTable.json)
-
     UnityEditor->>LocalJSON: JSON 파일 포함 (StreamingAssets)
 
     activate TableManager
@@ -46,7 +45,7 @@ sequenceDiagram
     TableManager->>TableManager: LoadAllTables() 호출
 
     loop 각 데이터 테이블 (e.g., Entity, Champion, Skill)
-        Note right of TableManager: **[강조 1] 플랫폼별 파일 로딩 분리**
+        Note right of TableManager: **플랫폼별 파일 로딩 분리**
         TableManager->>LocalJSON: JSON 파일 로드 요청 (e.g., "EntityTable.json")
         alt UNITY_EDITOR || UNITY_STANDALONE
             LocalJSON-->>TableManager: File.ReadAllText()로 파일 내용 반환
@@ -57,7 +56,7 @@ sequenceDiagram
         TableManager->>TableManager: JsonConvert.DeserializeObject<Dictionary<string, List<T>>> (JSON 파싱)
         TableManager->>TableManager: List<T> 형태로 데이터 추출
 
-        Note right of TableManager: **[강조 2] 제네릭 데이터 변환 및 [강조 3] Dictionary 정리**
+        Note right of TableManager: **제네릭 데이터 변환 및 Dictionary 정리**
         TableManager->>TableManager: `keySelector(T item)`를 사용하여 ID 추출
         TableManager->>TableManager: `Dictionary<int, T>`로 변환 및 저장 (O(1) 조회 구조)
         TableManager->>TableManager: `tableMap` (Dictionary<Type, object>)에 등록
@@ -66,7 +65,7 @@ sequenceDiagram
     deactivate TableManager
 
     GameLogic->>TableManager: FindTableData<T>(id) or FindAllTableData<T>()
-    Note right of TableManager: **[강조 2] 제네릭 접근 & [강조 3] Dictionary 빠른 조회**
+    Note right of TableManager: **제네릭 접근 & Dictionary 빠른 조회**
     TableManager-->>GameLogic: 요청된 테이블 데이터 반환
 ```
 
