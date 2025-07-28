@@ -71,34 +71,51 @@ sequenceDiagram
 
 ```mermaid
 classDiagram
-    class SkillManager {
-        - reservationSkill: SkillTable
-        - skillActorDict: Dictionary~SkillActionType, SkillActor~
-        + Awake()
-        + ExecuteSkill(caster: GameEntity)
-        + ExecuteSkill(caster: GameEntity, hit: RaycastHit)
-        - Execute(caster: GameEntity, target: GameEntity)
-        + SetReservationSkill(skill: SkillTable)
-        + ResetReservationSkill()
-    }
+class SkillManager {
+  - reservationSkill: SkillTable
+  - skillActorDict: Dictionary~SkillActionType, SkillActor~
+  + Awake()
+  + ExecuteSkill(caster: GameEntity)
+  + ExecuteSkill(caster: GameEntity, hit: RaycastHit)
+  - Execute(caster: GameEntity, target: GameEntity)
+  + SetReservationSkill(skill: SkillTable)
+  + ResetReservationSkill()
+}
 
-    class SkillActor {
-        <<abstract>>
-        + Execute(data: SkillTable, caster: GameEntity, target: GameEntity)
-    }
+class SkillActor {
+  <<abstract>>
+  + Execute(data: SkillTable, caster: GameEntity, target: GameEntity)
+}
 
-    class LaunchSkillActor {
-        + Execute(data: SkillTable, caster: GameEntity, target: GameEntity)
-    }
+class LaunchSkillActor {
+  + Execute(data: SkillTable, caster: GameEntity, target: GameEntity)
+}
 
-    class SkillTable {
-        + id: int
-        + skill_name: string
-        + cool_time: float
-        + excute_type: SkillExecuteType
-        + action_type: SkillActionType
-       
+class SkillTable {
+  + id: int
+  + skill_name: string
+  + cool_time: float
+  + excute_type: SkillExecuteType
+  + action_type: SkillActionType
+}
 
+class GameEntity {
+  + ServerShootRpc(targetId, skillName, damage, ...)
+  + GetTeam(): Team
+  + IsInvincible(): bool
+}
+
+class Champion {
+  + PlayerCoolTime: PlayerCoolTime
+}
+
+SkillManager --> SkillTable : uses reservationSkill
+SkillManager ..> SkillActor : uses skillActorDict
+SkillActor <|-- LaunchSkillActor
+LaunchSkillActor ..> GameEntity : calls ServerShootRpc
+SkillManager ..> GameEntity : casts/uses
+GameEntity <|-- Champion
+SkillManager ..> PlayerCoolTime : sets cooltime
 ```
 
 
