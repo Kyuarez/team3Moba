@@ -90,14 +90,15 @@ public class TableManager : MonoBehaviour
         // ...
     }
 
-    private void LoadTable<T>(string tableName) where T : ITableData
+    private void LoadTable<T>(string tableName, out Dictionary<int, T> outDict, System.Func<T, int> keySelector) where T : ITableData
     {
-        //Streaming Aset으로 부터 json 데이터 가져와서 시트 단위로 Dictionary에 저장하기
+        //Streaming Aset으로 부터 json 데이터 가져와서 시트 단위로 Dictionary에 저장
     }
 }
-</details>
+
 ```
 📎 [전체 TableManager.cs 보기](https://github.com/Kyuarez/team3Moba/blob/main/Team3_Moba/Assets/Scripts/Data/TableManager/TableManager.cs)
+</details>
 
 ---
 
