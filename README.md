@@ -67,6 +67,7 @@ sequenceDiagram
 #### TableManager.cs 
 <details>
 <summary>GameManager.cs 코드 일부 보기</summary>
+  
 ```csharp
 public class TableManager : MonoBehaviour
 {
@@ -95,10 +96,9 @@ public class TableManager : MonoBehaviour
         //Streaming Aset으로 부터 json 데이터 가져와서 시트 단위로 Dictionary에 저장
     }
 }
-
-</details>
 ```
 
+</details>
 📎 [전체 TableManager.cs 보기](https://github.com/Kyuarez/team3Moba/blob/main/Team3_Moba/Assets/Scripts/Data/TableManager/TableManager.cs)
 
 ---
