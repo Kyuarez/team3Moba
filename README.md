@@ -66,7 +66,7 @@ sequenceDiagram
 
 #### TableManager.cs 
 <details>
-<summary>GameManager.cs 코드 일부 보기</summary>
+<summary>TableManager.cs 코드 일부 보기</summary>
   
 ```csharp
 public class TableManager : MonoBehaviour
@@ -87,14 +87,18 @@ public class TableManager : MonoBehaviour
 
     private void LoadAllTables()
     {
-        LoadTable<EntityData>("EntityTable");
+        LoadTable<EntityData>("EntityTable", out dict, model => model.id); //모델의 첫번째 아이디를 키값으로 상정하고 작업
         // ...
     }
 
     private void LoadTable<T>(string tableName, out Dictionary<int, T> outDict, System.Func<T, int> keySelector) where T : ITableData
     {
         //Streaming Aset으로 부터 json 데이터 가져와서 시트 단위로 Dictionary에 저장
+
     }
+
+    //개별 콘크리트 데이터 테이블
+    private Dictionary<int, EntityTable> entityTable = new Dictionary<int, EntityTable>();
 }
 ```
 
@@ -156,6 +160,74 @@ SkillManager ..> GameEntity : casts/uses
 GameEntity <|-- Champion
 SkillManager ..> PlayerCoolTime : sets cooltime
 ```
+
+#### SkillManager.cs 
+<details>
+<summary>SkillManager.cs 코드 일부 보기</summary>
+```csharp
+public class SkillManager : MonoSingleton<SkillManager>
+{
+    private SkillTable reservationSkill;
+    private Dictionary<SkillActionType, SkillActor> skillActorDict = new Dictionary<SkillActionType, SkillActor>();
+
+    //즉시 공격
+    public bool ExecuteSkill(GameEntity caster) 
+    {
+        //스킬 예약 초기화 및 챔피언 처리
+        return Execute(caster);
+    }
+    //좌표, 타겟
+    public bool ExecuteSkill(GameEntity caster, RaycastHit hit)
+    {
+        //타겟 설정 및 Excute
+        return Execute(caster, target);
+    }
+
+    private bool Execute(GameEntity caster, GameEntity target = null)
+    {
+        if(skillActorDict.TryGetValue(reservationSkill.action_type, out var skillActor))
+        {
+            skill.Actor.Excute();
+            return true;
+        }
+
+        return false;
+    }
+
+    public void SetReservationSkill(SkillTable skill)
+    {
+        //스킬 예약
+    }
+    public void ResetReservationSkill()
+    {
+        //스킬 리셋
+    }
+}
+```
+</details>
+📎 [전체 SkillManager.cs 보기](https://github.com/Kyuarez/team3Moba/blob/main/Team3_Moba/Assets/Scripts/Skill/SkillManager.cs)
+
+
+#### SkillActor.cs 
+<details>
+<summary>SkillExcutor.cs 코드 일부 보기</summary>
+```csharp
+public abstract class SkillActor
+{
+    public abstract void Execute(SkillTable data, GameEntity caster, GameEntity target = null);
+}
+
+public class LaunchSkillActor : SkillActor
+{
+    public override void Execute(SkillTable data, GameEntity caster, GameEntity target = null)
+    {        
+        //구제적 코드
+    }
+}
+
+```
+</details>
+📎 [전체 SkillExcutor.cs 전 보기](https://github.com/Kyuarez/team3Moba/blob/main/Team3_Moba/Assets/Scripts/Skill/SkillExecutor.cs)
 
 
 
