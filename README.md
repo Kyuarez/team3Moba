@@ -164,6 +164,7 @@ SkillManager ..> PlayerCoolTime : sets cooltime
 #### SkillManager.cs 
 <details>
 <summary>SkillManager.cs 코드 일부 보기</summary>
+  
 ```csharp
 public class SkillManager : MonoSingleton<SkillManager>
 {
@@ -212,6 +213,7 @@ public class SkillManager : MonoSingleton<SkillManager>
 #### SkillActor.cs 
 <details>
 <summary>SkillExcutor.cs 코드 일부 보기</summary>
+  
 ```csharp
 public abstract class SkillActor
 {
