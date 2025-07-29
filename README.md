@@ -96,9 +96,10 @@ public class TableManager : MonoBehaviour
     }
 }
 
-```
-📎 [전체 TableManager.cs 보기](https://github.com/Kyuarez/team3Moba/blob/main/Team3_Moba/Assets/Scripts/Data/TableManager/TableManager.cs)
 </details>
+```
+
+📎 [전체 TableManager.cs 보기](https://github.com/Kyuarez/team3Moba/blob/main/Team3_Moba/Assets/Scripts/Data/TableManager/TableManager.cs)
 
 ---
 
