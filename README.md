@@ -63,6 +63,7 @@ sequenceDiagram
     Note right of InGameData: **제네릭 접근 & Dictionary 빠른 조회**
     InGameData-->>GameLogic: 요청된 테이블 데이터 반환 (O(1) 속도)
 ```
+
 #### TableManager.cs 
 <details>
 <summary>GameManager.cs 코드 일부 보기</summary>
@@ -71,7 +72,7 @@ public class TableManager : MonoBehaviour
 {
     public static TableManager Instance { get; private set; }
 
-    private Dictionary<Type, object> tableMap = new();
+    private Dictionary<Type, object> tableMap = new(); //테이블 제너럴 관리 위한 맵핑 구조
 
     private void Awake()
     {
@@ -86,25 +87,16 @@ public class TableManager : MonoBehaviour
     private void LoadAllTables()
     {
         LoadTable<EntityData>("EntityTable");
-        LoadTable<ChampionData>("ChampionTable");
         // ...
     }
 
     private void LoadTable<T>(string tableName) where T : ITableData
     {
-        string json = LoadJsonFromStreamingAssets(tableName);
-        var list = JsonConvert.DeserializeObject<List<T>>(json);
-        var dict = list.ToDictionary(item => item.ID);
-        tableMap[typeof(T)] = dict;
-    }
-
-    public Dictionary<int, T> GetTable<T>() where T : ITableData
-    {
-        return tableMap[typeof(T)] as Dictionary<int, T>;
+        //Streaming Aset으로 부터 json 데이터 가져와서 시트 단위로 Dictionary에 저장하기
     }
 }
-```
 </details>
+```
 📎 [전체 TableManager.cs 보기](https://github.com/Kyuarez/team3Moba/blob/main/Team3_Moba/Assets/Scripts/Data/TableManager/TableManager.cs)
 
 ---
